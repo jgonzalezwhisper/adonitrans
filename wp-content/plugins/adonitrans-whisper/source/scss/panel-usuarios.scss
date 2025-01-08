@@ -1,0 +1,17 @@
+@use "global/dataTable";
+@use "global/variables" as *;
+
+#wrap-usuarios {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 20px;
+
+    .wrap-listado-usuarios,
+    .wrap-gestion-usuarios {
+        width: 100%;        
+    }
+    .wrap-gestion-usuarios{
+        display: none;
+    }   
+
+}

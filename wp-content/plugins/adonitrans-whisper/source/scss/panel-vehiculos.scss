@@ -1,0 +1,74 @@
+@use "global/dataTable";
+@use "global/variables" as *;
+
+#wrap-vehiculos {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 20px;
+    .wrap-listado-vehiculos,
+    .wrap-gestion-vehiculos {
+        width: 100%;
+    }
+
+    .wrap-title {
+        background-color: #0095e8;
+        box-shadow: 0 0 7px 1px rgba(0, 0, 0, .32);
+
+        .title {
+            margin: 0;
+            line-height: 1;
+            color: #fff;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-size: 22px;
+            font-weight: 700;
+            text-shadow: 0px 0px 4px rgba(0, 0, 0, .45);
+        }
+
+    }
+
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 20px;
+        row-gap: 25px;
+
+        .wrap {
+            width: 100%;
+            position: relative;
+
+            label {
+                text-shadow: none;
+                margin-bottom: 5px;
+            }
+            a{
+                color: $primary-color;
+                text-decoration: underline;
+                transition: all .5s;
+                &:hover{
+                    color: $color4;
+                }
+            }
+
+            .select2-container {
+                .select2-selection--single {
+                    height: 42px;
+
+                    .select2-selection__rendered {
+                        line-height: 42px;
+                    }
+
+                }
+
+            }
+
+            &.wrap-2 {
+                width: 49%;
+            }
+
+        }
+
+    }
+
+}

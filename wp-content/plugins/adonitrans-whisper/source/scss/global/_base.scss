@@ -1,0 +1,399 @@
+@use "global/variables";
+@use "global/variables" as *;
+
+.adonitrans-plug {
+	#contloader {
+		position: fixed;
+		background-color: rgba(0, 0, 0, .7);
+		height: 100vh;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		top: 0;
+		left: 0;
+		flex-direction: column;
+		z-index: 9999;
+		opacity: 0;
+		transform: scale(0);
+		transition: all 0.5s;
+
+		.text {
+			color: #fff;
+		}
+
+		.loader {
+			width: 80px;
+			height: 80px;
+			border-radius: 50%;
+			display: inline-block;
+			border-top: 4px solid #FFF;
+			border-right: 4px solid transparent;
+			box-sizing: border-box;
+			animation: rotation 1s linear infinite;
+
+			&::after {
+				content: '';
+				box-sizing: border-box;
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 80px;
+				height: 80px;
+				border-radius: 50%;
+				border-left: 4px solid $color5;
+				border-bottom: 4px solid transparent;
+				animation: rotation 0.5s linear infinite reverse;
+			}
+
+		}
+
+	}
+
+	&.actloader {
+		#contloader {
+			transform: scale(1);
+			opacity: 1;
+		}
+
+	}
+
+	@keyframes rotation {
+		0% {
+			transform: rotate(0deg);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
+
+	}
+
+	.formplug {
+		label {
+			width: 100%;
+			margin-bottom: 20px;
+			display: flex;
+			flex-wrap: wrap;
+			row-gap: 9px;
+			font-size: 18px;
+			letter-spacing: 1px;
+			font-weight: 700;
+			text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+			position: relative;
+
+			input {
+				outline: none;
+				background-color: #fff;
+				color: #2d2d2d;
+				border: 1px solid #f1f1f1;
+			}
+
+			i {
+				position: absolute;
+				top: 37px;
+				right: 15px;
+				color: #313131;
+				font-size: 26px;
+				text-shadow: none;
+				cursor: pointer;
+				transition: .5s;
+
+				&:hover {
+					transform: scale(1.1);
+				}
+
+			}
+
+			&.error {
+				color: red;
+				font-size: 13px;
+				font-weight: 400;
+				margin-top: 4px;
+				line-height: 1;
+				margin-bottom: 0 !important;
+				letter-spacing: 0;
+			}
+
+		}
+
+	}
+
+	.button {
+		display: inline-block;
+		margin-bottom: 15px;
+		background-color: #00d6b0;
+		color: #2d2d2d;
+		box-shadow: 0 0 11px 2px rgba(0, 0, 0, .2);
+		font-weight: 700;
+		padding: 12px 20px;
+		border-radius: 5px;
+		border: none;
+		line-height: 1.4;
+		transition: .5s;
+
+		&:hover,
+		&:focus {
+			background-color: #00b9d9;
+			color: #333;
+		}
+
+	}
+
+	.tarjeta {
+		background-color: #f1f1f1;
+		padding: 25px;
+		border-radius: 10px;
+		border: 1 solid #eae9f1;
+		display: flex;
+		flex-wrap: wrap;
+		row-gap: 16px;
+		margin-bottom: 20px;
+
+		.wrap-titulo {
+			width: 100%;
+
+			.titulo {
+				font-size: 1.4em;
+				font-weight: 700;
+				color: #222;
+				line-height: 1.4;
+				margin: 0;
+			}
+
+			.subtitulo {
+				font-size: 1.2em;
+				line-height: 1.4;
+				margin: 0;
+			}
+
+		}
+
+	}
+
+	.validapass {
+		margin-bottom: 20px;
+
+		.subtitle {
+			letter-spacing: 0;
+			color: #333;
+			font-size: 16px;
+			font-weight: 700;
+			margin-bottom: 12px;
+		}
+
+		ul {
+			color: #96989B;
+			font-size: 14px;
+			line-height: 1.6;
+			list-style: none;
+		}
+
+		.tachado {
+			text-decoration: line-through;
+			color: green;
+		}
+
+	}
+
+	.center {
+		text-align: center;
+	}
+
+	// Estilos base
+	.adonitrans-tabs {
+		display: inline-block;
+		width: 100%;
+
+		// Navegación de tabs
+		&-nav {
+			display: flex;
+			list-style: none;
+			padding: 0;
+			margin: 0;
+
+			li {
+				cursor: pointer;
+				padding: 10px 20px;
+				border: none;
+				background-color: $primary-color;
+				color: #fff;
+				font-weight: bold;
+				transition: background-color 0.3s ease;
+
+				&.active {
+					background-color: $color4;
+					color: #fff;
+				}
+
+				&:hover {
+					background-color: $color4;
+					color: #fff;
+				}
+
+			}
+
+		}
+
+		// Contenido de tabs
+		&-content {
+			padding: 20px;
+			background-color: #fff;
+
+			.tab-content {
+				display: none;
+
+				&.active {
+					display: block;
+				}
+
+			}
+
+		}
+
+	}
+
+	.acordeon {
+		.acordeon-item {
+			margin-bottom: 10px;
+
+			.acordeon-header {
+				background-color: $color4;
+			    color: #fff;
+			    border: none;
+			    padding: 10px;
+			    width: 100%;
+			    text-align: left;
+			    cursor: pointer;
+			    font-weight: 700;
+			    font-size: 16px;
+			    display: flex;
+			    align-items: center;
+			    justify-content: space-between;
+			}
+
+			.acordeon-body {
+				display: none;
+				padding: 10px;
+				background-color: #f9f9f9;
+				border-top: 1px solid #ddd;
+			}
+
+			.campo {
+				margin-bottom: 15px;
+
+				label {
+					display: block;
+					margin-bottom: 5px;
+					font-size: 14px;
+				}
+
+				input {
+					width: 100%;
+					padding: 8px;
+					border: 1px solid #ccc;
+					font-size: 14px;
+					border-radius: 4px;
+				}
+
+			}
+
+		}
+
+	}
+
+	// Estilos del formulario
+	#ajustes-generales {
+		div {
+			margin-bottom: 15px;
+
+			label {
+				display: block;
+				font-weight: bold;
+				margin-bottom: 5px;
+			}
+
+			input,
+			textarea {
+				width: 100%;
+				padding: 8px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				font-size: 14px;
+				box-sizing: border-box;
+
+				&:focus {
+					border-color: #007bff;
+					outline: none;
+				}
+
+			}
+
+			textarea {
+				resize: vertical;
+				min-height: 80px;
+			}
+
+		}
+
+		#wrap-franjas-trabajo {
+			.franja {
+				display: flex;
+				flex-wrap: wrap;
+				width: 100%;
+				justify-content: space-between;
+
+				button {
+					&.remove-franja-row {
+						&:hover {
+							background-color: red;
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		#wrap-tarifas-descuentos {
+			.row-tarifa {
+				display: flex;
+				flex-wrap: wrap;
+				width: 100%;
+				justify-content: space-between;
+
+				button {
+					&.remove-tarifa-row {
+						&:hover {
+							background-color: red;
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		button {
+			background-color: #007bff;
+			color: #fff;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 16px;
+			margin-top: 20px;
+
+			&:hover {
+				background-color: #0056b3;
+			}
+
+		}
+
+	}
+
+}

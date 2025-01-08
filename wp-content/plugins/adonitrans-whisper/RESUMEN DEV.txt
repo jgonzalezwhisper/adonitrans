@@ -1,0 +1,19 @@
+Quiero que actues como el mejor consultor de software, necesito analizar, y ver el mejor flujo para comenzar un proyecto en Wordpress, usando ACF PRO para guardar informacion personalizada y a la medida.
+
+El desarrollo tendra creacion, edicion y eliminacion desde el front, pero estara limitada algunas opciones y vistas segun los roles personalizados de cada usuario. Solamente el usuario con rol Administrador de Wordpress podra entrar al backend.
+
+El desarrollo sera para una empresa prestadora de servicio de transporte a empresas solicitantes, la empresa solicitante tendra un perfil con carga de contrato y datos de contacto, y cada cliente estara asociado a la empresa solicitante.
+
+Los requerimientos del proyecto son los siguientes:
+
+1. Debe de contar con los siguientes roles personalizados: Comercial 1, Comercial 2, Tramites, Talento Humano, Operaciones 1, Operaciones 2, Facturacion, Tesoreria, los cuales son de la empresa. Roles personalizados externos son: Propietario Vehiculo, Conductor, Cliente y Empresa
+1.1 Roles como Comercial 1 y 2, Operaciones 1 y 2 tienen los mismos permisos, pero los de numero 2 no pueden crear informes por ejemplo, crear informes es generar un excel desde el front.
+1.2 Los roles externos como Propietario Vehiculo y Conductor, son roles de personas que no trabajan directamente en la empresa, ademas, un Propietario de Vehiculo puede ser Conductor, como se podria manejar esto?
+1.3 El Rol externo Cliente esta asociado a una empresa solicitante del servicio, el usuario Cliente tendra una opcion para activar o inactivar
+1.4 El rol Empresa sera el usuario  de la empresa solicitante, con ella se podra generar excel como informes de los servicios solicitados
+2. El login de la plataforma debe contar con un codigo generado enviado por correo usado como token de inicio de sesion, este codigo debe de tener una duracion para que pueda ser usado.
+3. Los reportes deben de ser generados en Excel para que los usuarios puedan filtrarlos de manera eficiente
+4. Un propietario de vehiculo, podra tener varios vehiculos relacionados a su perfil, pero el vehiculo podra ser comprado por la plataforma, es decir, no estara relacionado directamente a un usuario con ese rol, como se podria manejar este flujo?
+5. Todas las operaciones deben de hacerse por ajax, tal como crear, editar o eliminar, o generar excel como informes.
+
+Que me recomiendas para comenzar con la interfaz y el proceso? no generes codigo, solo quiero saber con que interfaz ui o proceso debo de empezar.
