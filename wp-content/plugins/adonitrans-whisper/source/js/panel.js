@@ -63,12 +63,12 @@ jQuery(document).ready(function($) {
         $("#lateral ul li").removeClass('active');
         $(this).addClass('active');
 
-        var action = $(this).data("action");
-        if (action === "logout") {
+        var data_action = $(this).data("action");
+        if (data_action === "logout") {
             return;
         }
         $('body').addClass('actloader');
-        var fileUrl = panelAjax.plugin_url + "includes/parts/panel/" + action + ".php";
+        var fileUrl = panelAjax.plugin_url + "includes/parts/panel/" + data_action + ".php";
 
         $.ajax({
             url: fileUrl,
@@ -79,16 +79,16 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 $('body').removeClass('actloader');
                 $("#informacion").html(response);
-                if (action == 'usuario') {
-                    initUsuarios();
-                }
-                if (action == 'vehiculo') {
-                    initVehiculos();
-                }
-                if (action == 'empresa') {
+
+                if (data_action == 'empresa') {
                     initEmpresas();
                 }
-
+                if (data_action == 'vehiculo') {
+                    initVehiculos();
+                }
+                if (data_action == 'usuario') {
+                    initUsuarios();
+                }
             },
             error: function() {
                 $('body').removeClass('actloader');
@@ -114,20 +114,20 @@ function checkPassword(value) {
     return hasNumber && hasSpecialChar && hasUpperCase && lengthValid;
 }
 
-function initUsuarios() {
+window.initUsuarios = function initUsuarios() {
     jQuery('#table-usuarios').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         }
     });
-    jQuery('#select-rolesusuario').select2({
+    jQuery('#select_rolesusuario').select2({
         placeholder: "Selecciona un rol",
         allowClear: true,
         width: '100%'
     });
 }
 
-function initVehiculos() {
+window.initVehiculos = function initVehiculos() {
     jQuery('#table-vehiculos').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
@@ -141,7 +141,7 @@ function initVehiculos() {
     });
 }
 
-function initEmpresas() {
+window.initEmpresas = function initEmpresas() {
     jQuery('#table-empresas').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
