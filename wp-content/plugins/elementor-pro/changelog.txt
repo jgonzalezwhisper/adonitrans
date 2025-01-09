@@ -1,5 +1,10 @@
 # Elementor Pro - by Elementor.com
 
+#### 3.26.3 - 2025-01-07
+
+* Security Fix: Improved code security enforcement in Search widget
+* Fix: Height issues cause slideshow thumbnails to display incorrectly in Media Carousel ([#29663](https://github.com/elementor/elementor/issues/29663))
+
 #### 3.26.2 - 2024-12-22
 
 * Fix: Menu items are not clickable in various scenarios in Menu widget ([#29191](https://github.com/elementor/elementor/issues/29191))
