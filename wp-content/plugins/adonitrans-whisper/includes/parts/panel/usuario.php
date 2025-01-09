@@ -4,7 +4,6 @@
         exit('Acceso no autorizado');
     }
 ?>
-
 <div id="wrap-usuarios">
     <div class="tarjeta">
         <div class="wrap-titulo">
