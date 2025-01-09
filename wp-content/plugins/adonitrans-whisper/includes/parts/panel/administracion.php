@@ -1,4 +1,9 @@
-<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  ?>
+<?php 
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  
+    if (!isset($_POST['action']) || empty($_POST['action'])) {
+        exit('Acceso no autorizado');
+    }
+?>
 <div class="tarjeta">
 	<div class="wrap-titulo">
 		<h3 class="titulo">ADMINISTRACIÓN</h3>

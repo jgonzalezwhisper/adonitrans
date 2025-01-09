@@ -22,7 +22,6 @@ jQuery(document).ready(function($) {
     });
 
     $(document).on('click', '#wrap-empresas .wrap-listado-empresas .edit-empresa', function(event) {
-
         $('#wrap-empresas .wrap-gestion-empresas button[type="submit"]').text('Editar Empresa');
         $('#wrap-empresas .wrap-gestion-empresas .title').text('Editar Empresa');
         $("#wrap-empresas .wrap-listado-empresas").hide();
@@ -55,12 +54,11 @@ jQuery(document).ready(function($) {
                             $('#' + key).val(value);
                         }
                     });
-                    if (response.data.centros_de_costos_empresa && response.data.centros_de_costos_empresa.length > 0) {
 
+                    // Mostrar los centros de costos
+                    if (response.data.centros_de_costos_empresa && response.data.centros_de_costos_empresa.length > 0) {
                         $.each(response.data.centros_de_costos_empresa, function(index, centro) {
                             var newRow = $('.centro-costo').first().clone();
-
-                            // Actualizar los IDs y valores
                             newRow.find('label').attr('for', 'nombre-' + index);
                             newRow.find('input[name="codigo_centro[]"]')
                                 .val(centro.codigo)
@@ -71,6 +69,19 @@ jQuery(document).ready(function($) {
                                 .attr('id', 'nombre-' + index)
                                 .attr('name', 'nombre_centro[]');
                             $('.wrap-datos').append(newRow);
+                        });
+                    }
+
+                    // Mostrar los documentos cargados
+                    if (response.data.documentos_de_la_empresa && response.data.documentos_de_la_empresa.length > 0) {
+                        $('#documentos-container').empty(); // Limpiar contenedor de documentos
+                        $.each(response.data.documentos_de_la_empresa, function(index, documento) {
+                            const newRow = `<div class="document-row" data-document-id="${documento.id}">
+                                    <a href="${documento.url}" target="_blank">${documento.nombre || 'Ver Documento'}</a>
+                                    <button type="button" class="button remove-documento">Eliminar</button>
+                                </div>
+                            `;
+                            $('#documentos-container').append(newRow);
                         });
                     }
 
@@ -86,7 +97,6 @@ jQuery(document).ready(function($) {
                     });
                 }
             }
-
         });
     });
 
@@ -196,12 +206,12 @@ jQuery(document).ready(function($) {
 
     /*DOCUMENTOS DE LA EMPRESA*/
     const fileIcons = {
-        pdf: 'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg',
-        doc: 'https://es.wikipedia.org/wiki/Archivo:Microsoft_Office_Word_(2019%E2%80%93present).svg',
-        docx: 'https://es.wikipedia.org/wiki/Archivo:Microsoft_Office_Word_(2019%E2%80%93present).svg',
-        xls: 'https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg',
-        xlsx: 'https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg',
-        default: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg',
+        pdf: empresaAjax.plugin_url + 'assets/images/PDF.svg',
+        doc: empresaAjax.plugin_url + 'assets/images/WORD.svg',
+        docx: empresaAjax.plugin_url + 'assets/images/WORD.svg',
+        xls: empresaAjax.plugin_url + 'assets/images/EXCEL.svg',
+        xlsx: empresaAjax.plugin_url + 'assets/images/EXCEL.svg',
+        default: empresaAjax.plugin_url + 'assets/images/OTRO.svg',
     };
 
     // Añadir una nueva fila para documentos
@@ -209,7 +219,7 @@ jQuery(document).ready(function($) {
         evt.preventDefault();
         const newRow = `
                 <div class="document-row">
-                    <input type="file" name="documentos_de_la_empresa[][documento]" class="documento-input">
+                    <input type="file" name="documentos_de_la_empresa[]" class="documento-input" accept=".xlsx,.xls,.doc,.docx,.pdf">
                     <img src="${fileIcons.default}" alt="Icono del archivo" class="document-icon" style="width: 32px; height: 32px;">
                     <button type="button" class="button remove-documento">Eliminar</button>
                 </div>
@@ -227,10 +237,20 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // Eliminar una fila de documentos
+    // Al eliminar un documento en el frontend
     $(document).on('click', '.remove-documento', function() {
+        const documentoId = $(this).closest('.document-row').data('document-id'); // Suponiendo que tienes un data attribute con el ID
+        const eliminados = $('#documentos_eliminados'); // Un campo oculto donde almacenas los IDs eliminados
+        let idsEliminados = eliminados.val() ? JSON.parse(eliminados.val()) : [];
+
+        if (documentoId && !idsEliminados.includes(documentoId)) {
+            idsEliminados.push(documentoId);
+            eliminados.val(JSON.stringify(idsEliminados));
+        }
+
         $(this).closest('.document-row').remove();
     });
+
 
     /*ENVIO Y VALIDACION DE FORMULARIO*/
     $(document).on('focusin', '#empresa-form', function() {

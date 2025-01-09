@@ -1,10 +1,9 @@
 <?php 
     require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  
-    if (!defined('DOING_AJAX') && !DOING_AJAX ) {
+    if (!isset($_POST['action']) || empty($_POST['action'])) {
         exit('Acceso no autorizado');
     }
 ?>
-
 <div id="wrap-empresas">
     <div class="tarjeta">
         <div class="wrap-titulo">
@@ -70,8 +69,9 @@
         <div class="wrap wrap-title">
             <h3 class="title">Crear Empresa</h3>
         </div>
-        <form id="empresa-form" method="post" class="formplug" autocomplete="off">
+        <form id="empresa-form" method="post" class="formplug" autocomplete="off" enctype="multipart/form-data">
             <input type="hidden" id="empresa-id" name="empresa-id" value="">
+            <input type="hidden" id="documentos_eliminados" name="documentos_eliminados" value="">
             <?php wp_nonce_field('create_empresa_action', 'create_empresa_nonce'); ?>
 
             <div class="wrap wrap-2">

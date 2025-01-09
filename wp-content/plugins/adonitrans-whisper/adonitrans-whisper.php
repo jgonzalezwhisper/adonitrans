@@ -127,3 +127,33 @@ function add_custom_loader_to_footer() {
     </div>
     <?php
 }
+
+add_action('wp_ajax_render_html_panel', 'func_render_html_panel');
+add_action('wp_ajax_nopriv_render_html_panel', 'func_render_html_panel');
+function func_render_html_panel() {
+    if (!defined('DOING_AJAX') || !DOING_AJAX) {
+        exit('Acceso no autorizado');
+    }
+}
+
+// Filtrar errores de Elementor
+add_filter('elementor/debugger/log', function($log) {
+    // Filtrar o modificar el log si es un aviso de Elementor
+    if ( strpos($log, 'La función Elementor\Controls_Manager') !== false ) {
+        return ''; // Ignorar este log
+    }
+    return $log;
+});
+
+// Filtrar errores específicos y registrar otros
+function custom_error_filter($errno, $errstr, $errfile, $errline) {
+    // Omite los errores de Elementor que contienen "sticky_divider"
+    if ( strpos($errstr, 'La función Elementor') !== false ) {
+        return true; // Ignorar este error
+    }
+    // Registrar otros errores
+    return false;
+}
+
+// Agregar el filtro para omitir algunos errores
+set_error_handler('custom_error_filter');

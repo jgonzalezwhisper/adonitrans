@@ -1,6 +1,6 @@
 <?php 
     require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  
-    if (!defined('DOING_AJAX') && !DOING_AJAX ) {
+    if (!isset($_POST['action']) || empty($_POST['action'])) {
         exit('Acceso no autorizado');
     }
 ?>

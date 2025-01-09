@@ -72,7 +72,10 @@ jQuery(document).ready(function($) {
 
         $.ajax({
             url: fileUrl,
-            method: "GET",
+            method: "POST",
+            data: {
+                action: 'render_html_panel',
+            },
             success: function(response) {
                 $('body').removeClass('actloader');
                 $("#informacion").html(response);
