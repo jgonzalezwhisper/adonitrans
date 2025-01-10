@@ -120,7 +120,7 @@ window.initUsuarios = function initUsuarios() {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         }
     });
-    jQuery('#select_rolesusuario').select2({
+    jQuery('#select_rolesusuario, #sel_empresa_asociada').select2({
         placeholder: "Selecciona un rol",
         allowClear: true,
         width: '100%'

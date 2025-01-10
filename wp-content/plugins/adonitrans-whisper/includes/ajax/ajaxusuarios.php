@@ -21,7 +21,7 @@ function create_user_function() {
     $roles_permitidos = [
         'comercial_1', 'comercial_2', 'tramites', 'talento_humano', 
         'operaciones_1', 'operaciones_2', 'facturacion', 'tesoreria', 
-        'propietario_vehiculo', 'conductor', 'cliente', 'empresa','administrator'
+        'propietario_vehiculo', 'conductor', 'colaborador', 'empresa','administrator'
     ];
     
     if (!in_array($role, $roles_permitidos)) {
@@ -80,6 +80,10 @@ function create_user_function() {
 
     if (isset($_POST['user-direccion']) && !empty($_POST['user-direccion'])) {
         update_field('direccion', sanitize_text_field($_POST['user-direccion']), 'user_' . $user_id);
+    }
+
+    if (isset($_POST['sel_empresa_asociada']) && !empty($_POST['sel_empresa_asociada'])) {
+        update_field('empresa_asociada_usuario', sanitize_text_field($_POST['sel_empresa_asociada']), 'user_' . $user_id);
     }
 
 
