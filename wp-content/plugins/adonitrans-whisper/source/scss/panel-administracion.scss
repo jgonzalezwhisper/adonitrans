@@ -1,4 +1,5 @@
 @use "global/base";
+@use "global/dataTable";
 @use "global/variables" as *;
 
 body {
@@ -148,6 +149,14 @@ body {
 
             &.wrap-2 {
                 width: 49%;
+                &.time{
+                	display: flex;
+					align-items: center;
+					justify-content: space-around;
+					label{
+						column-gap: 10px;
+					}
+                }
             }
 
         }

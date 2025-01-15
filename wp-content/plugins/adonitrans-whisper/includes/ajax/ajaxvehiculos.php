@@ -137,7 +137,6 @@ function load_vehiculo_data_function() {
 }
 
 
-
 // Obtener lista de vehículos
 add_action('wp_ajax_obtener_vehiculos', function () {
     $vehiculos = [];

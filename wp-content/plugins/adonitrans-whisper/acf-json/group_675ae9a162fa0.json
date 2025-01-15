@@ -21,6 +21,35 @@
             "selected": 0
         },
         {
+            "key": "field_67852ff8bd154",
+            "label": "Panel Colaborador",
+            "name": "panel_colaborador",
+            "aria-label": "",
+            "type": "post_object",
+            "instructions": "Selecciona la pagina a mostrar el Panel de Administracion, recuerda usar el shortcode <strong>[panel_administracion]<\/strong>",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "page"
+            ],
+            "post_status": [
+                "publish"
+            ],
+            "taxonomy": "",
+            "return_format": "object",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "ui": 1,
+            "bidirectional_target": []
+        },
+        {
             "key": "field_675c410e1c366",
             "label": "Panel Administracion",
             "name": "panel_administracion",
@@ -302,5 +331,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 1,
-    "modified": 1734627141
+    "modified": 1736781875
 }

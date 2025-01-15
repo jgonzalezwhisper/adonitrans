@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 // Crear un shortcode para el front del panel de administracion
-function func_panel_administracion() { 
+function func_panel_colaborador() { 
     ob_start();
     ?>
     <div id="panel-administracion" class="wrap-panel">
@@ -28,24 +28,12 @@ function func_panel_administracion() {
     		<ul>
                 <li data-action="panel">
                     <i class="icofont-dashboard-web"></i> Panel
-                </li>
+                </li>    
                 <li data-action="recorrido">
                     <i class="icofont-map-pins"></i> Recorridos
                 </li>
-    			<li data-action="empresa">
-    				<i class="icofont-building-alt"></i> Empresas
-    			</li>
-                <li data-action="vehiculo">
-                    <i class="icofont-car"></i> Vehículos
-                </li>                      
-                <li data-action="usuario">
-                    <i class="icofont-users-social"></i> Usuarios
-                </li>        
-                <li data-action="administracion">
-                    <i class="icofont-architecture-alt"></i> Administración
-                </li>
     			<li data-action="cuenta">
-    				<i class="icofont-user-alt-3"></i> Cuenta
+    				<i class="icofont-user-alt-3"></i> Mi Cuenta
     			</li>
     			<li data-action="logout">
                     <?php
@@ -66,4 +54,4 @@ function func_panel_administracion() {
     <?php
     return ob_get_clean();
 }
-add_shortcode('panel_administracion', 'func_panel_administracion');
+add_shortcode('panel_colaborador', 'func_panel_colaborador');

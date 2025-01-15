@@ -83,6 +83,9 @@ jQuery(document).ready(function($) {
                 if (data_action == 'empresa') {
                     initEmpresas();
                 }
+                if (data_action == 'recorrido') {
+                    initRecorridos();
+                }
                 if (data_action == 'vehiculo') {
                     initVehiculos();
                 }
@@ -118,7 +121,8 @@ window.initUsuarios = function initUsuarios() {
     jQuery('#table-usuarios').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
-        }
+        },
+        order: [[0, 'desc']]
     });
     jQuery('#select_rolesusuario, #sel_empresa_asociada').select2({
         placeholder: "Selecciona un rol",
@@ -127,11 +131,32 @@ window.initUsuarios = function initUsuarios() {
     });
 }
 
+window.initRecorridos = function initRecorridos() {
+    jQuery('#table-recorridos').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
+        },
+        order: [[0, 'desc']]
+    });
+
+    jQuery('#ciudad_inicio, #barrio_inicio, #ciudad_fin, #barrio_fin').select2({
+        placeholder: "Selecciona un Valor",
+        width: '100%'
+    });
+    if (jQuery('#id_solicitante_recorrido').length > 0) {
+        jQuery('#id_solicitante_recorrido, #id_conductor_recorrido').select2({
+            placeholder: "Selecciona un Valor",
+            width: '100%'
+        });
+    }
+}
+
 window.initVehiculos = function initVehiculos() {
     jQuery('#table-vehiculos').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
-        }
+        },
+        order: [[0, 'desc']]
     });
 
     jQuery('#tipo_de_vehiculo, #propietario_de_vehiculo, #conductor_del_vehiculo').select2({
@@ -145,7 +170,8 @@ window.initEmpresas = function initEmpresas() {
     jQuery('#table-empresas').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
-        }
+        },
+        order: [[0, 'desc']]
     });
 
     jQuery('#administradores_empresa').select2({

@@ -89,8 +89,15 @@ function validate_token() {
             wp_set_current_user($user_id);
             wp_set_auth_cookie($user_id);
 
-            $panel_administracion = get_field('panel_administracion', 'option');
-            if ( $panel_administracion ) {
+            // Obtener los roles del usuario
+            $user = get_userdata($user_id);
+            $user_roles = $user->roles;
+
+            if ( in_array('colaborador', $user_roles) ) {
+                $panel_administracion = get_field('panel_colaborador', 'option');
+                $redirect_url = get_permalink($panel_administracion);
+            } else {
+                $panel_administracion = get_field('panel_administracion', 'option');
                 $redirect_url = get_permalink($panel_administracion);
             }
 
