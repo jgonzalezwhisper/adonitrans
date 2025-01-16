@@ -1,10 +1,3 @@
-<?php
-if (!defined('ABSPATH')) {
-    $root_path = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
-    require_once($_SERVER['DOCUMENT_ROOT'] . $root_path . '/wp-load.php');
-}
-
-?>
 <div class="tarjeta">
     <div class="wrap-titulo">
         <h3 class="titulo">PANEL</h3>
