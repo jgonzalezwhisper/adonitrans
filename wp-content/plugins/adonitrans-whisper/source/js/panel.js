@@ -76,6 +76,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'render_html_panel',
             },
+            cache: false,
             success: function(response) {
                 $('body').removeClass('actloader');
                 $("#informacion").html(response);

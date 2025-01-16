@@ -142,7 +142,10 @@ jQuery(document).ready(function($) {
 
                                     $.ajax({
                                         url: administracionAjax.plugin_url + 'includes/parts/panel/administracion.php',
-                                        method: 'GET',
+                                        method: "POST",
+                                        data: {
+                                            action: 'render_html_panel',
+                                        },
                                         success: function(response) {
                                             $('#informacion').html(response);
                                         },

@@ -4,7 +4,6 @@
         exit('Acceso no autorizado');
     }
 ?>
-
 <div id="wrap-recorridos">
     <div class="tarjeta">
         <div class="wrap-titulo">
@@ -224,10 +223,7 @@
                     <div class="wrap">
                         <label for="centro_de_costo">Centro de Costo</label>
                         <select id="centro_de_costo" name="centro_de_costo" disabled>
-                            <option value="0">Selecciona un Centro de Costo</option>
-                            <?php foreach ($centros_costo_empresa as $key => $value): ?>
-                                <option value="<?= $value['codigo']; ?>"><?= $value['nombre']; ?></option>
-                            <?php endforeach ?>
+                            <option value="0">Selecciona un Centro de Costo</option>                            
                         </select>
                     </div>
                 <?php endif ?>

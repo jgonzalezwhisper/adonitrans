@@ -1,20 +1,9 @@
-<?php
-    $wpLoadPath = $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';
-
-    if (!file_exists($wpLoadPath)) {
-        // Detectamos la carpeta del script actual y ajustamos la ruta
-        $currentFolder = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-        $wpLoadPath = $_SERVER['DOCUMENT_ROOT'] . $currentFolder . '/wp-load.php';
-    }
-    if (!file_exists($wpLoadPath)) {
-        exit('No se puede cargar WordPress. Verifique la ubicación de wp-load.php.');
-    }
-    require_once($wpLoadPath);
+<?php 
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  
     if (!isset($_POST['action']) || empty($_POST['action'])) {
         exit('Acceso no autorizado');
     }
 ?>
-
 <div id="wrap-vehiculos">
     <div class="tarjeta">
         <div class="wrap-titulo">
