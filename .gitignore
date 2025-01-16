@@ -2,6 +2,11 @@
 *.log
 *.tmp
 *.swp
+*.bak
+*.original
+*.sql
+*.sqlite
+*.env
 
 # Ignorar configuraciones específicas de IDEs
 .vscode/
@@ -22,6 +27,10 @@ yarn-error.log*
 vendor/
 composer.lock
 
+# Ignorar el cache del servidor
+cache/
+*.cache
+
 # Ignorar backups y bases de datos locales
 *.sql
 *.tar.gz
@@ -33,3 +42,7 @@ wp-content/cache/
 wp-content/backup/
 wp-content/upgrade/
 wp-content/debug.log
+
+# Ignorar archivos específicos de configuraciones locales
+wp-config.php
+wp-config-sample.php
