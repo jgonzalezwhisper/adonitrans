@@ -1,4 +1,3 @@
-<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  ?>
 <div class="tarjeta">
     <div class="wrap-titulo">
         <h3 class="titulo">PANEL</h3>

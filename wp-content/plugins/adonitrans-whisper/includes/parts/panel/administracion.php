@@ -1,13 +1,12 @@
 <?php require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  ?>
-<div class="tarjeta">
+
+<div class="adonitrans-tabs tarjeta">
 	<div class="wrap-titulo">
 		<h3 class="titulo">ADMINISTRACIÓN</h3>
 		<h4 class="subtitulo">Gestiona la configuración del software de la empresa</h4>
 	</div>
 	<p>Administra y gestiona fácilmente las configuraciones necesarias para el funcionamiento correcto del software.</p>
-</div>
 
-<div class="adonitrans-tabs tarjeta">
 	<ul class="adonitrans-tabs-nav">
 		<li class="active" data-tab="tab1">Franjas Horarias</li>
 		<li data-tab="tab2">Descuentos</li>

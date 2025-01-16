@@ -7,23 +7,23 @@ function custom_login_form_shortcode() {
     ob_start();
     ?>
     <div class="wrap-login">
-        <h3 class="titulo">INICIA SESIÓN</h3>
+        <h3 class="titulo">Iniciar Sesión</h3>
         <form action="<?= get_the_permalink() ?>" id="custom-login-form" class="formplug" method="POST">
             <?php wp_nonce_field('custom_user_login', 'custom_login_nonce'); ?>
             <label for="user_email">
-                Correo Electrónico
-                <input type="email" name="user_email" id="user_email" placeholder="Correo electrónico" required autocomplete="off">
+                <p class="title_form_login">Usuario</p>
+                <input type="email" name="user_email" id="user_email" placeholder="" required autocomplete="off">
             </label>
             <label for="user_password">
-                Contraseña
-                <input type="password" name="user_password" id="user_password" placeholder="Contraseña" required autocomplete="off">
+                <p class="title_form_login">Contraseña</p>
+                <input type="password" name="user_password" id="user_password" placeholder="" required autocomplete="off">
                 <i class="icofont-eye-blocked"></i>
             </label>       
-            <button class="button" type="submit">Iniciar sesión</button>
+            <button class="button" type="submit">Enviar</button>
             <br>            
             <!-- Campo de token, inicialmente oculto -->
             <div id="token-section" style="display: none;">
-                <label for="user_token">Ingresa el token recibido
+                <label for="user_token"><p class="title_form_login" style="text-align: center;">Ingresa el token recibido</p>
                     <input type="text" name="user_token" id="user_token" placeholder="Token" autocomplete="off">
                 </label>           
                 <button class="button" type="submit" id="submit-token">Verificar Token</button>

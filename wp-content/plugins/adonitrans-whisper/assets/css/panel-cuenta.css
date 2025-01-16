@@ -1,2 +1,77 @@
+#panel-administracion .wrap-gestion-usuarios {
+  width: 100%;
+  background: #fff;
+  padding: 25px;
+  border-radius: 20px;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .column-1{
+	width: 33%;
+	display: flex;
+  	align-items: center;
+  	border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .column-1 .profile_photo img{
+	border-radius: 50%;
+	max-width: 200px;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .column-1 .profile_photo label{
+	color: transparent;
+	  position: absolute;
+	  bottom: 0;
+	  left: 0;
+	  z-index: 999;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .column-1 .profile_photo label i{
+	position: absolute;
+  left: 50%;
+  top: -15%;
+  background: var(--e-global-color-90af78a);
+  width: fit-content;
+  padding: 10px;
+  border-radius: 50px;
+  color: var(--e-global-color-primary);
+  z-index: 9;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .column-1 .profile_info label, #panel-administracion .wrap-gestion-usuarios #user-form .column-2 .wrap label{
+	font-size: 16px;
+  font-weight: 800;
+  text-decoration: underline;
+  color: var(--e-global-color-primary);
+  margin: 0;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .column-1 .profile_info input, #panel-administracion .wrap-gestion-usuarios #user-form .column-2 .wrap input{
+	background: transparent;
+	  color: #000;
+	  font-size: 17px;
+	  border: none;
+	  font-weight: 500;
+	  margin-bottom: 15px;
+	  padding: 0;
+}
+
+#panel-administracion .wrap-gestion-usuarios #user-form .column-2{
+	padding-left: 20px;
+	border-right: 1px solid rgba(0, 0, 0, 0.1);
+	width: 30%;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .column-2:last-child{
+	border: none;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .column-2 h3{
+	font-size: 20px;
+  font-weight: 700;
+  color: #000;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .cont_password input{
+	border: 1px solid #000;
+  border-radius: 10px;
+  margin-left: 10px;
+  font-size: 16px;
+  padding: 0 10px;
+}
+#panel-administracion .wrap-gestion-usuarios #user-form .cont_password #generate-password{
+	font-size: 16px;
+  font-weight: 600;
+}
 
 /*# sourceMappingURL=panel-cuenta.css.map */

@@ -1,9 +1,4 @@
-<?php 
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  
-    if (!defined('DOING_AJAX') && !DOING_AJAX ) {
-        exit('Acceso no autorizado');
-    }
-?>
+<?php require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  ?>
 
 <div id="wrap-usuarios">
     <div class="tarjeta">
