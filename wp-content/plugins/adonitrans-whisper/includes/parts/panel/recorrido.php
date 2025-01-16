@@ -19,7 +19,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Titulo</th>
+                    <th>Recorrido</th>
                     <th>Empresa</th>
                     <th>Colaborador</th>
                     <th>Estado</th>
@@ -64,13 +64,22 @@
                             $placa_recorrido = get_field('placa_recorrido', get_the_ID());
                             $ciudad_inicial_recorrido = get_field('ciudad_inicial_recorrido', get_the_ID());
                             $barrio_inicial_recorrido = get_field('barrio_inicial_recorrido', get_the_ID());
+                            $colaborador_id = get_field('id_solicitante_recorrido', get_the_ID())['ID'];
+                            $colaborador = get_userdata($colaborador_id);
+                            $empresa_asociada = get_user_meta($colaborador_id, 'empresa_asociada_usuario', true);
+                            $first_name = "";
+                            $email = "";
+                            if ($colaborador) {
+                                $first_name = $colaborador->first_name;
+                                $email = $colaborador->user_email;
+                            }
                             $estado_recorrido = get_field('estado_del_recorrido', get_the_ID());
                         ?>
                         <tr>
                             <td><?= get_the_ID(); ?></td>
                             <td><?= get_the_title( ) ?></td>
-                            <td><?= $ciudad_inicial_recorrido.' / '.$barrio_inicial_recorrido; ?></td>
-                            <td><?= $ciudad_inicial_recorrido.' / '.$barrio_inicial_recorrido; ?></td>
+                            <td><?= get_the_title( $empresa_asociada ); ?></td>
+                            <td><?= $first_name." - $email" ?></td>
                             <td class="<?= $estado_recorrido; ?>"><?= $estado_recorrido; ?></td>
                             <td>
                                 <div class="acciones">

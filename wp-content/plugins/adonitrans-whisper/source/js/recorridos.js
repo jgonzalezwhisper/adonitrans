@@ -197,7 +197,16 @@ jQuery(document).ready(function($) {
                         confirmButtonText: 'Aceptar'
                     });
                 }
-            }
+            },
+            error: function() {
+                $('body').removeClass('actloader');
+                Swal.fire({
+                    title: '¡Error!',
+                    text: 'Hubo un problema al procesar la solicitud. Por favor intenta nuevamente.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                });
+            },
 
         });
     });
@@ -280,14 +289,14 @@ jQuery(document).ready(function($) {
     $(document).on('focusin', '#recorrido-form', function() {
 
         // Extender jQuery Validation para que funcione con select2 y elementos dinámicos
-    $.validator.setDefaults({
-        ignore: ':hidden:not(.select2-hidden-accessible)', // Ignorar elementos ocultos excepto select2
-    });
+        $.validator.setDefaults({
+            ignore: ':hidden:not(.select2-hidden-accessible)', // Ignorar elementos ocultos excepto select2
+        });
 
-    // Validación personalizada para select2
-    $.validator.addMethod("select2Required", function (value, element, param) {
-        return value !== null && value !== ""; // Validar que el valor no esté vacío
-    }, "Este dato es obligatorio");
+        // Validación personalizada para select2
+        $.validator.addMethod("select2Required", function(value, element, param) {
+            return value !== null && value !== ""; // Validar que el valor no esté vacío
+        }, "Este dato es obligatorio");
 
         $(this).validate({
             rules: {
@@ -312,7 +321,7 @@ jQuery(document).ready(function($) {
                 hora_inicio_recorrido: {
                     required: true,
                 },
-                centro_de_costo:{
+                centro_de_costo: {
                     select2Required: true,
                 }
             },

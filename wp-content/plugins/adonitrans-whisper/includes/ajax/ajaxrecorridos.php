@@ -164,3 +164,38 @@ function handle_delete_recorrido() {
 }
 add_action( 'wp_ajax_delete_recorrido', 'handle_delete_recorrido' );
 add_action( 'wp_ajax_nopriv_delete_recorrido', 'handle_delete_recorrido' );
+
+/*ACCION AJAX PARA OBTENER DATOS DE UN RECORRIDO*/
+add_action('wp_ajax_load_recorrido_data', 'load_recorrido_data_function');
+add_action('wp_ajax_nopriv_load_recorrido_data', 'load_recorrido_data_function');
+function load_recorrido_data_function() {
+    $post_id = intval($_POST['post_id']);
+    if (!$post_id || get_post_type($post_id) !== 'recorrido') {
+        wp_send_json_error(['message' => 'Post no válido o no es un tipo de post recorrido.']);
+    }
+
+    wp_die( );
+
+
+    $fecha_vencimiento_soat = get_post_meta($post_id, 'fecha_vencimiento_soat', true);
+    $fecha_vencimiento_tecno_mecanica = get_post_meta($post_id, 'fecha_vencimiento_tecno_mecanica', true);
+
+    // Convertir las fechas al formato YYYY-MM-DD
+    $fecha_vencimiento_soat_formatted = format_date_for_input($fecha_vencimiento_soat);
+    $fecha_vencimiento_tecno_mecanica_formatted = format_date_for_input($fecha_vencimiento_tecno_mecanica);
+
+    wp_send_json_success([
+        'estado_del_vehiculo'               => get_post_meta($post_id, 'estado_del_vehiculo', true),
+        'placa_vehiculo'                    => get_post_meta($post_id, 'placa_vehiculo', true),
+        'tipo_de_vehiculo'                  => get_post_meta($post_id, 'tipo_de_vehiculo', true),
+        'modelo_vehiculo'                   => get_post_meta($post_id, 'modelo_vehiculo', true),
+        'cantidad_pasajeros_vehiculo'       => get_post_meta($post_id, 'cantidad_pasajeros_vehiculo', true),
+        'marca_vehiculo'                    => get_post_meta($post_id, 'marca_vehiculo', true),
+        'serial_vehiculo'                   => get_post_meta($post_id, 'serial_vehiculo', true),
+        'chasis_vehiculo'                   => get_post_meta($post_id, 'chasis_vehiculo', true),
+        'fecha_vencimiento_soat'            => $fecha_vencimiento_soat_formatted,
+        'fecha_vencimiento_tecno_mecanica'  => $fecha_vencimiento_tecno_mecanica_formatted,
+        'propietario_de_vehiculo'           => get_post_meta($post_id, 'propietario_de_vehiculo', true),
+        'conductor_del_vehiculo'            => get_post_meta($post_id, 'conductor_del_vehiculo', true),
+    ]);
+}
