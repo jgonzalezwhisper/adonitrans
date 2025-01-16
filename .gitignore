@@ -28,9 +28,8 @@ composer.lock
 *.zip
 
 # Ignorar contenido dinámico de WordPress
-wp-content/uploads
-wp-content/cache
-wp-content/backup
-wp-content/upgrade
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup/
+wp-content/upgrade/
 wp-content/debug.log
-wp-content/uploads
