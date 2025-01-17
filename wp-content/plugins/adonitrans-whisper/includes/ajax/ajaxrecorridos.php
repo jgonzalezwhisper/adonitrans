@@ -74,10 +74,11 @@ function create_recorrido_function() {
 
     // Obtener los datos del formulario
     $id_solicitante_recorrido = sanitize_text_field($_POST['id_solicitante_recorrido']);
+    $empresa_solicitante_recorrido = get_field('empresa_asociada_usuario', 'user_' . $id_solicitante_recorrido);
     $id_conductor_recorrido = sanitize_text_field($_POST['id_conductor_recorrido']);
     $ciudad_inicio = sanitize_text_field($_POST['ciudad_inicio']);
     $nombre_inicio = get_the_title( $ciudad_inicio );
-    $barrio_inicio = strtoupper(sanitize_text_field($_POST['barrio_inicio']));
+    $barrio_inicio = sanitize_text_field($_POST['barrio_inicio']);
     $ciudad_fin = sanitize_text_field($_POST['ciudad_fin']);
     $nombre_fin = get_the_title( $ciudad_fin );
     $barrio_fin = sanitize_text_field($_POST['barrio_fin']);
@@ -113,13 +114,16 @@ function create_recorrido_function() {
     }
 
     // Guardar campos personalizados usando ACF
+    update_field('empresa_solicitante_recorrido', $empresa_solicitante_recorrido, $post_id);
     update_field('id_solicitante_recorrido', $id_solicitante_recorrido, $post_id);
     if (!empty($id_conductor_recorrido)) {
         update_field('id_conductor_recorrido', $id_conductor_recorrido, $post_id);
     }
     update_field('ciudad_inicial_recorrido', $nombre_inicio, $post_id);
+    update_field('ciudad_inicial_recorrido_codigo', $ciudad_inicio, $post_id);
     update_field('barrio_inicial_recorrido', $barrio_inicio, $post_id);
     update_field('ciudad_final_recorrido', $nombre_fin, $post_id);
+    update_field('ciudad_final_recorrido_codigo', $ciudad_fin, $post_id);
     update_field('barrio_final_recorrido', $barrio_fin, $post_id);
     update_field('fecha_inicio_recorrido', $fecha_inicio_recorrido, $post_id);
     update_field('hora_inicio_recorrido', $hora_inicio_recorrido, $post_id);
@@ -169,33 +173,43 @@ add_action( 'wp_ajax_nopriv_delete_recorrido', 'handle_delete_recorrido' );
 add_action('wp_ajax_load_recorrido_data', 'load_recorrido_data_function');
 add_action('wp_ajax_nopriv_load_recorrido_data', 'load_recorrido_data_function');
 function load_recorrido_data_function() {
+    // Verificar que la solicitud sea válida
     $post_id = intval($_POST['post_id']);
     if (!$post_id || get_post_type($post_id) !== 'recorrido') {
         wp_send_json_error(['message' => 'Post no válido o no es un tipo de post recorrido.']);
     }
 
-    wp_die( );
+    // Obtener el usuario actual y su rol
+    $current_user = wp_get_current_user();
+    $user_roles = $current_user->roles; // Puede haber múltiples roles
+    $user_role = !empty($user_roles) ? $user_roles[0] : '';
 
+    // Obtener datos del post usando ACF
+    $fecha_inicio_recorrido = get_field('fecha_inicio_recorrido', $post_id);
+    $fecha_inicio_recorrido = format_date_for_input($fecha_inicio_recorrido); // Si tienes esta función para formatear
 
-    $fecha_vencimiento_soat = get_post_meta($post_id, 'fecha_vencimiento_soat', true);
-    $fecha_vencimiento_tecno_mecanica = get_post_meta($post_id, 'fecha_vencimiento_tecno_mecanica', true);
+    // Preparar la respuesta dependiendo del rol del usuario
+    $response = [
+        'fecha_inicio_recorrido' => $fecha_inicio_recorrido,
+        'hora_inicio_recorrido'  => format_time_input(get_field('hora_inicio_recorrido', $post_id)),
+        'ciudad_inicio'          => get_field('ciudad_inicial_recorrido_codigo', $post_id),
+        'barrio_inicio'          => get_field('barrio_inicial_recorrido', $post_id),
+        'ciudad_fin'             => get_field('ciudad_final_recorrido_codigo', $post_id),
+        'barrio_fin'             => get_field('barrio_final_recorrido', $post_id),
+    ];
 
-    // Convertir las fechas al formato YYYY-MM-DD
-    $fecha_vencimiento_soat_formatted = format_date_for_input($fecha_vencimiento_soat);
-    $fecha_vencimiento_tecno_mecanica_formatted = format_date_for_input($fecha_vencimiento_tecno_mecanica);
+    // Si el usuario es administrador o empresa, añadir más datos
+    if ($user_role === 'administrator' || $user_role === 'empresa') {
+        $response['id_solicitante_recorrido'] = get_field('id_solicitante_recorrido', $post_id)['ID'];
+        $response['id_conductor_recorrido']   = get_field('id_conductor_recorrido', $post_id);
+        $response['centro_de_costo']          = get_field('centro_de_costo', $post_id);
+    }
 
-    wp_send_json_success([
-        'estado_del_vehiculo'               => get_post_meta($post_id, 'estado_del_vehiculo', true),
-        'placa_vehiculo'                    => get_post_meta($post_id, 'placa_vehiculo', true),
-        'tipo_de_vehiculo'                  => get_post_meta($post_id, 'tipo_de_vehiculo', true),
-        'modelo_vehiculo'                   => get_post_meta($post_id, 'modelo_vehiculo', true),
-        'cantidad_pasajeros_vehiculo'       => get_post_meta($post_id, 'cantidad_pasajeros_vehiculo', true),
-        'marca_vehiculo'                    => get_post_meta($post_id, 'marca_vehiculo', true),
-        'serial_vehiculo'                   => get_post_meta($post_id, 'serial_vehiculo', true),
-        'chasis_vehiculo'                   => get_post_meta($post_id, 'chasis_vehiculo', true),
-        'fecha_vencimiento_soat'            => $fecha_vencimiento_soat_formatted,
-        'fecha_vencimiento_tecno_mecanica'  => $fecha_vencimiento_tecno_mecanica_formatted,
-        'propietario_de_vehiculo'           => get_post_meta($post_id, 'propietario_de_vehiculo', true),
-        'conductor_del_vehiculo'            => get_post_meta($post_id, 'conductor_del_vehiculo', true),
-    ]);
+    // Si el usuario es colaborador, solo incluir centro_de_costo
+    if ($user_role === 'colaborador') {
+        $response['centro_de_costo'] = get_field('centro_de_costo', $post_id);
+    }
+
+    // Devolver la respuesta en formato JSON
+    wp_send_json_success($response);
 }

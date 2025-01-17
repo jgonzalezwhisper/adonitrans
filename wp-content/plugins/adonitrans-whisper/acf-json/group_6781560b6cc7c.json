@@ -3,6 +3,35 @@
     "title": "Datos Adicionales Recorrido",
     "fields": [
         {
+            "key": "field_678a699662650",
+            "label": "Empresa Solicitante Recorrido",
+            "name": "empresa_solicitante_recorrido",
+            "aria-label": "",
+            "type": "post_object",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "empresa"
+            ],
+            "post_status": [
+                "publish"
+            ],
+            "taxonomy": "",
+            "return_format": "object",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "ui": 1,
+            "bidirectional_target": []
+        },
+        {
             "key": "field_6781560b5d2a7",
             "label": "ID Solicitante Recorrido",
             "name": "id_solicitante_recorrido",
@@ -183,6 +212,27 @@
             "append": ""
         },
         {
+            "key": "field_678a501422470",
+            "label": "Ciudad Inicial Recorrido Codigo",
+            "name": "ciudad_inicial_recorrido_codigo",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_67815a3f3f19b",
             "label": "Barrio Inicial Recorrido",
             "name": "barrio_inicial_recorrido",
@@ -225,6 +275,27 @@
             "append": ""
         },
         {
+            "key": "field_678a502622471",
+            "label": "Ciudad Final Recorrido Codigo",
+            "name": "ciudad_final_recorrido_codigo",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_67815aa23f19d",
             "label": "Barrio Final Recorrido",
             "name": "barrio_final_recorrido",
@@ -249,6 +320,27 @@
             "key": "field_67815aac3f19e",
             "label": "Centro de Costo",
             "name": "centro_de_costo",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_678a503822472",
+            "label": "Centro de Costo Nombre",
+            "name": "centro_de_costo_nombre",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -396,5 +488,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1736949021
+    "modified": 1737124518
 }

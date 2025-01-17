@@ -181,12 +181,18 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     $.each(response.data, function(key, value) {
-                        if (key === 'tipo_de_recorrido' || key === 'propietario_de_recorrido' || key === 'conductor_del_recorrido') {
+                        if (key === 'id_solicitante_recorrido' || key === 'ciudad_inicio' || key === 'ciudad_fin') {
                             $('#' + key).val(value).trigger('change');
                         } else {
                             $('#' + key).val(value);
                         }
                     });
+
+                    setTimeout(() => {
+                        $('#barrio_inicio').val(response.data.barrio_inicio).trigger('change');
+                        $('#barrio_fin').val(response.data.barrio_fin).trigger('change');
+                        $('#centro_de_costo').val(response.data.centro_de_costo).trigger('change');
+                    }, 1000);
                     $('body').removeClass('actloader');
                 } else {
                     $('body').removeClass('actloader');

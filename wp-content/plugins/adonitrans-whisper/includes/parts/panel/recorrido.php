@@ -55,6 +55,29 @@
                             ]
                         ];
                     }
+                    elseif ( $user_role === 'empresa' ) {
+                        // Obtener el ID del post con el campo personalizado igual a 23
+                        $empresa_id = get_posts(array(
+                            'post_type'  => 'empresa',
+                            'meta_query' => array(
+                                array(
+                                    'key'     => 'usuarios_administradores_empresa',
+                                    'value'   => '"' . $user_id . '"',
+                                    'compare' => 'LIKE',
+                                ),
+                            ),
+                            'fields'     => 'ids',
+                            'numberposts' => 1,
+                        ))[0] ?? null;
+
+                        $args['meta_query'] = [
+                            [
+                                'key'     => 'empresa_solicitante_recorrido',
+                                'value'   => $empresa_id,
+                                'compare' => '='
+                            ]
+                        ];
+                    }
 
                     $query = new WP_Query($args);
                 ?>
@@ -124,7 +147,26 @@
                 );
 
                 $user_query = new WP_User_Query($argscon);
-                $conductores = $user_query->get_results(); // Obtener resultados
+                $conductores = $user_query->get_results();
+            }
+            if ($user_role === 'empresa') {
+
+                $argscolemp = array(
+                    'role'    => 'colaborador',
+                    'orderby' => 'display_name',
+                    'order'   => 'ASC',
+                    'meta_query' => array(
+                        array(
+                            'key'     => 'empresa_asociada_usuario',
+                            'value'   => $empresa_id,
+                            'compare' => '=',
+                        ),
+                    ),
+                );
+
+                $user_query = new WP_User_Query($argscolemp);
+                $colaboradores = $user_query->get_results();
+                
             }
         ?>
         <form id="recorrido-form" method="post" class="formplug" autocomplete="off">
@@ -153,30 +195,34 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="wrap wrap-2">
-                    <label for="id_conductor_recorrido">Conductor Asignado</label>
-                    <select id="id_conductor_recorrido" name="id_conductor_recorrido">
-                        <option value="0">Selecciona un Conductor</option>
-                        <?php foreach ($conductores as $conductor): ?>
-                            <?php
-                            $user_id = $conductor->ID;
-                            $first_name = get_user_meta($user_id, 'first_name', true);
-                            $last_name = get_user_meta($user_id, 'last_name', true);
-                            $email = $conductor->user_email;
+                <?php if ($user_role === 'administrator'): ?>
+                    <div class="wrap wrap-2">
+                        <label for="id_conductor_recorrido">Conductor Asignado</label>
+                        <select id="id_conductor_recorrido" name="id_conductor_recorrido">
+                            <option value="0">Selecciona un Conductor</option>
+                            <?php foreach ($conductores as $conductor): ?>
+                                <?php
+                                $user_id = $conductor->ID;
+                                $first_name = get_user_meta($user_id, 'first_name', true);
+                                $last_name = get_user_meta($user_id, 'last_name', true);
+                                $email = $conductor->user_email;
 
-                            $name = trim("$first_name $last_name");
-                            $display_name = $name ? $name : $conductor->display_name;
-                            ?>
-                            <option value="<?php echo esc_attr($user_id); ?>">
-                                <?php echo esc_html("$display_name ($email)"); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+                                $name = trim("$first_name $last_name");
+                                $display_name = $name ? $name : $conductor->display_name;
+                                ?>
+                                <option value="<?php echo esc_attr($user_id); ?>">
+                                    <?php echo esc_html("$display_name ($email)"); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif ?>
             <?php endif ?>
             <?php if ($user_role === 'colaborador'): ?>
                 <input type="hidden" id="id_solicitante_recorrido" name="id_solicitante_recorrido" value="<?= $user_id ?>">
             <?php endif ?>
+
+            <div class="wrap"></div>
 
             <div class="wrap wrap-2">
                 <label for="ciudad_inicio">Ciudad Inicio</label>

@@ -118,7 +118,6 @@ function enqueue_custom_login_scripts() {
 add_action('wp_enqueue_scripts', 'enqueue_custom_login_scripts');
 
 
-
 add_filter('acf/settings/save_json', function ($path) {
     $plugin_json_path = plugin_dir_path(__FILE__) . 'acf-json';
 
@@ -153,7 +152,7 @@ function func_render_html_panel() {
 // Filtrar errores de Elementor
 add_filter('elementor/debugger/log', function($log) {
     // Filtrar o modificar el log si es un aviso de Elementor
-    if ( strpos($log, 'La función Elementor\Controls_Manager') !== false ) {
+    if ( strpos($log, 'Elementor\Controls_Manager') !== false ) {
         return ''; // Ignorar este log
     }
     return $log;
@@ -162,7 +161,7 @@ add_filter('elementor/debugger/log', function($log) {
 // Filtrar errores específicos y registrar otros
 function custom_error_filter($errno, $errstr, $errfile, $errline) {
     // Omite los errores de Elementor que contienen "sticky_divider"
-    if ( strpos($errstr, 'La función Elementor') !== false ) {
+    if ( strpos($errstr, 'Elementor\Controls_Manager') !== false ) {
         return true; // Ignorar este error
     }
     // Registrar otros errores
@@ -171,3 +170,13 @@ function custom_error_filter($errno, $errstr, $errfile, $errline) {
 
 // Agregar el filtro para omitir algunos errores
 set_error_handler('custom_error_filter');
+
+function format_date_for_input($date) {
+    $date_obj = DateTime::createFromFormat('d/m/Y', $date);
+    return $date_obj ? $date_obj->format('Y-m-d') : $date;
+}
+
+function format_time_input($hora12) {
+    $hora24 = date("H:i", strtotime($hora12));
+    return $hora24;
+}
