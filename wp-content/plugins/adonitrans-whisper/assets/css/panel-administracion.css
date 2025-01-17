@@ -23,7 +23,7 @@
     border-radius: 50%;
     display: inline-block;
     border-top: 4px solid #fff;
-    border-right: 4px solid var(--e-global-color-90af78a);
+    border-right: 4px solid #FCD722;
     box-sizing: border-box;
     animation: 1s linear infinite rotation
 }
@@ -36,7 +36,7 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    border-left: 4px solid var(--e-global-color-primary);
+    border-left: 4px solid #086ACF;
     border-bottom: 4px solid transparent;
     animation: .5s linear infinite reverse rotation;
 }
@@ -108,7 +108,7 @@
   text-decoration: none;
 }
 .adonitrans-plug .button:focus, .adonitrans-plug .button:hover {
-    background-color: var(--e-global-color-90af78a);
+    background-color: #FCD722;
     color: #333
 }
 .adonitrans-plug .tarjeta {
@@ -178,7 +178,7 @@
     cursor: pointer;
     padding: 10px 20px;
     border: none;
-    background-color: var(--e-global-color-primary);
+    background-color: #086ACF;
     color: #fff;
     font-weight: 700;
     transition: background-color .3s;
@@ -294,7 +294,7 @@ body.adonitrans-plug {
     overflow: hidden
 }
 #panel-administracion {
-    background-color: var(--e-global-color-primary);
+    background-color: #086ACF;
     display: flex;
     flex-wrap: wrap;
     height: 100vh;
@@ -368,7 +368,7 @@ scale: 1.2;
   background-color: rgba(211,41,41,var(--tw-bg-opacity));
 }
 #panel-administracion #franja .continfo .continfo_noti i{
-	color: var(--e-global-color-primary);
+	color: #086ACF;
 }
 #panel-administracion #franja .continfo .continfo_bread{
   display: flex;
@@ -377,15 +377,15 @@ scale: 1.2;
   font-weight: 500;
 }
 #panel-administracion #franja .continfo .continfo_bread a{
-	color: var(--e-global-color-primary);
+	color: #086ACF;
 	text-decoration: none;
 }
 #panel-administracion #franja .continfo .continfo_bread span{
 	padding: 0 5px;
-	color: var(--e-global-color-primary);
+	color: #086ACF;
 }
 #panel-administracion #lateral {
-    background-color: var(--e-global-color-primary);
+    background-color: #086ACF;
     color: #fff;
     width: 15%;
     padding: 0;
@@ -463,7 +463,7 @@ scale: 1.2;
     margin-bottom: 5px
 }
 #panel-administracion form .wrap a {
-    color: var(--e-global-color-primary);
+    color: #086ACF;
     text-decoration: underline;
     transition: .5s
 }
@@ -526,10 +526,11 @@ scale: 1.2;
     text-shadow: 0 0 4px rgba(0, 0, 0, .45)
 }
 /*# sourceMappingURL=panel-administracion.css.map */
+/****CSS YULI****/
 
 .dropdown-menu-user{
     width: 224px;
-      background-color: var(--e-global-color-primary);
+      background-color: #086ACF;
       padding: 20px;
       border-radius: 10px;
       margin:50px;
@@ -590,4 +591,177 @@ scale: 1.2;
 .dropdown-menu-user .options ul li i{
     font-size: 16px;
     padding-right: 10px;
+}
+.adonitrans-plug .adonitrans-tabs{
+    width: auto;
+    display: block;
+}
+.adonitrans-plug .adonitrans-tabs-nav{
+    border-radius: 20px 20px 0 0;
+    background: #c6c6c6ad;
+}
+.adonitrans-plug .adonitrans-tabs-nav li{
+    background-color: transparent;
+  color: #717171;
+  padding: 15px 20px;
+  font-size: 19px;
+}
+.adonitrans-plug .adonitrans-tabs-nav li:first-child{
+    border-radius: 20px 0 0 0;
+}
+.adonitrans-plug .adonitrans-tabs-nav li.active, .adonitrans-plug .adonitrans-tabs-nav li:hover{
+    background-color: #086acf;
+}
+.adonitrans-plug #ajustes-generales .franja, .adonitrans-plug #ajustes-generales #wrap-tarifas-descuentos .row-tarifa{
+    justify-content: start!important;
+    background: #ffe3004f;
+    padding: 15px 30px;
+    border-radius: 15px;
+    width: auto;
+}
+.adonitrans-plug #ajustes-generales .franja .franja_item, .adonitrans-plug #ajustes-generales #wrap-tarifas-descuentos .row-tarifa .tarifa-item{
+    margin-right: 30px;
+}
+.adonitrans-plug #ajustes-generales .franja .franja_item:last-child, .adonitrans-plug #ajustes-generales #wrap-tarifas-descuentos .row-tarifa .tarifa-item:last-child{
+    margin-right: 0px;
+}
+.adonitrans-plug #ajustes-generales .franja .franja_item label, .adonitrans-plug #ajustes-generales #wrap-tarifas-descuentos .row-tarifa .tarifa-item label{
+    font-size: 18px;
+}
+.adonitrans-plug #ajustes-generales div input, .adonitrans-plug #ajustes-generales div textarea{
+    font-size: 16px;
+}
+.adonitrans-plug #ajustes-generales button i{
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+.adonitrans-plug #ajustes-generales button.button-remove{
+  background: #e18d8d;
+  color: #fff;
+  font-size: 14px;
+  padding: 0px 15px;
+  border-radius: 10px;
+  margin-left: 0px;
+  transition: background 0.3s ease;
+  transition: 0.5s;
+}
+.adonitrans-plug #ajustes-generales button.button-remove:hover{
+    background: #f95959;
+    margin-left: 10px;
+}
+.adonitrans-plug #ajustes-generales button.button-remove:hover i{
+    font-size: 16px;
+}
+.adonitrans-plug #ajustes-generales button.button-add{
+  background: #0054ae;
+  color: #fff;
+  font-size: 16px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-left: 0px;
+  transition: background 0.3s ease;
+  transition: 0.5s;
+}
+.adonitrans-plug #ajustes-generales button.button-add:hover{
+    background: #086ACF;
+    margin-left: 10px;
+}
+.adonitrans-plug #ajustes-generales button.button-add i{
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+.adonitrans-plug #ajustes-generales button.button-add:hover i{
+    font-size: 16px;
+}
+.adonitrans-plug #ajustes-generales button.button-save{
+    transition: 0.5s;
+    background: #FCD722;
+      color: #000;
+      font-size: 17px;
+      text-transform: uppercase;
+      padding: 10px 15px;
+      border-radius: 15px;
+      margin-top: 0px;
+      transition: background 0.3s ease;
+      transition: 0.5s;
+}
+.adonitrans-plug #ajustes-generales button.button-save:hover{
+    background: #086ACF;
+    margin-top: -5px;
+    color: #fff;
+}
+.adonitrans-plug #ajustes-generales #wrap-franjas-trabajo .franja{
+    width: auto;
+}
+#panel-administracion .wrap-title, #panel-administracion #wrap-vehiculos .wrap-title{
+    background-color: #086acf;
+  border-radius: 15px;
+}
+#panel-administracion form .wrap label{
+    margin-bottom: 5px;
+}
+#panel-administracion form .wrap input, #panel-administracion form .wrap select{
+    width: 95%;
+    font-size: 16px;
+  appearance: none;
+  border-radius: .375rem;
+  border: 1px solid #e6e6e6;
+  padding: .5rem .75rem;
+  box-shadow: 0px 2px 2px 0 rgba(0,0,0,0.1);
+}
+.adonitrans-plug .formplug label{
+    font-size: 17px;
+    font-weight: 500;
+}
+#panel-administracion form .wrap #generate-password{
+    font-size: 16px;
+  font-weight: 600;
+  color: #086ACF;
+  text-decoration: underline;
+  transition: .5s;
+}
+.adonitrans-plug #cancelar-vehiculo-btn.button{
+    background: #e18d8d;
+  color: #fff;
+}
+.adonitrans-plug #cancelar-vehiculo-btn.button:hover{
+    background: #f95959;
+}
+#panel-administracion .wrap-gestion-vehiculos, #panel-administracion .wrap-gestion-empresas {
+  width: 100%;
+  background: #fff;
+  padding: 25px;
+  border-radius: 20px;
+}
+#wrap-vehiculos form .wrap .select2-container .select2-selection--single .select2-selection__rendered{
+  border-radius: .375rem!important;
+  border: 1px solid #e6e6e6;
+  padding: .5rem .75rem!important;
+  box-shadow: 0px 2px 2px 0 rgba(0,0,0,0.1);
+  line-height: 1em!important;
+  font-size: 15px;
+}
+.adonitrans-plug .acordeon .acordeon-item .acordeon-header{
+    border-radius: 10px 10px 0 0;
+  background-color: #FBE474;
+  color: #4d4c4c;
+}
+.wrap-centro-costos > .button {
+  background-color: #0051a4;
+  color: #fff;
+  padding: 5px 15px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.wrap-centro-costos .wrap-datos .centro-costo .button.remove-centro-row{
+  background-color: #e18d8d;
+  color: #fff;
+  padding: 5px 15px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.adonitrans-plug .acordeon .acordeon-item .acordeon-body{
+    padding: 20px;
 }

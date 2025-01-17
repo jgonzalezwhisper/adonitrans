@@ -27,19 +27,19 @@
 							$hora_fin = date('H:i', strtotime($franja['hora_fin']));
 						?>
 						<div class="franja">
-							<div>
+							<div class="franja_item">
 								<label for="franja_nombre_<?php echo $franja['nombre']; ?>">Nombre</label>
 								<input type="text" id="franja_nombre_<?php echo $franja['nombre']; ?>" name="nombre_franja[]" value="<?php echo esc_attr($franja['nombre']); ?>"  />
 							</div>
-							<div>
+							<div class="franja_item">
 								<label for="franja_inicio_<?php echo $hora_inicio; ?>">Hora Inicio</label>
 								<input type="time" id="franja_inicio_<?php echo $hora_inicio; ?>" name="inicio_franja[]" value="<?php echo esc_attr($hora_inicio); ?>"  />
 							</div>
-							<div>
+							<div class="franja_item">
 								<label for="franja_fin_<?php echo $hora_fin; ?>">Hora Fin</label>
 								<input type="time" id="franja_fin_<?php echo $hora_fin; ?>" name="fin_franja[]" value="<?php echo esc_attr($hora_fin); ?>"  />
 							</div>
-							<button type="button" class="button remove-franja-row">Eliminar Franja</button>
+							<button type="button" class="button button-remove remove-franja-row"><i class="icofont-info-circle"></i>Eliminar Franja</button>
 						</div>
 						<?php
 						endforeach;
@@ -64,7 +64,7 @@
 						endif;
 						?>
 					</div>
-					<button type="button" id="add-franja-row" class="button">Añadir Franja</button>
+					<button type="button" id="add-franja-row" class="button button-add"><i class="icofont-plus-circle"></i>Añadir Franja</button>
 				</div>
 			</div>
 
@@ -79,24 +79,24 @@
 						?>
 						<?php foreach ($tarifas_descuentos as $valtardesc):  ?>
 						<div class="row-tarifa">
-							<div>
+							<div class="tarifa-item">
 								<label for="elm-tarifa-<?php echo $valtardesc['grupo_tarifas_descuentos']['descripcion']; ?>">Descripcion
 									<input type="text" id="elm-tarifa-<?php echo $valtardesc['grupo_tarifas_descuentos']['descripcion']; ?>" name="descripcion[]" value="<?php echo esc_attr($valtardesc['grupo_tarifas_descuentos']['descripcion']); ?>"  />
 								</label>
 							</div>
-							<div>
+							<div class="tarifa-item">
 								<label for="elm-tarifa-<?php echo $valtardesc['grupo_tarifas_descuentos']['valor']; ?>">Valor
 									<input type="text" id="elm-tarifa-<?php echo $valtardesc['grupo_tarifas_descuentos']['valor']; ?>" name="valor[]" value="<?php echo esc_attr($valtardesc['grupo_tarifas_descuentos']['valor']) ?>"  />
 								</label>
 							</div>
-							<button type="button" class="button remove-tarifa-row">Eliminar Tarifa</button>
+							<button type="button" class="button button-remove remove-tarifa-row"><i class="icofont-info-circle"></i>Eliminar Tarifa</button>
 						</div>
 						<?php endforeach ?>
 					</div>
-					<button type="button" id="add-tarifa-row" class="button">Añadir Tarifa</button>
+					<button type="button" id="add-tarifa-row" class="button button-add"><i class="icofont-plus-circle"></i>Añadir Tarifa</button>
 				</div>
 			</div>
 		</div>
-		<button type="submit" class="button">Guardar Cambios</button>
+		<button type="submit" class="button button-save"><i class="icofont-save"></i>Guardar Cambios</button>
 	</form>
 </div>

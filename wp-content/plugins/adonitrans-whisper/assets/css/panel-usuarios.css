@@ -1,2 +1,65 @@
 .dataTables_wrapper .dataTables_length label{display:flex;align-items:center;-moz-column-gap:4px;column-gap:4px}.dataTables_wrapper .dataTable thead tr th{background-color:#222;color:#fff;transition:.5s}.dataTables_wrapper .dataTable thead tr th:hover{background-color:#333}.dataTables_wrapper .dataTable thead tr th::before,.dataTables_wrapper .dataTable thead tr th:after{color:#fff!important;opacity:.6!important}.dataTables_wrapper .dataTable thead tr th.sorting_asc,.dataTables_wrapper .dataTable thead tr th.sorting_desc{background-color:#000}.dataTables_wrapper .dataTable thead tr th.sorting_asc::before,.dataTables_wrapper .dataTable thead tr th.sorting_desc::after{opacity:.9!important}.dataTables_wrapper .dataTable tbody .Activa,.dataTables_wrapper .dataTable tbody .Activo{color:#30bf30;font-weight:700}.dataTables_wrapper .dataTable tbody .Inactiva,.dataTables_wrapper .dataTable tbody .Inactivo{color:red;font-weight:700}.dataTables_wrapper .dataTable tbody .acciones .accion{background-color:#0095e8;color:#fff;font-size:13px;text-transform:uppercase;padding:8px 18px;line-height:1;font-weight:600;border:none;transition:.5s}.dataTables_wrapper .dataTable tbody .acciones .accion:hover{background-color:#00d6b0;color:#2d2d2d}#wrap-usuarios{display:flex;flex-wrap:wrap;row-gap:20px}#wrap-usuarios .wrap-gestion-usuarios,#wrap-usuarios .wrap-listado-usuarios{width:100%}#wrap-usuarios .wrap-gestion-usuarios{display:none}
 /*# sourceMappingURL=panel-usuarios.css.map */
+/*****CSS YULI*****/
+.adonitrans-plug #table-usuarios_wrapper #table-usuarios_length label, .adonitrans-plug #table-usuarios_wrapper #table-usuarios_filter label, .adonitrans-plug #table-usuarios_wrapper #table-usuarios_info, .adonitrans-plug #table-usuarios_wrapper #table-usuarios_paginate, .adonitrans-plug #table-vehiculos_wrapper #table-vehiculos_length label, .adonitrans-plug #table-vehiculos_wrapper #table-vehiculos_filter label, .adonitrans-plug #table-vehiculos_wrapper #table-vehiculos_info, .adonitrans-plug #table-vehiculos_wrapper #table-vehiculos_paginate, .adonitrans-plug #table-empresas_wrapper #table-empresas_length label, .adonitrans-plug #table-empresas_wrapper #table-empresas_filter label, .adonitrans-plug #table-empresas_wrapper #table-empresas_info, .adonitrans-plug #table-empresas_wrapper #table-empresas_paginate{
+	font-size: 16px;
+	font-weight: 400;
+	color: #6c6868;
+}
+.adonitrans-plug #table-usuarios_wrapper #table-usuarios_filter, .adonitrans-plug #table-vehiculos_wrapper #table-vehiculos_filter, .adonitrans-plug #table-empresas_wrapper #table-empresas_filter{
+	margin-bottom: 25px;
+}
+.adonitrans-plug #table-usuarios_wrapper #table-usuarios_info, .adonitrans-plug #table-usuarios_wrapper #table-usuarios_paginate, .adonitrans-plug #table-vehiculos_wrapper #table-vehiculos_info, .adonitrans-plug #table-vehiculos_wrapper #table-vehiculos_paginate, .adonitrans-plug #table-empresas_wrapper #table-empresas_paginate{
+	margin-top: 25px;
+}
+.adonitrans-plug #table-usuarios_wrapper #table-usuarios_paginate a.paginate_button.current, .adonitrans-plug #table-vehiculos_wrapper #table-vehiculos_paginate a.paginate_button.current, .adonitrans-plug #table-empresas_wrapper #table-empresas_paginate a.paginate_button.current{
+	background: #086acf;
+  color: #fff !important;
+  font-weight: 700;
+  border: 1px solid #626262;
+  padding: 2px 15px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.adonitrans-plug table.table-adoni{
+	paddding: 35px 0!important;
+}
+.adonitrans-plug table.table-adoni thead tr th, .adonitrans-plug table.table-adoni thead tr th.sorting_asc{
+	background-color: #535353;
+    color: #fff;
+    transition: .5s;
+    font-size: 17px;
+    border-right: 1px solid rgba(255, 255, 255, 0.4);
+}
+.adonitrans-plug table.table-adoni tbody tr{
+  background-color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+}
+.adonitrans-plug table.table-adoni > tbody > tr.odd > *{
+	box-shadow: none!important;
+}
+.adonitrans-plug table.table-adoni > tbody > tr.odd > .sorting_1{
+	background-color: #fff;
+	box-shadow: none!important;
+}
+.adonitrans-plug table.table-adoni > tbody > tr > td:nth-child(2){
+	font-weight: 600;
+}
+.adonitrans-plug table.table-adoni tbody .acciones .accion{
+	background-color: #FDE261;
+  color: #4d4d4d;
+  font-size: 14px;
+  text-transform: capitalize;
+  border-radius: 6px;
+}
+.adonitrans-plug table.table-adoni tbody .acciones .accion:hover{
+	background-color: #FCD722;
+}
+.adonitrans-plug table.table-adoni tbody .acciones .accion.delete-user{
+	background-color: #e18d8d;
+    color: #fff;
+}
+.adonitrans-plug table.table-adoni tbody .acciones .accion.delete-user:hover{
+	background-color: #f95959;
+}

@@ -25,18 +25,18 @@
 	position: absolute;
   left: 50%;
   top: -15%;
-  background: var(--e-global-color-90af78a);
+  background: #FCD722;
   width: fit-content;
   padding: 10px;
   border-radius: 50px;
-  color: var(--e-global-color-primary);
+  color: #086ACF;
   z-index: 9;
 }
 #panel-administracion .wrap-gestion-usuarios #user-form .column-1 .profile_info label, #panel-administracion .wrap-gestion-usuarios #user-form .column-2 .wrap label{
 	font-size: 16px;
   font-weight: 800;
   text-decoration: underline;
-  color: var(--e-global-color-primary);
+  color: #086ACF;
   margin: 0;
 }
 #panel-administracion .wrap-gestion-usuarios #user-form .column-1 .profile_info input, #panel-administracion .wrap-gestion-usuarios #user-form .column-2 .wrap input{
