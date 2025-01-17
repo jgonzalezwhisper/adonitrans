@@ -45,6 +45,7 @@ wp-content/*
 # Ignorar configuraciones locales
 wp-config.php
 wp-config-sample.php
+debug.log
 
 # Ignorar configuraciones de WP-CLI (si se usan)
 wp-cli.local.yml

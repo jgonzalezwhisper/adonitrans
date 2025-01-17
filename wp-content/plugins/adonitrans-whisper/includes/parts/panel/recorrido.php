@@ -106,7 +106,9 @@
                             <td class="<?= $estado_recorrido; ?>"><?= $estado_recorrido; ?></td>
                             <td>
                                 <div class="acciones">
-                                    <button class="accion edit-recorrido" data-id="<?= get_the_ID(); ?>">Editar</button>
+                                    <?php if ($user_role !== 'colaborador'): ?>
+                                        <button class="accion edit-recorrido" data-id="<?= get_the_ID(); ?>">Editar</button>
+                                    <?php endif ?>
                                     <button class="accion delete-recorrido" data-id="<?= get_the_ID(); ?>">Eliminar</button>
                                 </div>
                             </td>

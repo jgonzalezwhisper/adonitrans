@@ -75,7 +75,9 @@ function create_recorrido_function() {
     // Obtener los datos del formulario
     $id_solicitante_recorrido = sanitize_text_field($_POST['id_solicitante_recorrido']);
     $empresa_solicitante_recorrido = get_field('empresa_asociada_usuario', 'user_' . $id_solicitante_recorrido);
-    $id_conductor_recorrido = sanitize_text_field($_POST['id_conductor_recorrido']);
+    if (isset($_POST['id_conductor_recorrido']) && !empty($_POST['id_conductor_recorrido'])) {
+        $id_conductor_recorrido = sanitize_text_field($_POST['id_conductor_recorrido']);
+    }    
     $ciudad_inicio = sanitize_text_field($_POST['ciudad_inicio']);
     $nombre_inicio = get_the_title( $ciudad_inicio );
     $barrio_inicio = sanitize_text_field($_POST['barrio_inicio']);
