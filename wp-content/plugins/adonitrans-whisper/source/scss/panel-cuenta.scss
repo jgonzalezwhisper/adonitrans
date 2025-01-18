@@ -1,5 +1,115 @@
-#wrap-cuenta{
-	.wrap-title{
-		
-	}
+#panel-administracion {
+  .wrap-gestion-usuarios {
+    width: 100%;
+    background: #fff;
+    padding: 25px;
+    border-radius: 20px;
+
+    #user-form {
+      .column-1 {
+        width: 33%;
+        display: flex;
+        align-items: center;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+
+        .profile_photo {
+          img {
+            border-radius: 50%;
+            max-width: 200px;
+          }
+
+          label {
+            color: transparent;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 999;
+
+            i {
+              position: absolute;
+              left: 50%;
+              top: -15%;
+              background: #FCD722;
+              width: fit-content;
+              padding: 10px;
+              border-radius: 50px;
+              color: #086ACF;
+              z-index: 9;
+            }
+          }
+        }
+
+        .profile_info {
+          label {
+            font-size: 16px;
+            font-weight: 800;
+            text-decoration: underline;
+            color: #086ACF;
+            margin: 0;
+          }
+
+          input {
+            background: transparent;
+            color: #000;
+            font-size: 17px;
+            border: none;
+            font-weight: 500;
+            margin-bottom: 15px;
+            padding: 0;
+          }
+        }
+      }
+
+      .column-2 {
+        padding-left: 20px;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        width: 30%;
+
+        &:last-child {
+          border: none;
+        }
+
+        h3 {
+          font-size: 20px;
+          font-weight: 700;
+          color: #000;
+        }
+
+        .wrap {
+          label {
+            font-size: 16px;
+            font-weight: 800;
+            text-decoration: underline;
+            color: #086ACF;
+            margin: 0;
+          }
+
+          input {
+            background: transparent;
+            color: #000;
+            font-size: 17px;
+            border: none;
+            font-weight: 500;
+            margin-bottom: 15px;
+            padding: 0;
+          }
+        }
+      }
+
+      .cont_password {
+        input {
+          border: 1px solid #000;
+          border-radius: 10px;
+          margin-left: 10px;
+          font-size: 16px;
+          padding: 0 10px;
+        }
+
+        #generate-password {
+          font-size: 16px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
 }

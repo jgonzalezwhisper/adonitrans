@@ -2,16 +2,126 @@
 @use "global/variables" as *;
 
 #wrap-usuarios {
-    display: flex;
-    flex-wrap: wrap;
-    row-gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 20px;
 
-    .wrap-listado-usuarios,
-    .wrap-gestion-usuarios {
-        width: 100%;        
+  .wrap-gestion-usuarios,
+  .wrap-listado-usuarios {
+    width: 100%;
+  }
+
+  .wrap-gestion-usuarios {
+    display: none;
+  }
+}
+
+.adonitrans-plug {
+  #table-usuarios_wrapper,
+  #table-vehiculos_wrapper,
+  #table-empresas_wrapper {
+    #table-usuarios_length label,
+    #table-usuarios_filter label,
+    #table-usuarios_info,
+    #table-usuarios_paginate,
+    #table-vehiculos_length label,
+    #table-vehiculos_filter label,
+    #table-vehiculos_info,
+    #table-vehiculos_paginate,
+    #table-empresas_length label,
+    #table-empresas_filter label,
+    #table-empresas_info,
+    #table-empresas_paginate {
+      font-size: 16px;
+      font-weight: 400;
+      color: #6c6868;
     }
-    .wrap-gestion-usuarios{
-        display: none;
-    }   
 
+    #table-usuarios_filter,
+    #table-vehiculos_filter,
+    #table-empresas_filter {
+      margin-bottom: 25px;
+    }
+
+    #table-usuarios_info,
+    #table-usuarios_paginate,
+    #table-vehiculos_info,
+    #table-vehiculos_paginate,
+    #table-empresas_paginate {
+      margin-top: 25px;
+    }
+
+    #table-usuarios_paginate a.paginate_button.current,
+    #table-vehiculos_paginate a.paginate_button.current,
+    #table-empresas_paginate a.paginate_button.current {
+      background: #086acf;
+      color: #fff !important;
+      font-weight: 700;
+      border: 1px solid #626262;
+      padding: 2px 15px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+  }
+
+  table.table-adoni {
+    paddding: 35px 0 !important;
+
+    thead {
+      tr {
+        th,
+        th.sorting_asc {
+          background-color: #535353;
+          color: #fff;
+          transition: 0.5s;
+          font-size: 17px;
+          border-right: 1px solid rgba(255, 255, 255, 0.4);
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        background-color: #fff;
+        font-size: 16px;
+        font-weight: 400;
+
+        &.odd > * {
+          box-shadow: none !important;
+        }
+
+        &.odd > .sorting_1 {
+          background-color: #fff;
+          box-shadow: none !important;
+        }
+
+        td:nth-child(2) {
+          font-weight: 600;
+        }
+      }
+
+      .acciones {
+        .accion {
+          background-color: #FDE261;
+          color: #4d4d4d;
+          font-size: 14px;
+          text-transform: capitalize;
+          border-radius: 6px;
+
+          &:hover {
+            background-color: #FCD722;
+          }
+
+          &.delete-user {
+            background-color: #e18d8d;
+            color: #fff;
+
+            &:hover {
+              background-color: #f95959;
+            }
+          }
+        }
+      }
+    }
+  }
 }

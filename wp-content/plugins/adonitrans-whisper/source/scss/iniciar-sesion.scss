@@ -1,77 +1,123 @@
 @use "global/base";
 
 .adonitrans-plug {
-	.wrap-login {
-		display: flex;
-		flex-wrap: wrap;
-		flex-direction: column;
-		padding: 50px 35px;
-		background-color: rgba(0, 0, 0, 0.5);
-		box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
-		border-radius: 18px;
-		color: white;
-		position: relative;
-		overflow: hidden;
-		max-width: 750px;
-		margin: 0 auto;
+  .wrap-login {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    padding: 50px 35px;
+    background-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.3);
+    border-radius: 18px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    max-width: 750px;
+    margin: 0 auto;
 
-		&::before {
-			content: "";
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			filter: blur(1px);
-			animation: ani-blur ease-out 2s infinite;
-			background-image: url('../images/login-fondo.jpeg');
-			background-size: cover;
-			background-position: center;
-			z-index: -1;
-		}
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      filter: blur(1px);
+      animation: 2s ease-out infinite ani-blur;
+      background-image: url(../images/login-fondo.jpeg);
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+    }
 
-		.titulo {
-			margin-top: 0;
-			margin-bottom: 30px;
-			text-align: center;
-			text-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
-		}
+    .titulo {
+      margin-top: 0;
+      margin-bottom: 30px;
+      text-align: center;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+      font-size: 35px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
 
-	}
+    #custom-login-form {
+      padding: 30px 80px 50px;
 
-}
+      label {
+        .title_form_login {
+          color: #fff;
+          display: block;
+          width: 100%;
+          margin: 0;
+          text-shadow: none;
+          font-size: 18px;
+        }
 
-@keyframes ani-blur {
-	0% {
-		filter: blur(1px);
-	}
+        input {
+          background-color: rgba(255, 255, 255, 0.3);
+          color: #fff;
+          border: none;
+          padding: 10px 30px;
+          width: 100%;
+          border-radius: 20px;
+          font-size: 17px;
+          font-weight: 500;
+        }
 
-	50% {
-		filter: blur(3px);
-	}
+        i {
+          color: #fff;
+          top: 44px;
+        }
+      }
 
-	100% {
-		filter: blur(1px);
-	}
+      .button {
+        width: 100%;
+        margin-top: 30px;
+        border-radius: 20px;
+        font-size: 16px;
+        background: #086acf;
+        color: #fff;
+        text-shadow: none;
+        text-transform: uppercase;
+        box-shadow: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-}
+        &:hover {
+          background-color: var(--e-global-color-90af78a);
+          color: #000;
+          transform: translateY(-5px);
+        }
+      }
 
-/* RESPONSIVE */
-@media only screen and (max-width:1490px) {
-}
+      #token-section {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 30px;
+        border-radius: 20px;
+        margin-top: 30px;
 
-@media only screen and (max-width:1405px) {
-}
+        .button {
+          font-size: 14px;
+          width: auto;
+          margin: 0 auto;
+          display: block;
+          background: #FCD72296;
+        }
+      }
+    }
+  }
 
-@media only screen and (max-width:768px) {
-}
+  @keyframes ani-blur {
+    0%, 100% {
+      filter: blur(1px);
+    }
+    50% {
+      filter: blur(3px);
+    }
+  }
 
-@media only screen and (max-width:490px) {
-	.adonitrans-plug {
-		.wrap-login {
-			padding: 40px 30px;
-		}
-
-	}
-
+  @media only screen and (max-width: 490px) {
+    .wrap-login {
+      padding: 40px 30px;
+    }
+  }
 }

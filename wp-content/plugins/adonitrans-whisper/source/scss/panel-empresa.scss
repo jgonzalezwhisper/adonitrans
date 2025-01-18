@@ -1,44 +1,46 @@
 @use "global/variables" as *;
 
 .wrap-centro-costos {
-	.wrap-datos {
-		padding: 10px 0;
+  .wrap-datos {
+    padding: 10px 0;
 
-		.centro-costo {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: start;
-    		column-gap: 35px;
+    .centro-costo {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: start;
+      column-gap: 35px;
 
-			label {
-				width: 25%;
-				font-size: 15px;
-			}
+      label {
+        width: 25%;
+        font-size: 15px;
+      }
 
-			.button {
-				font-size: 14px;
-				background-color: $primary-color;
-				color: #fff;
+      .button {
+        font-size: 14px;
+        background-color: #086acf;
+        color: #fff;
 
-				&:hover {
-					background-color: red;
-				}
+        &:hover {
+          background-color: red;
+        }
+      }
 
-			}
+      &:first-child {
+        .button {
+          display: none;
+        }
+      }
+    }
+  }
 
-		}
+  > .button {
+    background-color: #086acf;
+    color: #fff;
+  }
+}
 
-		.centro-costo:first-child { 
-			.button{
-				display: none;
-			}
-		}
-
-	}
-
-	>.button {
-		background-color: $primary-color;
-		color: #fff;
-	}
-
+#wrap-empresas {
+  .wrap-listado-empresas {
+    width: 100%;
+  }
 }
