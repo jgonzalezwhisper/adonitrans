@@ -1,6 +1,2 @@
-.wrap-centro-costos .wrap-datos{padding:10px 0}.wrap-centro-costos .wrap-datos .centro-costo{display:flex;flex-wrap:wrap;justify-content:start;-moz-column-gap:35px;column-gap:35px}.wrap-centro-costos .wrap-datos .centro-costo label{width:25%;font-size:15px}.wrap-centro-costos .wrap-datos .centro-costo .button{font-size:14px;background-color:#086acf;color:#fff}.wrap-centro-costos .wrap-datos .centro-costo .button:hover{background-color:red}.wrap-centro-costos .wrap-datos .centro-costo:first-child .button{display:none}.wrap-centro-costos>.button{background-color:#086acf;color:#fff}
+.wrap-centro-costos .wrap-datos{padding:10px 0}.wrap-centro-costos .wrap-datos .centro-costo{display:flex;flex-wrap:wrap;justify-content:start;-moz-column-gap:35px;column-gap:35px}.wrap-centro-costos .wrap-datos .centro-costo label{width:25%;font-size:15px}.wrap-centro-costos .wrap-datos .centro-costo .button{font-size:14px;background-color:#086acf;color:#fff}.wrap-centro-costos .wrap-datos .centro-costo .button:hover{background-color:red}.wrap-centro-costos .wrap-datos .centro-costo:first-child .button{display:none}.wrap-centro-costos>.button{background-color:#086acf;color:#fff}#wrap-empresas .wrap-listado-empresas{width:100%}
 /*# sourceMappingURL=panel-empresa.css.map */
-/*****CSS YULI*****/
-#wrap-empresas .wrap-listado-empresas{
-	width: 100%;
-}
