@@ -99,11 +99,6 @@ function handle_delete_vehiculo() {
 add_action( 'wp_ajax_delete_vehiculo', 'handle_delete_vehiculo' );
 add_action( 'wp_ajax_nopriv_delete_vehiculo', 'handle_delete_vehiculo' );
 
-function format_date_for_input($date) {
-    $date_obj = DateTime::createFromFormat('d/m/Y', $date);
-    return $date_obj ? $date_obj->format('Y-m-d') : $date;
-}
-
 /*ACCION AJAX PARA OBTENER DATOS DE UN VEHICULO*/
 add_action('wp_ajax_load_vehiculo_data', 'load_vehiculo_data_function');
 add_action('wp_ajax_nopriv_load_vehiculo_data', 'load_vehiculo_data_function');
@@ -135,7 +130,6 @@ function load_vehiculo_data_function() {
         'conductor_del_vehiculo'            => get_post_meta($post_id, 'conductor_del_vehiculo', true),
     ]);
 }
-
 
 
 // Obtener lista de vehículos

@@ -39,6 +39,9 @@ function func_panel_administracion() {
                 <li data-action="panel">
                     <i class="icofont-dashboard-web"></i> Panel
                 </li>
+                <li data-action="recorrido">
+                    <i class="icofont-map-pins"></i> Recorridos
+                </li>
     			<li data-action="empresa">
     				<i class="icofont-building-alt"></i> Empresas
     			</li>

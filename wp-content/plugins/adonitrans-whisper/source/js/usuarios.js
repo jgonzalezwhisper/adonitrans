@@ -47,6 +47,7 @@ jQuery(document).ready(function($) {
     function toggleFieldsByRole(role) {
         const extraFieldsContainer = $('#extra-fields-container');
         const paymentFieldsContainer = $('#payment-fields-container');
+        const empresaFieldsContainer = $('#wrap-empresa-asociada');
 
         // Ocultar todo por defecto
         extraFieldsContainer.hide();
@@ -58,6 +59,14 @@ jQuery(document).ready(function($) {
             if (role === 'propietario_vehiculo' || role === 'conductor') {
                 paymentFieldsContainer.show();
             }
+            else if (role === 'colaborador' ) {
+                empresaFieldsContainer.show();
+            }
+            else{
+                paymentFieldsContainer.hide();
+                empresaFieldsContainer.hide();
+            }
+
         }
     }
 
@@ -201,7 +210,10 @@ jQuery(document).ready(function($) {
 
                                 $.ajax({
                                     url: fileUrl,
-                                    method: "GET",
+                                    method: "POST",
+                                    data: {
+                                        action: 'render_html_panel',
+                                    },
                                     success: function(response) {
                                         $("#informacion").html(response);
                                         initUsuarios();
@@ -371,7 +383,10 @@ jQuery(document).ready(function($) {
 
                                     $.ajax({
                                         url: fileUrl,
-                                        method: 'GET',
+                                        method: "POST",
+                                        data: {
+                                            action: 'render_html_panel',
+                                        },
                                         success: function(response) {
                                             $('#informacion').html(response);
                                             initUsuarios();

@@ -187,6 +187,7 @@
 			font-size: 14px;
 			line-height: 1.6;
 			list-style: none;
+			padding: 0;
 		}
 
 		.tachado {
@@ -259,17 +260,17 @@
 
 			.acordeon-header {
 				background-color: $color4;
-			    color: #fff;
-			    border: none;
-			    padding: 10px;
-			    width: 100%;
-			    text-align: left;
-			    cursor: pointer;
-			    font-weight: 700;
-			    font-size: 16px;
-			    display: flex;
-			    align-items: center;
-			    justify-content: space-between;
+				color: #fff;
+				border: none;
+				padding: 10px;
+				width: 100%;
+				text-align: left;
+				cursor: pointer;
+				font-weight: 700;
+				font-size: 16px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
 			}
 
 			.acordeon-body {

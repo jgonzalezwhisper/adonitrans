@@ -28,7 +28,7 @@ function add_custom_user_roles() {
     $external_roles = [
         'propietario_vehiculo' => 'Propietario Vehiculo',
         'conductor'            => 'Conductor',
-        'cliente'              => 'Cliente',
+        'colaborador'          => 'Colaborador',
         'empresa'              => 'Empresa',
     ];
 
@@ -82,7 +82,7 @@ function restrict_dashboard_access_and_admin_bar() {
         'tesoreria',
         'propietario_vehiculo',
         'conductor',
-        'cliente',
+        'colaborador',
         'empresa'
     ];
 

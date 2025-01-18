@@ -1,14 +1,19 @@
-# Ignorar todo el contenido temporal o de desarrollo
+# Ignorar archivos temporales y de desarrollo
 *.log
 *.tmp
 *.swp
+*.bak
+*.original
+*.sql
+*.sqlite
+*.env
 
 # Ignorar configuraciones específicas de IDEs
 .vscode/
 .idea/
 *.iml
 
-# Ignorar sistema operativo
+# Ignorar archivos del sistema operativo
 .DS_Store
 Thumbs.db
 
@@ -18,21 +23,30 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Ignorar composer y dependencias no necesarias
+# Ignorar Composer y dependencias no necesarias
 vendor/
 composer.lock
 
+# Ignorar el cache del servidor
+cache/
+*.cache
+
 # Ignorar backups y bases de datos locales
-*.sql
 *.tar.gz
 *.zip
 
-# Ignorar contenido dinámico de WordPress
-wp-content/uploads/
-wp-content/cache/
-wp-content/backup/
-wp-content/upgrade/
-wp-content/debug.log
-wp-content/uploads
-.htaccess
+# Ignorar todo el contenido dinámico subido
+wp-content/*
+
+# Permitir excepciones específicas dentro de wp-content
+!wp-content/plugins/
+!wp-content/themes/
+
+# Ignorar configuraciones locales
 wp-config.php
+wp-config-sample.php
+debug.log
+
+# Ignorar configuraciones de WP-CLI (si se usan)
+wp-cli.local.yml
+wp-cli.yml

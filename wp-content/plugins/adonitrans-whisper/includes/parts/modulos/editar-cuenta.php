@@ -33,7 +33,7 @@
                 'tesoreria'         => 'Tesoreria',
                 'propietario_vehiculo' => 'Propietario Vehiculo',
                 'conductor'            => 'Conductor',
-                'cliente'              => 'Cliente',
+                'colaborador'          => 'Colaborador (Empresa)',
                 'empresa'              => 'Empresa',
                 ];
                 foreach ($roles as $role_key => $role_name) {
@@ -86,6 +86,88 @@
                 <input type="file" id="user-foto" name="user-foto" accept="image/*">
             </div>
         </div>
+        <!-- Informacion empresa asociada -->
+        <div class="wrap" id="wrap-empresa-asociada" style="display:none;">
+
+            <div class="wrap">
+                <?php
+                if (is_user_logged_in()) {
+                    $current_user = wp_get_current_user();
+
+                    // Nombre del input compartido
+                    $input_name = 'sel_empresa_asociada';
+
+                    // Si el usuario tiene el rol "administrator"
+                    if (in_array('administrator', $current_user->roles)) {
+                        // Consultar los posts de tipo "empresa"
+                        $empresa_posts = get_posts([
+                            'post_type' => 'empresa',
+                            'numberposts' => -1,
+                        ]);
+
+                        if ($empresa_posts) {
+                            $options = [];
+                            foreach ($empresa_posts as $post) {
+                                $options[] = [
+                                    'value' => $post->ID,
+                                    'label' => $post->post_title
+                                ];
+                            }
+                        } else {
+                            $options = [];
+                        }
+                    }
+
+                    // Si el usuario tiene el rol "empresa"
+                    elseif (in_array('empresa', $current_user->roles)) {
+                        // Consultar los posts de tipo "empresa" donde el usuario esté en el campo ACF "usuarios_administradores_empresa"
+                        $empresa_posts = get_posts([
+                            'post_type' => 'empresa',
+                            'numberposts' => -1,
+                            'meta_query' => [
+                                [
+                                    'key' => 'usuarios_administradores_empresa',
+                                    'value' => '"' . $current_user->ID . '"', // Buscar en los valores serializados
+                                    'compare' => 'LIKE',
+                                ],
+                            ],
+                        ]);
+
+                        if ($empresa_posts) {
+                            $hidden_inputs = [];
+                            foreach ($empresa_posts as $post) {
+                                $hidden_inputs[] = $post->ID;
+                            }
+                        } else {
+                            $hidden_inputs = [];
+                        }
+                    }
+                }
+                ?>
+
+                <!-- HTML para rol administrator -->
+                <?php if (!empty($options)): ?>
+                    <label for="sel_empresa_asociada">Seleccione una empresa</label>
+                    <select id="sel_empresa_asociada" name="<?php echo esc_attr($input_name); ?>">
+                        <option value="0">Seleccione una empresa</option>
+                        <?php foreach ($options as $option): ?>
+                            <option value="<?php echo esc_attr($option['value']); ?>">
+                                <?php echo esc_html($option['label']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                <?php endif; ?>
+
+                <!-- HTML para rol empresa -->
+                <?php if (!empty($hidden_inputs)): ?>
+                    <?php foreach ($hidden_inputs as $hidden_input): ?>
+                        <input type="hidden" name="<?php echo esc_attr($input_name); ?>" value="<?php echo esc_attr($hidden_input); ?>">
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
+            </div>        
+        </div>
+
         <!-- Información de pago -->
         <div class="wrap" id="payment-fields-container" style="display:none;">
             <h4>Información de Pago</h4>

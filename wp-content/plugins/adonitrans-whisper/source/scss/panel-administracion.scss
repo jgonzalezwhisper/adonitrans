@@ -1,4 +1,5 @@
 @use "global/base";
+@use "global/dataTable";
 @use "global/variables" as *;
 
 body.adonitrans-plug {
@@ -91,11 +92,42 @@ body.adonitrans-plug {
         }
       }
 
-      .continfo_bread {
-        display: flex;
-        font-size: 16px;
-        text-shadow: none;
-        font-weight: 500;
+            label {
+                text-shadow: none;
+                margin-bottom: 5px;
+            }
+            a{
+                color: $primary-color;
+                text-decoration: underline;
+                transition: all .5s;
+                &:hover{
+                    color: $color4;
+                }
+            }
+
+            .select2-container {
+                .select2-selection--single {
+                    height: 42px;
+
+                    .select2-selection__rendered {
+                        line-height: 42px;
+                    }
+
+                }
+
+            }
+
+            &.wrap-2 {
+                width: 49%;
+                &.time{
+                	display: flex;
+					align-items: center;
+					justify-content: space-around;
+					label{
+						column-gap: 10px;
+					}
+                }
+            }
 
         a {
           color: #086ACF;

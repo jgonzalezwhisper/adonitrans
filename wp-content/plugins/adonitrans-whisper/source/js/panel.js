@@ -63,29 +63,36 @@ jQuery(document).ready(function($) {
         $("#lateral ul li").removeClass('active');
         $(this).addClass('active');
 
-        var action = $(this).data("action");
-        if (action === "logout") {
+        var data_action = $(this).data("action");
+        if (data_action === "logout") {
             return;
         }
         $('body').addClass('actloader');
-        var fileUrl = panelAjax.plugin_url + "includes/parts/panel/" + action + ".php";
+        var fileUrl = panelAjax.plugin_url + "includes/parts/panel/" + data_action + ".php";
 
         $.ajax({
             url: fileUrl,
-            method: "GET",
+            method: "POST",
+            data: {
+                action: 'render_html_panel',
+            },
+            cache: false,
             success: function(response) {
                 $('body').removeClass('actloader');
                 $("#informacion").html(response);
-                if (action == 'usuario') {
-                    initUsuarios();
-                }
-                if (action == 'vehiculo') {
-                    initVehiculos();
-                }
-                if (action == 'empresa') {
+
+                if (data_action == 'empresa') {
                     initEmpresas();
                 }
-
+                if (data_action == 'recorrido') {
+                    initRecorridos();
+                }
+                if (data_action == 'vehiculo') {
+                    initVehiculos();
+                }
+                if (data_action == 'usuario') {
+                    initUsuarios();
+                }
             },
             error: function() {
                 $('body').removeClass('actloader');
@@ -111,24 +118,46 @@ function checkPassword(value) {
     return hasNumber && hasSpecialChar && hasUpperCase && lengthValid;
 }
 
-function initUsuarios() {
+window.initUsuarios = function initUsuarios() {
     jQuery('#table-usuarios').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
-        }
+        },
+        order: [[0, 'desc']]
     });
-    jQuery('#select-rolesusuario').select2({
+    jQuery('#select_rolesusuario, #sel_empresa_asociada').select2({
         placeholder: "Selecciona un rol",
         allowClear: true,
         width: '100%'
     });
 }
 
-function initVehiculos() {
+window.initRecorridos = function initRecorridos() {
+    jQuery('#table-recorridos').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
+        },
+        order: [[0, 'desc']]
+    });
+
+    jQuery('#ciudad_inicio, #barrio_inicio, #ciudad_fin, #barrio_fin').select2({
+        placeholder: "Selecciona un Valor",
+        width: '100%'
+    });
+    if (jQuery('#id_solicitante_recorrido').length > 0) {
+        jQuery('#id_solicitante_recorrido, #id_conductor_recorrido').select2({
+            placeholder: "Selecciona un Valor",
+            width: '100%'
+        });
+    }
+}
+
+window.initVehiculos = function initVehiculos() {
     jQuery('#table-vehiculos').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
-        }
+        },
+        order: [[0, 'desc']]
     });
 
     jQuery('#tipo_de_vehiculo, #propietario_de_vehiculo, #conductor_del_vehiculo').select2({
@@ -138,11 +167,12 @@ function initVehiculos() {
     });
 }
 
-function initEmpresas() {
+window.initEmpresas = function initEmpresas() {
     jQuery('#table-empresas').DataTable({
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
-        }
+        },
+        order: [[0, 'desc']]
     });
 
     jQuery('#administradores_empresa').select2({
