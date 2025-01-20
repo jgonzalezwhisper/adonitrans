@@ -50,3 +50,10 @@ debug.log
 # Ignorar configuraciones de WP-CLI (si se usan)
 wp-cli.local.yml
 wp-cli.yml
+apache
+certs/*
+docker-compose.yml
+php.ini
+/.htaccess
+wp-config.php
+wp-content/debug.log
