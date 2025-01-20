@@ -55,5 +55,3 @@ certs/*
 docker-compose.yml
 php.ini
 /.htaccess
-wp-config.php
-wp-content/debug.log
