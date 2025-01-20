@@ -37,7 +37,8 @@ body.adonitrans-plug {
     .continfo {
       width: 83%;
       color: #000;
-      text-shadow: 1px 1px #000;
+      font-size: 18px;
+      text-shadow: none;
       font-weight: 700;
       background-color: #fff;
       border-radius: 30px 30px 0 0;
@@ -101,7 +102,7 @@ body.adonitrans-plug {
                 text-decoration: underline;
                 transition: all .5s;
                 &:hover{
-                    color: $color4;
+                    color: $secondary-color;
                 }
             }
 
@@ -247,6 +248,19 @@ body.adonitrans-plug {
       }
     }
 
+    #payment-fields-container{
+      h4{
+        background: $blue-dark;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 10px;
+        width: 100%;
+        text-align: center;
+        font-weight: 700;
+        font-size: 20px;
+      }
+    }
+
     #extra-fields-container,
     #payment-fields-container,
     .payment-row {
@@ -283,21 +297,20 @@ body.adonitrans-plug {
   }
 
   .wrap-title {
-    background-color: #0095e8;
-    box-shadow: 0 0 7px 1px rgba(0, 0, 0, 0.32);
+    background-color: #086acf;
+    border-radius: 15px;
 
     .title {
       margin: 0 0 20px;
-      line-height: 1;
-      color: #fff;
-      padding: 15px 20px;
-      text-transform: uppercase;
-      font-size: 22px;
-      font-weight: 700;
-      text-shadow: 0 0 4px rgba(0, 0, 0, 0.45);
+    line-height: 1;
+    color: #fff;
+    padding: 15px 20px;
+    text-transform: uppercase;
+    font-size: 22px;
+    font-weight: 700;
+    text-shadow: 0 0 4px rgba(0, 0, 0, .45)
     }
   }
-}
 
 .dropdown-menu-user {
   width: 224px;
@@ -440,6 +453,7 @@ body.adonitrans-plug {
           border-radius: 10px;
           margin-left: 0;
           transition: background 0.3s ease;
+          transition: 0.3s;
 
           &:hover {
             background: #f95959;
@@ -464,6 +478,7 @@ body.adonitrans-plug {
           border-radius: 10px;
           margin-left: 0;
           transition: background 0.3s ease;
+          transition: 0.3s;
 
           &:hover {
             background: #086ACF;

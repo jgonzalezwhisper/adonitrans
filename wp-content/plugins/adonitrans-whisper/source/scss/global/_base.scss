@@ -27,7 +27,7 @@
 			height: 80px;
 			border-radius: 50%;
 			display: inline-block;
-			border-top: 4px solid #FFF;
+			border-top: 4px solid $primary-color;
 			border-right: 4px solid transparent;
 			box-sizing: border-box;
 			animation: rotation 1s linear infinite;
@@ -41,7 +41,7 @@
 				width: 80px;
 				height: 80px;
 				border-radius: 50%;
-				border-left: 4px solid $color5;
+				border-left: 4px solid $secondary-color;
 				border-bottom: 4px solid transparent;
 				animation: rotation 0.5s linear infinite reverse;
 			}
@@ -72,21 +72,24 @@
 	.formplug {
 		label {
 			width: 100%;
-			margin-bottom: 20px;
+			margin-bottom: 5px;
 			display: flex;
 			flex-wrap: wrap;
 			row-gap: 9px;
-			font-size: 18px;
+			font-size: 17px;
 			letter-spacing: 1px;
-			font-weight: 700;
-			text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+			font-weight: 500;
+			text-shadow: none;
 			position: relative;
 
 			input {
-				outline: none;
-				background-color: #fff;
-				color: #2d2d2d;
-				border: 1px solid #f1f1f1;
+				width: 95%;
+			    font-size: 16px;
+			  appearance: none;
+			  border-radius: .375rem;
+			  border: 1px solid #e6e6e6;
+			  padding: .5rem .75rem;
+			  box-shadow: 0px 2px 2px 0 rgba(0,0,0,0.1);
 			}
 
 			i {
@@ -117,26 +120,116 @@
 
 		}
 
+		.wrap{
+			input, select{
+				width: 95%;
+			    font-size: 16px;
+			  appearance: none;
+			  border-radius: .375rem;
+			  border: 1px solid #e6e6e6;
+			  padding: .5rem .75rem;
+			  box-shadow: 0px 2px 2px 0 rgba(0,0,0,0.1);
+			  background-color: #fff;
+			}
+			#generate-password, #add-payment-row{
+				font-size: 16px;
+				  font-weight: 600;
+				  color: #086ACF;
+				  text-decoration: underline;
+				  transition: .5s;
+			}
+			.select2-selection__rendered{
+				border-radius: .375rem!important;
+				  border: 1px solid #e6e6e6;
+				  padding: .5rem .75rem!important;
+				  box-shadow: 0px 2px 2px 0 rgba(0,0,0,0.1);
+				  line-height: 1em!important;
+				  font-size: 17px;
+			}
+			.select2-container{
+				font-size: 17px!important;
+				.select2-selection--single{
+					border: 0;
+				}
+			}
+		}
+		.wrap-2{
+			width: 49%;
+			float: left;
+		}
 	}
 
 	.button {
 		display: inline-block;
 		margin-bottom: 15px;
-		background-color: #00d6b0;
-		color: #2d2d2d;
-		box-shadow: 0 0 11px 2px rgba(0, 0, 0, .2);
-		font-weight: 700;
-		padding: 12px 20px;
-		border-radius: 5px;
+		margin-left: 0px;
+		background-color: $primary-color;
+		color: #fff;
+		box-shadow: none;
+		border-radius: 25px;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 17px;
+		padding: 10px 30px;
+		border-radius: 25px;
 		border: none;
 		line-height: 1.4;
 		transition: .5s;
 
 		&:hover,
 		&:focus {
-			background-color: #00b9d9;
-			color: #333;
+			background-color: $secondary-color;
+			color: #000;
+			margin-left: 10px;
 		}
+
+		&.button-remove {
+          background: #e18d8d;
+          color: #fff;
+
+          &:hover {
+            background: #f95959;
+            margin-left: 10px;
+          }
+
+          i {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+
+            &:hover {
+              font-size: 16px;
+            }
+          }
+        }
+
+        &.button-add {
+          background: #0054ae;
+          color: #fff;
+
+          &:hover {
+            background: #086ACF;
+            margin-left: 10px;
+          }
+
+          i {
+            margin-right: 10px;
+
+            &:hover {
+              font-size: 16px;
+            }
+          }
+        }
+
+        &.button-save {
+          background: #FCD722;
+          color: #000;
+
+          &:hover {
+            background: #086ACF;
+            margin-top: -5px;
+            color: #fff;
+          }
+        }
 
 	}
 
@@ -148,7 +241,12 @@
 		display: flex;
 		flex-wrap: wrap;
 		row-gap: 16px;
-		margin-bottom: 20px;
+		margin: 0px 20px;
+
+		p{
+			font-size: 18px;
+			font-weight: 400;
+		}
 
 		.wrap-titulo {
 			width: 100%;
@@ -167,6 +265,13 @@
 				margin: 0;
 			}
 
+		}
+
+		.wrap-gestion-vehiculos, .wrap-gestion-empresas, .wrap-listado-recorridos, .wrap-gestion-recorridos{
+			width: 100%;
+			  background: #fff;
+			  padding: 25px;
+			  border-radius: 20px;
 		}
 
 	}
@@ -278,6 +383,13 @@
 				padding: 10px;
 				background-color: #f9f9f9;
 				border-top: 1px solid #ddd;
+
+				#documentos-repetidor{
+					h3{
+						font-size: 19px;
+  						font-weight: 500;
+					}
+				}
 			}
 
 			.campo {
@@ -380,21 +492,43 @@
 		}
 
 		button {
-			background-color: #007bff;
+			background-color: $blue-dark;
 			color: #fff;
 			border: none;
 			padding: 10px 20px;
-			border-radius: 4px;
+			border-radius: 20px;
 			cursor: pointer;
 			font-size: 16px;
 			margin-top: 20px;
 
+			i{
+				margin-right: 10px;
+			}
+
 			&:hover {
-				background-color: #0056b3;
+				background-color: $secondary-color;
+				color: #000;
 			}
 
 		}
 
 	}
 
+}
+.swal2-container{
+	.swal2-popup{
+		.swal2-actions{
+			.swal2-confirm{
+				button{
+				background-color: $primary-color;
+				padding: 12px 30px;
+				border-radius: 20px;
+				}
+				&:hover{
+					background-color: $secondary-color;
+					color: #000;
+				}
+			}
+		}
+	}
 }

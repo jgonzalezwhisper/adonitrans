@@ -14,7 +14,7 @@
 
     <div class="wrap-listado-empresas">
         <a href="#" class="button" id="crear-empresa">Crear Empresa</a>
-        <table id="table-empresas" class="display">
+        <table id="table-empresas" class="display table-adoni">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -52,8 +52,8 @@
                             <td class="center"><?= $numero_usuarios; ?></td>
                             <td class="center">
                                 <div class="acciones">
-                                    <button class="accion edit-empresa" data-id="<?= get_the_ID(); ?>">Editar</button>
-                                    <button class="accion delete-empresa" data-id="<?= get_the_ID(); ?>">Eliminar</button>
+                                    <button class="accion edit-empresa button-save" data-id="<?= get_the_ID(); ?>"><i class="icofont-pencil"></i> Editar</button>
+                                    <button class="accion delete-empresa button-remove" data-id="<?= get_the_ID(); ?>"><i class="icofont-info-circle"></i> Eliminar</button>
                                 </div>
                             </td>
                         </tr>
@@ -227,8 +227,8 @@
 
                 
                 <div class="wrap">
-                    <button class="button" type="submit" id="submit-empresa" name="submit-empresa"><i class="icofont-check"></i> Crear Empresa</button>
-                    <button class="button" type="button" id="cancelar-empresa-btn"><i class="icofont-exit"></i>Cancelar</button>
+                    <button class="button button-add" type="submit" id="submit-empresa" name="submit-empresa"><i class="icofont-check"></i> Crear Empresa</button>
+                    <button class="button button-remove" type="button" id="cancelar-empresa-btn"><i class="icofont-exit"></i>Cancelar</button>
                 </div>
             </form>
         </div> 

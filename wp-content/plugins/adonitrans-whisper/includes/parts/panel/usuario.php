@@ -68,8 +68,8 @@
                             <td class="<?= $estado_usuario; ?>"><?= $estado_usuario; ?></td>
                             <td>
                                 <div class="acciones">
-                                    <button class="accion edit-user" data-userid="<?= $user->ID; ?>"><i class="icofont-pencil"></i>Editar</button>
-                                    <button class="accion delete-user" data-userid="<?= $user->ID; ?>"><i class="icofont-info-circle"></i>Eliminar</button>
+                                    <button class="accion edit-user button-save" data-userid="<?= $user->ID; ?>"><i class="icofont-pencil"></i>Editar</button>
+                                    <button class="accion delete-user button-delete" data-userid="<?= $user->ID; ?>"><i class="icofont-info-circle"></i>Eliminar</button>
                                 </div>
                             </td>
                         </tr>

@@ -166,8 +166,8 @@
                     </select>
                 </div>
                 <div class="wrap">
-                    <button class="button" type="submit" name="submit-user">Crear Vehículo</button>
-                    <button class="button" type="button" id="cancelar-vehiculo-btn">Cancelar</button>
+                    <button class="button button-add" type="submit" name="submit-user">Crear Vehículo</button>
+                    <button class="button button-remove" type="button" id="cancelar-vehiculo-btn">Cancelar</button>
                 </div>
             </form>
         </div> 

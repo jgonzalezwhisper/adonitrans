@@ -9,24 +9,6 @@
         width: 100%;
     }
 
-    .wrap-title {
-        background-color: #0095e8;
-        box-shadow: 0 0 7px 1px rgba(0, 0, 0, .32);
-
-        .title {
-            margin: 0;
-            line-height: 1;
-            color: #fff;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            font-size: 22px;
-            font-weight: 700;
-            text-shadow: 0px 0px 4px rgba(0, 0, 0, .45);
-        }
-
-    }
-
     form {
         display: flex;
         flex-wrap: wrap;
