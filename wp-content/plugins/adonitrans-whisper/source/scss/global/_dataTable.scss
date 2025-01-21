@@ -79,6 +79,9 @@
 		tbody {
 			td{
 				vertical-align: middle;
+				&.colaborador{
+					font-size: 14px;
+				}
 			}
 			.Activo, .Activa{
 				color: #30bf30;
@@ -86,6 +89,10 @@
 			}
 			.Inactivo, .Inactiva{
 				color: red;
+    			font-weight: 700;
+			}
+			.Pendiente{
+				color: #ff8100;
     			font-weight: 700;
 			}
 			.acciones {

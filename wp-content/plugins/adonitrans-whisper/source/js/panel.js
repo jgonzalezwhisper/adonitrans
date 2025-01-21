@@ -62,6 +62,8 @@ jQuery(document).ready(function($) {
 
         $("#lateral ul li").removeClass('active');
         $(this).addClass('active');
+        
+        $("#franja .nombsecc").text($(this).text());
 
         var data_action = $(this).data("action");
         if (data_action === "logout") {
@@ -145,7 +147,7 @@ window.initRecorridos = function initRecorridos() {
         width: '100%'
     });
     if (jQuery('#id_solicitante_recorrido').length > 0) {
-        jQuery('#id_solicitante_recorrido, #id_conductor_recorrido').select2({
+        jQuery('#id_solicitante_recorrido').select2({
             placeholder: "Selecciona un Valor",
             width: '100%'
         });

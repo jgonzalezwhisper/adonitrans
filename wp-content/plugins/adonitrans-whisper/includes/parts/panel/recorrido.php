@@ -101,7 +101,7 @@
                                 <td><?= get_the_ID(); ?></td>
                                 <td><?= get_the_title( ) ?></td>
                                 <td><?= get_the_title( $empresa_asociada ); ?></td>
-                                <td><?= $first_name." - $email" ?></td>
+                                <td class="colaborador"><?= $first_name ?> - <span class="email"><?= $email ?></span></td>
                                 <td class="<?= $estado_recorrido; ?>"><?= $estado_recorrido; ?></td>
                                 <td>
                                     <div class="acciones">
@@ -220,7 +220,7 @@
                     <?php endif ?>
                 <?php endif ?>
                 <?php if ($user_role === 'colaborador'): ?>
-                    <input type="hidden" id="id_solicitante_recorrido" name="id_solicitante_recorrido" value="<?= $user_id ?>">
+                    <input type="hidden" id="id_solicitante_recorrido_col" name="id_solicitante_recorrido" value="<?= $user_id ?>">
                 <?php endif ?>
 
                 <div class="wrap"></div>

@@ -18,6 +18,7 @@
 			$telefono = get_field('telefono', $user_key);
 			$direccion = get_field('direccion', $user_key);
 			$foto_de_usuario = get_field('foto_de_usuario', $user_key);
+			$foto_de_usuario = $foto_de_usuario? $foto_de_usuario['url']: URL_ADONITRANSPLUG."assets/images/profile.jpg";
 			$user_roles = $current_user->roles;
 			$user_role = !empty($user_roles) ? $user_roles[0] : '';
 		?>
@@ -26,7 +27,7 @@
 			<div class="column-1">
 				<div class="wrap profile_photo">
 					<img src="<?= URL_ADONITRANSPLUG ?>assets/images/profile.jpg" alt="<?= get_bloginfo( 'name' ) ?>">
-					<label for="user-foto">Cambiar<i class="icofont-camera"></i></label>
+					<label for="user-foto">Cambiar <i class="icofont-camera"></i></label>
 					<input style="display:none;" type="file" id="user-foto" name="user-foto" accept="image/*" value="<?= $foto_de_usuario; ?>">
 				</div>
 				<div class="wrap profile_info">
