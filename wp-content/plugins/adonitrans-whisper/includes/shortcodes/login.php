@@ -14,7 +14,7 @@ function custom_login_form_shortcode() {
                 <p class="title_form_login">Usuario</p>
                 <input type="email" name="user_email" id="user_email" placeholder="" required autocomplete="off">
             </label>
-            <label for="user_password">
+            <label class="password" for="user_password">
                 <p class="title_form_login">Contraseña</p>
                 <input type="password" name="user_password" id="user_password" placeholder="" required autocomplete="off">
                 <i class="icofont-eye-blocked"></i>

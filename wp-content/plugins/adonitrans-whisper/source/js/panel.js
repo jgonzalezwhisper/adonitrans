@@ -62,7 +62,7 @@ jQuery(document).ready(function($) {
 
         $("#lateral ul li").removeClass('active');
         $(this).addClass('active');
-        
+
         $("#franja .nombsecc").text($(this).text());
 
         var data_action = $(this).data("action");
@@ -94,6 +94,7 @@ jQuery(document).ready(function($) {
                 }
                 if (data_action == 'usuario') {
                     initUsuarios();
+
                 }
             },
             error: function() {
@@ -125,7 +126,9 @@ window.initUsuarios = function initUsuarios() {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
-        order: [[0, 'desc']]
+        order: [
+            [0, 'desc']
+        ]
     });
     jQuery('#select_rolesusuario, #sel_empresa_asociada').select2({
         placeholder: "Selecciona un rol",
@@ -139,7 +142,9 @@ window.initRecorridos = function initRecorridos() {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
-        order: [[0, 'desc']]
+        order: [
+            [0, 'desc']
+        ]
     });
 
     jQuery('#ciudad_inicio, #barrio_inicio, #ciudad_fin, #barrio_fin').select2({
@@ -159,7 +164,9 @@ window.initVehiculos = function initVehiculos() {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
-        order: [[0, 'desc']]
+        order: [
+            [0, 'desc']
+        ]
     });
 
     jQuery('#tipo_de_vehiculo, #propietario_de_vehiculo, #conductor_del_vehiculo').select2({
@@ -174,7 +181,9 @@ window.initEmpresas = function initEmpresas() {
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
-        order: [[0, 'desc']]
+        order: [
+            [0, 'desc']
+        ]
     });
 
     jQuery('#administradores_empresa').select2({

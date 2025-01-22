@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-	$(document).on('click', '.adonitrans-plug .formplug label i', function(event) {
+	$(document).on('click', '.adonitrans-plug .formplug label.password i', function(event) {
         event.preventDefault();
         $ojo = $(this);
         let input = $(this).closest('label').find('input');

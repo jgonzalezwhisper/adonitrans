@@ -26,9 +26,16 @@
 
 			<div class="column-1">
 				<div class="wrap profile_photo">
-					<img src="<?= URL_ADONITRANSPLUG ?>assets/images/profile.jpg" alt="<?= get_bloginfo( 'name' ) ?>">
-					<label for="user-foto">Cambiar <i class="icofont-camera"></i></label>
-					<input style="display:none;" type="file" id="user-foto" name="user-foto" accept="image/*" value="<?= $foto_de_usuario; ?>">
+					<img id="profile-photo-preview" data-original="<?= $foto_de_usuario; ?>" src="<?= $foto_de_usuario; ?>" alt="<?= esc_attr(get_user_meta($user_id, 'first_name', true)); ?>">
+					<label for="user-foto-prof" title="Cambiar Foto">Cambiar <i id="icon-camera" class="icofont-camera"></i></label>
+					<input 
+						style="display:none;" 
+						type="file" 
+						id="user-foto-prof" 
+						name="user-foto-prof" 
+						accept="image/*"
+						value="<?= $foto_de_usuario; ?>" 						
+					>
 				</div>
 				<div class="wrap profile_info">
 					<input type="hidden" id="user-id" name="user-id" value="<?= esc_attr($user_id); ?>">
@@ -63,7 +70,7 @@
 			<div class="column-2 wrap">
 				<h3>Actualizar Contraseña</h3>
 				<div class="cont_password">
-					<label for="password">Contraseña
+					<label class="password" for="password">Contraseña
 						<input type="password" id="password" name="password" value="">
 						<i class="icofont-eye-blocked"></i>
 					</label>

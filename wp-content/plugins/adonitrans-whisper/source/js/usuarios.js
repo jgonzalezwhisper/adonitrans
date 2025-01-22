@@ -58,11 +58,9 @@ jQuery(document).ready(function($) {
 
             if (role === 'propietario_vehiculo' || role === 'conductor') {
                 paymentFieldsContainer.show();
-            }
-            else if (role === 'colaborador' ) {
+            } else if (role === 'colaborador') {
                 empresaFieldsContainer.show();
-            }
-            else{
+            } else {
                 paymentFieldsContainer.hide();
                 empresaFieldsContainer.hide();
             }
@@ -431,5 +429,41 @@ jQuery(document).ready(function($) {
         }
     });
 
+    const urlimgoriginal = "";
+
+    $(document).on('change', '#user-foto-prof', function(event) {
+        const fileInput = $(this);
+        const file = event.target.files[0];
+        const previewImage = $('.profile_photo img');
+        const urlimgoriginal = previewImage.data('original');
+        const iconCamera = $('.profile_photo .icofont-camera, .profile_photo .icofont-close');
+        const label = $('.profile_photo label');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.attr('src', e.target.result);
+                iconCamera.attr('class', 'icofont-close');
+                label.addClass('remove');
+                label.attr('title', 'Eliminar Foto');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    $(document).on('click', '.profile_photo label.remove', function(evt) {
+        const iconCamera = $('.profile_photo .icofont-close');
+        const previewImage = $('.profile_photo img');
+        const fileInput = $('#user-foto-prof');
+        const label = $(this);
+
+        if (iconCamera.length > 0) {
+            evt.preventDefault();
+            previewImage.attr('src', $("#profile-photo-preview").data('original'));
+            fileInput.val('');
+            iconCamera.attr('class', 'icofont-camera');
+            label.attr('title', 'Cambiar Foto');
+        }
+    });
 
 });
