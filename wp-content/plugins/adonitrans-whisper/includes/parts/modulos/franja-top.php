@@ -14,13 +14,17 @@
             </div>
             <div class="continfo_user">
                 <?php if (is_user_logged_in()):
-                $current_user = wp_get_current_user();
-                $first_name = $current_user->user_firstname;
-                $last_name  = $current_user->user_lastname;
+                    $current_user = wp_get_current_user();
+                    $user_id = $current_user->ID;
+                    $user_key = 'user_' . $user_id;
+                    $first_name = $current_user->user_firstname;
+                    $last_name  = $current_user->user_lastname;
+                    $foto_de_usuario = get_field('foto_de_usuario', $user_key);
+                    $foto_de_usuario = $foto_de_usuario? $foto_de_usuario['url']: URL_ADONITRANSPLUG."assets/images/profile.jpg";
                 ?>
                 Hola, <?= $first_name.' '.$last_name ?>
                 <?php endif ?>
-                <img onclick="toggleMenu()" class="img_user" src="<?= URL_ADONITRANSPLUG ?>assets/images/profile.jpg" alt="<?= get_bloginfo( 'name' ) ?>">
+                <img class="img_user" src="<?= $foto_de_usuario; ?>" alt="<?= $first_name ?>">
                 <ul class="dropdown">
                     <li><a href="#">Soporte</a></li>
                     <li><a href="#">Contáctanos</a></li>

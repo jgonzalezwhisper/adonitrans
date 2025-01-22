@@ -388,6 +388,7 @@ jQuery(document).ready(function($) {
                                         success: function(response) {
                                             $('#informacion').html(response);
                                             initUsuarios();
+                                            $("#franja .img_user").attr('src', $("#profile-photo-preview").attr('src'));
                                         },
                                         error: function() {
                                             $('#informacion').html(

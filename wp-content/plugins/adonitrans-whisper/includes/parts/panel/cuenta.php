@@ -32,7 +32,7 @@
 						style="display:none;" 
 						type="file" 
 						id="user-foto-prof" 
-						name="user-foto-prof" 
+						name="user-foto" 
 						accept="image/*"
 						value="<?= $foto_de_usuario; ?>" 						
 					>
