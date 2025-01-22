@@ -90,6 +90,13 @@ function create_user_function() {
     // Subir la foto de usuario
     if (!empty($_FILES['user-foto']['name'])) {
         $file = $_FILES['user-foto'];
+
+        // Obtener el ID de la imagen asociada al campo foto_de_usuario y eliminarla
+        $foto = get_field('foto_de_usuario', 'user_' . $user_id);
+        if (!empty($foto['ID'])) {
+            wp_delete_attachment($foto['ID'], true); // Eliminar la imagen permanentemente
+        }
+
         $upload = wp_handle_upload($file, ['test_form' => false]);
 
         if (!isset($upload['error'])) {
