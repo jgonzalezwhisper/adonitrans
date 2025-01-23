@@ -84,10 +84,18 @@ function enqueue_custom_login_scripts() {
             wp_enqueue_style( 'adoni-cuenta-css', URL_ADONITRANSPLUG.'assets/css/panel-cuenta.css', array(), PLUG_VERSION );
 
         }
-    	if (is_page($slugadm)) {    		
+    	if (is_page($slugadm)) {   
+            wp_enqueue_style( 'adoni-asignaciones-css', URL_ADONITRANSPLUG.'assets/css/panel-asignaciones.css', array(), PLUG_VERSION );
             wp_enqueue_style( 'adoni-empresa-css', URL_ADONITRANSPLUG.'assets/css/panel-empresa.css', array(), PLUG_VERSION );
             wp_enqueue_style( 'adoni-usuarios-css', URL_ADONITRANSPLUG.'assets/css/panel-usuarios.css', array(), PLUG_VERSION );
             wp_enqueue_style( 'adoni-vehiculos-css', URL_ADONITRANSPLUG.'assets/css/panel-vehiculos.css', array(), PLUG_VERSION );
+
+
+            wp_enqueue_script('adoni-asignaciones-js', URL_ADONITRANSPLUG . 'assets/js/asignaciones.js', array('jquery'), null, true);
+            wp_localize_script('adoni-asignaciones-js', 'asignacionAjax', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'plugin_url' => URL_ADONITRANSPLUG,
+            ));
             
             
 

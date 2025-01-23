@@ -6,7 +6,7 @@
     </div>
     <div class="continfo">
         <div class="continfo_bread">
-            <a href="#">ADONIGO</a> <span>></span> <span class="nombsecc">Panel</span>
+            <a href="#">ADONI-Go!</a> <span>></span> <span class="nombsecc">Panel</span>
         </div>
         <div class="continfo-right">
             <div class="continfo_noti">

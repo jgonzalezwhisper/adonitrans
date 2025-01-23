@@ -31,7 +31,9 @@ body.adonitrans-plug {
         &:hover {
           transform: scale(1.1);
         }
+
       }
+
     }
 
     .continfo {
@@ -76,44 +78,51 @@ body.adonitrans-plug {
 
         }
 
-        .dropdown{
-            position: absolute;
-            list-style: none;
-            top: 45px;
-            right: 0;
-            background-color: $primary-color;
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: column;
-            row-gap: 5px;
-            border-radius: 6px;
-            padding: 0;
-            overflow: hidden;
-            transform: scale(0);
-            opacity: 0;
-            transition: 0.5s;
+        .dropdown {
+          position: absolute;
+          list-style: none;
+          top: 45px;
+          right: 0;
+          background-color: $primary-color;
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: column;
+          row-gap: 5px;
+          border-radius: 6px;
+          padding: 0;
+          overflow: hidden;
+          transform: scale(0);
+          opacity: 0;
+          transition: 0.5s;
 
-            li{
+          li {
+            display: inline-block;
+
+            a {
+              padding: 6px 16px 6px 27px;
+              color: #fff;
               display: inline-block;
-              a{
-                padding: 6px 16px 6px 27px;
-                color: #fff;
-                display: inline-block;
-                width: 100%;
-                font-weight: 500;
-                &:hover{
-                  background-color: $color3;;
-                }
+              width: 100%;
+              font-weight: 500;
+
+              &:hover {
+                background-color: $color3;
               }
+
             }
+
           }
 
-        &:hover{
-          .dropdown{
+        }
+
+        &:hover {
+          .dropdown {
             transform: scale(1);
             opacity: 1;
           }
+
         }
+
       }
 
       .continfo_noti {
@@ -133,136 +142,8 @@ body.adonitrans-plug {
         i {
           color: #086ACF;
         }
+
       }
-
-            label {
-                text-shadow: none;
-                margin-bottom: 5px;
-            }
-            a{
-                color: $primary-color;
-                text-decoration: underline;
-                transition: all .5s;
-                &:hover{
-                    color: $secondary-color;
-                }
-            }
-
-            .select2-container {
-                .select2-selection--single {
-                    height: 42px;
-
-                    .select2-selection__rendered {
-                        line-height: 42px;
-                    }
-
-                }
-
-            }
-
-            &.wrap-2 {
-                width: 49%;
-                &.time{
-                	display: flex;
-					align-items: center;
-					justify-content: space-around;
-					label{
-						column-gap: 10px;
-					}
-                }
-            }
-
-        a {
-          color: #086ACF;
-          text-decoration: none;
-        }
-
-        span {
-          padding: 0 5px;
-          color: #086ACF;
-        }
-      }
-    }
-  }
-
-  #lateral {
-    background-color: #086ACF;
-    color: #fff;
-    width: 15%;
-    padding: 0;
-    height: calc(100vh - 120px);
-
-    ul {
-      list-style: none;
-      padding: 0;
-
-      li {
-        padding: 15px 20px;
-        font-size: 17px;
-        letter-spacing: 1px;
-        text-transform: capitalize;
-        font-weight: 500;
-        cursor: pointer;
-        background-color: transparent;
-        color: #fff;
-        border-radius: 50px 0 0 50px;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-        animation: intro-menu-animation 0.4s ease-in-out 0.33333s forwards;
-        animation-delay: 0.1s;
-
-        i {
-          font-size: 20px;
-        }
-
-        a {
-          color: #fff;
-        }
-
-        &:hover {
-          background-color: rgba(39, 74, 183, 0.4);
-          transition-duration: 0.5s;
-
-          a {
-            color: #2d2d2d;
-          }
-        }
-
-        &.active {
-          background-color: #fff;
-          color: #000;
-        }
-      }
-    }
-  }
-
-  #informacion {
-    width: 85%;
-    height: calc(100vh - 120px);
-    padding: 0;
-    background-color: #fff;
-    overflow: auto;
-  }
-
-  .wrap-gestion-usuarios {
-    width: 100%;
-  }
-
-  form {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 20px;
-    row-gap: 25px;
-
-    &#ajustes-generales {
-      flex-direction: column;
-    }
-
-    .wrap {
-      width: 100%;
-      position: relative;
 
       label {
         text-shadow: none;
@@ -270,13 +151,14 @@ body.adonitrans-plug {
       }
 
       a {
-        color: #086ACF;
+        color: $primary-color;
         text-decoration: underline;
-        transition: 0.5s;
+        transition: all .5s;
 
         &:hover {
-          color: #00b9d9;
+          color: $secondary-color;
         }
+
       }
 
       .select2-container {
@@ -286,64 +168,214 @@ body.adonitrans-plug {
           .select2-selection__rendered {
             line-height: 42px;
           }
+
         }
-      }
-    }
 
-    #payment-fields-container{
-      h4{
-        background: $blue-dark;
-        color: #fff;
-        padding: 12px 20px;
-        border-radius: 10px;
-        width: 100%;
-        text-align: center;
-        font-weight: 700;
-        font-size: 20px;
-      }
-    }
-
-    #extra-fields-container,
-    #payment-fields-container,
-    .payment-row {
-      display: flex;
-      flex-wrap: wrap;
-      column-gap: 20px;
-      row-gap: 25px;
-
-      &:not(:last-child) {
-        margin-bottom: 40px;
       }
 
-      .remove-payment-row {
-        position: absolute;
-        color: red;
-        top: -6px;
-        right: 0;
-        background-color: #fff;
-        border-radius: 50%;
-        line-height: 1;
-        font-size: 9px;
-        padding: 8px;
-        border: 1px solid;
+      &.wrap-2 {
+        width: 49%;
+
+        &.time {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+
+          label {
+            column-gap: 10px;
+          }
+
+        }
+
+      }
+
+      a {
+        color: #086ACF;
         text-decoration: none;
-        transition: 0.5s;
-
-        &:hover {
-          background-color: red;
-          color: #fff;
-          border-color: red;
-        }
       }
+
+      span {
+        padding: 0 5px;
+        color: #086ACF;
+      }
+
     }
+
   }
 
-  .wrap-title {
-    background-color: #086acf;
-    border-radius: 15px;
+}
 
-    .title {
-      margin: 0 0 20px;
+#lateral {
+  background-color: #086ACF;
+  color: #fff;
+  width: 15%;
+  padding: 0;
+  height: calc(100vh - 120px);
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 15px 20px;
+      font-size: 17px;
+      letter-spacing: 1px;
+      text-transform: capitalize;
+      font-weight: 500;
+      cursor: pointer;
+      background-color: transparent;
+      color: #fff;
+      border-radius: 50px 0 0 50px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      column-gap: 10px;
+      animation: intro-menu-animation 0.4s ease-in-out 0.33333s forwards;
+      animation-delay: 0.1s;
+
+      i {
+        font-size: 20px;
+      }
+
+      a {
+        color: #fff;
+      }
+
+      &:hover {
+        background-color: rgba(39, 74, 183, 0.4);
+        transition-duration: 0.5s;
+
+        a {
+          color: #2d2d2d;
+        }
+
+      }
+
+      &.active {
+        background-color: #fff;
+        color: #000;
+      }
+
+    }
+
+  }
+
+}
+
+#informacion {
+  width: 85%;
+  height: calc(100vh - 120px);
+  padding: 0;
+  background-color: #fff;
+  overflow: auto;
+}
+
+.wrap-gestion-usuarios {
+  width: 100%;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  row-gap: 25px;
+
+  &#ajustes-generales {
+    flex-direction: column;
+  }
+
+  .wrap {
+    width: 100%;
+    position: relative;
+
+    label {
+      text-shadow: none;
+      margin-bottom: 5px;
+    }
+
+    a {
+      color: #086ACF;
+      text-decoration: underline;
+      transition: 0.5s;
+
+      &:hover {
+        color: #00b9d9;
+      }
+
+    }
+
+    .select2-container {
+      .select2-selection--single {
+        height: 42px;
+
+        .select2-selection__rendered {
+          line-height: 42px;
+        }
+
+      }
+
+    }
+
+  }
+
+  #payment-fields-container {
+    h4 {
+      background: $blue-dark;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      width: 100%;
+      text-align: center;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+  }
+
+  #extra-fields-container,
+  #payment-fields-container,
+  .payment-row {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+    row-gap: 25px;
+
+    &:not(:last-child) {
+      margin-bottom: 40px;
+    }
+
+    .remove-payment-row {
+      position: absolute;
+      color: red;
+      top: -6px;
+      right: 0;
+      background-color: #fff;
+      border-radius: 50%;
+      line-height: 1;
+      font-size: 9px;
+      padding: 8px;
+      border: 1px solid;
+      text-decoration: none;
+      transition: 0.5s;
+
+      &:hover {
+        background-color: red;
+        color: #fff;
+        border-color: red;
+      }
+
+    }
+
+  }
+
+}
+
+.wrap-title {
+  background-color: #086acf;
+  border-radius: 15px;
+
+  .title {
+    margin: 0 0 20px;
     line-height: 1;
     color: #fff;
     padding: 15px 20px;
@@ -351,8 +383,9 @@ body.adonitrans-plug {
     font-size: 22px;
     font-weight: 700;
     text-shadow: 0 0 4px rgba(0, 0, 0, .45)
-    }
   }
+
+}
 
 .dropdown-menu-user {
   width: 224px;
@@ -389,7 +422,9 @@ body.adonitrans-plug {
         font-size: 14px;
         padding-bottom: 15px;
       }
+
     }
+
   }
 
   .options {
@@ -425,9 +460,13 @@ body.adonitrans-plug {
           font-size: 16px;
           padding-right: 10px;
         }
+
       }
+
     }
+
   }
+
 }
 
 .adonitrans-plug {
@@ -453,8 +492,11 @@ body.adonitrans-plug {
         &:hover {
           background-color: #086acf;
         }
+
       }
+
     }
+
   }
 
   #ajustes-generales {
@@ -477,7 +519,9 @@ body.adonitrans-plug {
         label {
           font-size: 18px;
         }
+
       }
+
     }
 
     div {
@@ -509,7 +553,9 @@ body.adonitrans-plug {
             &:hover {
               font-size: 16px;
             }
+
           }
+
         }
 
         &.button-add {
@@ -533,7 +579,9 @@ body.adonitrans-plug {
             &:hover {
               font-size: 16px;
             }
+
           }
+
         }
 
         &.button-save {
@@ -551,15 +599,20 @@ body.adonitrans-plug {
             margin-top: -5px;
             color: #fff;
           }
+
         }
+
       }
+
     }
 
     #wrap-franjas-trabajo {
       .franja {
         width: auto;
       }
+
     }
+
   }
 
   .acordeon {
@@ -573,8 +626,11 @@ body.adonitrans-plug {
       .acordeon-body {
         padding: 20px;
       }
+
     }
+
   }
+
 }
 
 .wrap-centro-costos {
@@ -597,6 +653,9 @@ body.adonitrans-plug {
         font-size: 15px;
         font-weight: 600;
       }
+
     }
+
   }
+
 }

@@ -17,6 +17,9 @@
         </li>   
 
         <?php if (in_array($user_role, $roles_admins)): ?>
+            <li data-action="asignacion">
+                <i class="icofont-chart-flow"></i> Asignaciones
+            </li>
             <li data-action="vehiculo">
                 <i class="icofont-car"></i> Vehículos
             </li>

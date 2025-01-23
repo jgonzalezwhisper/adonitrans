@@ -112,7 +112,9 @@
                                     </div>
                                 </td>
                             </tr>
-                        <?php endwhile;wp_reset_postdata(); ?>                    
+                        <?php endwhile;wp_reset_postdata(); ?>  
+                    <?php else: ?>
+                        <p>No hay recorridos creados.</p>                    
                     <?php endif ?>
                         
                 </tbody>

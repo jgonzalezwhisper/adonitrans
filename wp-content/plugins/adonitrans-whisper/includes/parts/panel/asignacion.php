@@ -1,0 +1,174 @@
+<?php 
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');  
+    if (!isset($_POST['action']) || empty($_POST['action'])) {
+        exit('Acceso no autorizado');
+    }
+?>
+<div id="wrap-asignaciones">
+    <div class="tarjeta">
+        <div class="wrap-titulo">
+            <h3 class="titulo">ASIGNACIONES</h3>
+            <h4 class="subtitulo">Gestiona las asignaciones realizados en la plataforma</h4>
+        </div>
+        <p>Administra y gestiona las asignaciones registradas en ADONITRANS desde este panel. Mantén toda la información organizada y actualizada.</p>
+
+        <div class="wrap volver" style="display:none">
+            <span class="button"><i class="icofont-double-left"></i> Volver</span>
+        </div>
+
+        <div class="wrap wrap-acciones ">
+            <div class="botones">
+                <div class="boton" data-action="asginar">
+                    <i class="icofont-connection"></i> <span>Asignar</span>
+                </div>                
+
+                <div class="boton" data-action="ver">
+                    <i class="icofont-calendar"></i> <span>Ver</span>
+                </div>
+                
+                <div class="boton" data-action="exportar">
+                    <i class="icofont-file-excel"></i> <span>Reportes</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="wrap wrap-gestion wrap-gestion-asignaciones" data-target="asginar" style="display:none">
+            <div class="wrap wrap-title">
+                <h3 class="title">Crear Asignación</h3>
+            </div>
+
+            <form id="asignacion-form" method="post" class="formplug" autocomplete="off">
+                <?php wp_nonce_field('create_asignacion_action', 'create_asignacion_nonce'); ?>
+                <input type="hidden" id="asignacion-id" name="asignacion-id" value="">           
+
+                <?php
+                    $argscon = array(
+                        'role'    => 'conductor',
+                        'orderby' => 'display_name',
+                        'order'   => 'ASC',
+                        'meta_query' => array(
+                            array(
+                                'key'   => 'estado_usuario',
+                                'value' => 'Activo',
+                                'compare' => '='
+                            )
+                        )
+                    );
+                    $user_query = new WP_User_Query($argscon);
+                    $conductores = $user_query->get_results();
+                ?>
+                <div class="wrap">
+                    <label for="id_conductor_asignado">Conductor Asignado</label>
+                    <select id="id_conductor_asignado" name="id_conductor_asignado" required>
+                        <option value="">Selecciona un Conductor</option>
+                        <?php foreach ($conductores as $conductor): ?>
+                        <?php
+                            $user_id = $conductor->ID;
+                            $first_name = get_user_meta($user_id, 'first_name', true);
+                            $last_name = get_user_meta($user_id, 'last_name', true);
+                            $email = $conductor->user_email;
+                            $name = trim("$first_name $last_name");
+                            $display_name = $name ? $name : $conductor->display_name;
+                        ?>
+                        <option value="<?php echo esc_attr($user_id); ?>">
+                            <?php echo esc_html("$display_name ($email)"); ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>               
+
+                <div class="wrap wrap-2">
+                    <label for="inicio_semana_asignacion">Fecha Inicio Semana</label>
+                    <input type="date" id="inicio_semana_asignacion" name="inicio_semana_asignacion" min="<?= date('Y-m-d') ?>" value="" placeholder="dd/mm/yyyy">
+                </div>
+
+                <div class="wrap wrap-2">
+                    <label for="fin_semana_asignacion">Fecha Fin Semana</label>
+                    <input type="date" id="fin_semana_asignacion" name="fin_semana_asignacion" min="<?= date('Y-m-d') ?>" value="" placeholder="dd/mm/yyyy">
+                </div>
+
+                <div class="wrap"></div>
+
+                <div id="wrap-asignacion-dias" class="wrap wrap-fanjas">
+
+                    <div id="wrap-asignacion-dia" class="wrap-franja">
+
+                        <div class="franja">
+                            <div class="franja_item">
+                                <label for="dia_inicio_de_asignacion">Día Inicio</label>
+                                <input type="date" id="dia_inicio_de_asignacion" name="dia_inicio_de_asignacion[]" min="<?= date('Y-m-d') ?>" value="" placeholder="dd/mm/yyyy">
+                            </div>
+                            <div class="franja_item">
+                                <label for="dia_fin_de_asignacion">Día Fin</label>
+                                <input type="date" id="dia_fin_de_asignacion" name="dia_fin_de_asignacion[]" min="<?= date('Y-m-d') ?>" value="" placeholder="dd/mm/yyyy" >
+                            </div>
+                            <div class="franja_item">
+                                <label for="">Franja Horaria</label>
+                                <select id="" class="select_franja_asignacion" name="franja_horaria_asignacion[]"  >
+                                    <option value="">Selecciona una Franja</option>
+                                    <option value="Diurna">Diurna</option>
+                                    <option value="Partido">Partido</option>
+                                    <option value="Trasnocho">Trasnocho</option>
+                                    <option value="Descanso">Descanso</option>
+                                </select>
+                            </div>
+                            <button type="button" class="button remove">Eliminar Día(s)</button>
+                        </div>                        
+                    </div>
+
+                    <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir Día(s)</a>
+                    
+                </div>
+
+                <div class="wrap">
+                    <button class="button button-add" type="submit" name="submit-user">Crear Asignación</button>
+                    <button class="button cancelar button-remove" type="button" id="cancelar-asignacion-btn">Cancelar</button>
+                </div>
+            </form>           
+        </div> 
+
+        <div class="wrap wrap-gestion wrap-listado-asignaciones" data-target="ver" style="display:none">
+            <table id="table-asignaciones" class="display table-adoni">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Conductor</th>
+                        <th>Periodo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $args = [
+                            'post_type'      => 'asignacion',
+                            'posts_per_page' => -1,
+                        ];
+                        $query = new WP_Query($args);
+                    ?>
+                    
+                    <?php if ($query->have_posts()): ?>
+                        <?php while($query->have_posts()): $query->the_post();?>
+                            <?php
+                                $inicio_semana_asignacion = get_field('inicio_semana_asignacion', get_the_ID());
+                                $fin_semana_asignacion = get_field('fin_semana_asignacion', get_the_ID());
+                            ?>
+                            <tr>
+                                <td><?= get_the_ID(); ?></td>
+                                <td>xxxx - adfadf@gmail.com</td>
+                                <td><?= $inicio_semana_asignacion." -- ".$fin_semana_asignacion ?></td>
+                                <td>
+                                    <div class="acciones">
+                                        <button class="accion edit-asignacion" data-id="<?= get_the_ID(); ?>">Editar</button>
+                                        <button class="accion delete-asignacion" data-id="<?= get_the_ID(); ?>">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endwhile;wp_reset_postdata(); ?>    
+                    <?php else: ?>
+                        <p>No asignaciones creadas.</p>                
+                    <?php endif ?>
+                        
+                </tbody>
+            </table>
+        </div>
+</div>

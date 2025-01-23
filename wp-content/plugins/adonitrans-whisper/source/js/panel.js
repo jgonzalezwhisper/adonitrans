@@ -94,7 +94,9 @@ jQuery(document).ready(function($) {
                 }
                 if (data_action == 'usuario') {
                     initUsuarios();
-
+                }
+                if(data_action == 'asignacion'){
+                    initAsignacion()
                 }
             },
             error: function() {
@@ -187,6 +189,23 @@ window.initEmpresas = function initEmpresas() {
     });
 
     jQuery('#administradores_empresa').select2({
+        placeholder: "Selecciona un Valor",
+        allowClear: true,
+        width: '100%'
+    });
+}
+
+window.initAsignacion = function initAsignacion() {
+    jQuery('#table-asignaciones').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
+        },
+        order: [
+            [0, 'desc']
+        ]
+    });
+
+    jQuery('#id_conductor_asignado').select2({
         placeholder: "Selecciona un Valor",
         allowClear: true,
         width: '100%'

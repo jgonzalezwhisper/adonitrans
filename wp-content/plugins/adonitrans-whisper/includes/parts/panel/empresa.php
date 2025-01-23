@@ -57,7 +57,9 @@
                                     </div>
                                 </td>
                             </tr>
-                        <?php endwhile;wp_reset_postdata(); ?>                    
+                        <?php endwhile;wp_reset_postdata(); ?>     
+                    <?php else: ?>
+                        <p>No hay empresas creadas.</p>                 
                     <?php endif ?>
                         
                 </tbody>

@@ -1,0 +1,254 @@
+{
+    "key": "group_67910b9cae5f9",
+    "title": "Datos Adicionales Asignacion",
+    "fields": [
+        {
+            "key": "field_67911280ba183",
+            "label": "ID Conductor Asignado",
+            "name": "id_conductor_asignado",
+            "aria-label": "",
+            "type": "user",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "role": [
+                "conductor"
+            ],
+            "return_format": "array",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_67910b9c6059a",
+            "label": "Inicio Semana Asignacion",
+            "name": "inicio_semana_asignacion",
+            "aria-label": "",
+            "type": "date_picker",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "d\/m\/Y",
+            "return_format": "d\/m\/Y",
+            "first_day": 1,
+            "allow_in_bindings": 1
+        },
+        {
+            "key": "field_67910f6004e48",
+            "label": "Fin Semana Asignacion",
+            "name": "fin_semana_asignacion",
+            "aria-label": "",
+            "type": "date_picker",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "d\/m\/Y",
+            "return_format": "d\/m\/Y",
+            "first_day": 1,
+            "allow_in_bindings": 1
+        },
+        {
+            "key": "field_67911173e8d71",
+            "label": "Asignaciones de la Semana",
+            "name": "asignaciones_de_la_semana",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "field_6791122fba17f",
+            "button_label": "Agregar Asignacion",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_6791122fba17f",
+                    "label": "Dia Inicio de Asignacion",
+                    "name": "dia_inicio_de_asignacion",
+                    "aria-label": "",
+                    "type": "date_picker",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "d\/m\/Y",
+                    "return_format": "d\/m\/Y",
+                    "first_day": 1,
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_67911173e8d71"
+                },
+                {
+                    "key": "field_6792637b25804",
+                    "label": "Dia Fin de Asignacion",
+                    "name": "dia_fin_de_asignacion",
+                    "aria-label": "",
+                    "type": "date_picker",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "d\/m\/Y",
+                    "return_format": "d\/m\/Y",
+                    "first_day": 1,
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_67911173e8d71"
+                },
+                {
+                    "key": "field_679111a6e8d72",
+                    "label": "Franja Horaria Asignacion",
+                    "name": "franja_horaria_asignacion",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "Diurna": "Diurna",
+                        "Partido": "Partido",
+                        "Trasnocho": "Trasnocho",
+                        "Descanso": "Descanso"
+                    },
+                    "default_value": false,
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 1,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "parent_repeater": "field_67911173e8d71"
+                },
+                {
+                    "key": "field_67911247ba180",
+                    "label": "Asignaciones por Día",
+                    "name": "asignaciones_por_dia",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "layout": "table",
+                    "min": 0,
+                    "max": 0,
+                    "collapsed": "",
+                    "button_label": "Agregar Día",
+                    "rows_per_page": 20,
+                    "sub_fields": [
+                        {
+                            "key": "field_67911259ba181",
+                            "label": "Hora de la Asignación",
+                            "name": "hora_de_la_asignacion",
+                            "aria-label": "",
+                            "type": "time_picker",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "display_format": "g:i a",
+                            "return_format": "g:i a",
+                            "allow_in_bindings": 0,
+                            "parent_repeater": "field_67911247ba180"
+                        },
+                        {
+                            "key": "field_67911263ba182",
+                            "label": "Recorrido Relacionado",
+                            "name": "recorrido_relacionado",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "recorrido"
+                            ],
+                            "post_status": [
+                                "publish"
+                            ],
+                            "taxonomy": "",
+                            "return_format": "object",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "bidirectional": 0,
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_67911247ba180"
+                        }
+                    ],
+                    "parent_repeater": "field_67911173e8d71"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "asignacion"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1737647837
+}
