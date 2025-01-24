@@ -1,0 +1,40 @@
+.fc {
+    .fc-toolbar-title {
+        text-transform: uppercase;
+    }
+
+    .fc-toolbar {
+        .fc-button-group {
+            /*.fc-button {
+                &.fc-verMes-button {
+                    &:before {
+                        content: "\eecd";
+                        font-family: Icofont;
+                    }
+
+                }
+
+                &.fc-verLista-button {
+                    &:before {
+                        content: "\ef75";
+                        font-family: Icofont;
+                    }
+
+                }
+
+            }*/
+
+        }
+
+    }
+
+    .fc-button,
+    .fc-col-header-cell-cushion {
+        text-transform: capitalize;
+    }
+
+    .fc-daygrid-day-top {
+        justify-content: center;
+    }
+
+}

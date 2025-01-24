@@ -197,4 +197,8 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="wrap wrap-gestion wrap-calendario-asignaciones" data-target="ver-calendario" style="display:none">
+            <div id="calendar"></div>
+        </div>
 </div>

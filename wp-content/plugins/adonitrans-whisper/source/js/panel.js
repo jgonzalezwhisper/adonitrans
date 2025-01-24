@@ -95,7 +95,7 @@ jQuery(document).ready(function($) {
                 if (data_action == 'usuario') {
                     initUsuarios();
                 }
-                if(data_action == 'asignacion'){
+                if (data_action == 'asignacion') {
                     initAsignacion()
                 }
             },

@@ -31,6 +31,49 @@ jQuery(document).ready(function($) {
 
         $('#wrap-asignaciones .wrap-acciones').hide();
         $('#wrap-asignaciones .wrap-gestion[data-target="' + action + '"], #wrap-asignaciones .volver').show();
+
+        // Inicializar el calendario directamente
+        var calendarEl = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'listWeek',
+            height: 700,
+            headerToolbar: {
+                left: 'prev,next today', // Botones de navegación
+                center: 'title', // Título del mes/semana/día
+                right: 'verMes,verLista' // Botones personalizados
+            },
+            customButtons: {
+                verMes: {
+                    text: "Mes",
+                    click: function() {
+                        calendar.changeView('dayGridMonth'); // Cambiar a vista mensual
+                    }
+                },
+                verLista: {
+                    text: "Lista",
+                    click: function() {
+                        calendar.changeView('listWeek'); // Cambiar a vista lista
+                    }
+                }
+            },
+            events: [{
+                title: 'Reunión con cliente',
+                start: '2025-01-24T10:00:00', // Evento con hora específica
+                end: '2025-01-25T12:00:00'
+            }, {
+                title: 'Llamada de seguimiento',
+                start: '2025-01-24T15:30:00', // Otro evento en el mismo día
+                end: '2025-01-24T16:00:00'
+            }, {
+                title: 'Evento durante la semana',
+                start: '2025-01-25T09:00:00', // Evento en un día diferente
+                end: '2025-01-25T10:00:00'
+            }]
+
+        });
+        calendar.setOption('locale', 'es');
+        calendar.render();
+        calendar.updateSize();
     });
 
     $(document).on('click', '#wrap-asignaciones .volver .button', function(event) {
