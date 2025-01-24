@@ -20,10 +20,14 @@
             <div class="botones">
                 <div class="boton" data-action="asginar">
                     <i class="icofont-connection"></i> <span>Asignar</span>
+                </div>
+
+                <div class="boton" data-action="ver-calendario">
+                    <i class="icofont-calendar"></i> <span>Ver Calendario</span>
                 </div>                
 
-                <div class="boton" data-action="ver">
-                    <i class="icofont-calendar"></i> <span>Ver</span>
+                <div class="boton" data-action="ver-tabla">
+                    <i class="icofont-table"></i> <span>Ver Tabla</span>
                 </div>
                 
                 <div class="boton" data-action="exportar">
@@ -127,13 +131,14 @@
             </form>           
         </div> 
 
-        <div class="wrap wrap-gestion wrap-listado-asignaciones" data-target="ver" style="display:none">
+        <div class="wrap wrap-gestion wrap-listado-asignaciones" data-target="ver-tabla" style="display:none">
             <table id="table-asignaciones" class="display table-adoni">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Conductor</th>
                         <th>Periodo</th>
+                        <th>Franja</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -151,11 +156,32 @@
                             <?php
                                 $inicio_semana_asignacion = get_field('inicio_semana_asignacion', get_the_ID());
                                 $fin_semana_asignacion = get_field('fin_semana_asignacion', get_the_ID());
+
+                                $first_name = '';
+                                $email = '';
+                                $user_id_tabla = get_field('id_conductor_asignado', get_the_ID())['ID'];
+                                if ($user_id_tabla) {
+                                    $user_info_tabla = get_userdata($user_id_tabla);
+                                    if ($user_info_tabla) {
+                                        $first_name = $user_info_tabla->first_name;
+                                        $email = $user_info_tabla->user_email;
+                                    }
+                                }
+                                $franja = "";
+                                if (have_rows('asignaciones_de_la_semana', get_the_ID())) {
+                                    $valores = [];
+                                    while (have_rows('asignaciones_de_la_semana')) {
+                                        the_row();
+                                        if ($franja = get_sub_field('franja_horaria_asignacion')) $valores[] = $franja;
+                                    }
+                                    $franja = implode(', ', $valores);
+                                }
                             ?>
                             <tr>
                                 <td><?= get_the_ID(); ?></td>
-                                <td>xxxx - adfadf@gmail.com</td>
-                                <td><?= $inicio_semana_asignacion." -- ".$fin_semana_asignacion ?></td>
+                                <td class="center"><?= $first_name." - ".$email ?></td>
+                                <td class="center"><?= $inicio_semana_asignacion." -- ".$fin_semana_asignacion ?></td>
+                                <td class="center"><?= $franja ?></td>
                                 <td>
                                     <div class="acciones">
                                         <button class="accion edit-asignacion" data-id="<?= get_the_ID(); ?>">Editar</button>

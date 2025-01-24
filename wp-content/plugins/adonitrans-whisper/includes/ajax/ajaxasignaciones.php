@@ -1,6 +1,6 @@
 <?php
 
-/*Acción AJAX para CREAR o ACTUALIZAR una Asignación*/
+/*ACCION AJAX PARA CREAR O EDITAR DATOS DE UNA ASIGNACION*/
 add_action('wp_ajax_create_asignacion', 'create_asignacion_function');
 add_action('wp_ajax_nopriv_create_asignacion', 'create_asignacion_function');
 function create_asignacion_function() {
@@ -88,7 +88,7 @@ function create_asignacion_function() {
     wp_send_json_success(['message' => 'Asignación ' . $accion2 . ' exitosamente']);
 }
 
-/*Eliminar asignacion*/
+/*ACCION AJAX PARA ELIMINAR DATOS DE UNA ASIGNACION*/
 function handle_delete_asignacion() {
 
     // Verificar permisos del usuario
@@ -120,3 +120,46 @@ function handle_delete_asignacion() {
 }
 add_action( 'wp_ajax_delete_asignacion', 'handle_delete_asignacion' );
 add_action( 'wp_ajax_nopriv_delete_asignacion', 'handle_delete_asignacion' );
+
+/*ACCION AJAX PARA OBTENER DATOS DE UNA ASIGNACION*/
+add_action('wp_ajax_load_asignacion_data', 'load_asignacion_data_function');
+add_action('wp_ajax_nopriv_load_asignacion_data', 'load_asignacion_data_function');
+function load_asignacion_data_function() {
+    $post_id = intval($_POST['post_id']);
+    if (!$post_id || get_post_type($post_id) !== 'asignacion') {
+        wp_send_json_error(['message' => 'Post no válido o no es un tipo de post Asignación.']);
+    }
+
+    // Obtener inicio y fin de semana y formatear las fechas
+    $inicio_semana_asignacion = get_post_meta($post_id, 'inicio_semana_asignacion', true);
+    $fin_semana_asignacion = get_post_meta($post_id, 'fin_semana_asignacion', true);
+
+    $inicio_semana_asignacion = format_date_for_input($inicio_semana_asignacion);
+    $fin_semana_asignacion = format_date_for_input($fin_semana_asignacion);
+
+    // Procesar el campo repetidor 'asignaciones_de_la_semana'
+    $asignaciones_de_la_semana = [];
+    if (have_rows('asignaciones_de_la_semana', $post_id)) {
+        while (have_rows('asignaciones_de_la_semana', $post_id)) {
+            the_row();
+
+            $dia_inicio_de_asignacion = get_sub_field('dia_inicio_de_asignacion');
+            $dia_fin_de_asignacion = get_sub_field('dia_fin_de_asignacion');
+            $franja_horaria_asignacion = get_sub_field('franja_horaria_asignacion');
+
+            $asignaciones_de_la_semana[] = [
+                'dia_inicio_de_asignacion' => format_date_for_input($dia_inicio_de_asignacion),
+                'dia_fin_de_asignacion' => format_date_for_input($dia_fin_de_asignacion),
+                'franja_horaria_asignacion' => $franja_horaria_asignacion,
+            ];
+        }
+    }
+
+    // Respuesta JSON
+    wp_send_json_success([
+        'id_conductor_asignado' => get_post_meta($post_id, 'id_conductor_asignado', true),
+        'inicio_semana_asignacion' => $inicio_semana_asignacion,
+        'fin_semana_asignacion' => $fin_semana_asignacion,
+        'asignaciones_de_la_semana' => $asignaciones_de_la_semana,
+    ]);
+}

@@ -44,6 +44,7 @@ jQuery(document).ready(function($) {
     $(document).on('click', '#wrap-asignaciones .button.cancelar', function(event) {
         event.preventDefault();
         $('#asignacion-form')[0].reset();
+        $('#wrap-asignacion-dia .franja').not(':first').remove();
         $("#asignacion-id").text('').val('');
         $('#id_conductor_asignado').val(null).trigger('change');
         $('#wrap-asignaciones .wrap-acciones').show();
@@ -154,6 +155,77 @@ jQuery(document).ready(function($) {
                     }
                 });
             }
+        });
+    });
+
+    $(document).on('click', '.wrap-listado-asignaciones .edit-asignacion', function(event) {
+
+        $('#asignacion-form button[type="submit"]').text('Editar Asignación');
+        $('#wrap-asignaciones .wrap-title .title').text('Editar Asignación');
+
+        let post_id = $(this).data('id');
+        $("#asignacion-form #asignacion-id").val(post_id);
+        $('body').addClass('actloader');
+
+        // Enviar la solicitud AJAX para obtener los datos del usuario
+        $.ajax({
+            url: asignacionAjax.ajaxurl,
+            method: 'POST',
+            data: {
+                action: 'load_asignacion_data',
+                post_id: post_id
+            },
+            success: function(response) {
+                if (response.success) {
+
+                    // Conservar solo la primera franja como plantilla
+                    var $baseFranja = $('#wrap-asignacion-dia .franja').first();
+                    $('#wrap-asignacion-dia .franja').not(':first').remove();
+
+                    $.each(response.data, function(key, value) {
+                        if (key === 'id_conductor_asignado') {
+                            $('#' + key).val(value).trigger('change');
+                        } else if (key !== 'asignaciones_de_la_semana') {
+                            $('#' + key).val(value);
+                        }
+                    });
+
+                    // Procesar asignaciones_de_la_semana
+                    if (response.data.asignaciones_de_la_semana && response.data.asignaciones_de_la_semana.length > 0) {
+                        $.each(response.data.asignaciones_de_la_semana, function(index, asignacion) {
+                            let $currentFranja;
+
+                            if (index === 0) {
+                                // Usar la primera franja para la primera asignación
+                                $currentFranja = $baseFranja;
+                            } else {
+                                // Clonar la franja base para asignaciones adicionales
+                                $currentFranja = $baseFranja.clone();
+                                $('#wrap-asignacion-dia').append($currentFranja);
+                            }
+
+                            // Rellenar los datos en la franja actual
+                            $currentFranja.find('input[name="dia_inicio_de_asignacion[]"]').val(asignacion.dia_inicio_de_asignacion);
+                            $currentFranja.find('input[name="dia_fin_de_asignacion[]"]').val(asignacion.dia_fin_de_asignacion);
+                            $currentFranja.find('select[name="franja_horaria_asignacion[]"]').val(asignacion.franja_horaria_asignacion);
+                        });
+                    }
+
+
+                    $("#wrap-asignaciones .wrap-listado-asignaciones").hide();
+                    $("#wrap-asignaciones .wrap-gestion-asignaciones").show();
+                    $('body').removeClass('actloader');
+                } else {
+                    $('body').removeClass('actloader');
+                    Swal.fire({
+                        title: 'Algo ha ocurrido!',
+                        text: response.data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            }
+
         });
     });
 
