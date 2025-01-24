@@ -210,4 +210,42 @@ window.initAsignacion = function initAsignacion() {
         allowClear: true,
         width: '100%'
     });
+
+    // Inicializar el calendario directamente
+    var calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 700,
+        locale: 'es',
+        buttonText: {
+            today: 'Hoy',
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            list: 'Lista'
+        },
+        allDayText: 'Todo el día',
+        noEventsText: 'No hay asignaciones para mostrar',
+        headerToolbar: {
+            left: 'prev,next today', // Botones de navegación
+            center: 'title', // Título del mes/semana/día
+            right: 'verMes,verLista' // Botones personalizados
+        },
+        customButtons: {
+            verMes: {
+                text: "Mes",
+                click: function() {
+                    calendar.changeView('dayGridMonth'); // Cambiar a vista mensual
+                }
+            },
+            verLista: {
+                text: "Lista",
+                click: function() {
+                    calendar.changeView('listWeek'); // Cambiar a vista lista
+                }
+            }
+        },
+    });
+    calendar.render();
+    calendar.updateSize();
 }

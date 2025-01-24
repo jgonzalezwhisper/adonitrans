@@ -32,49 +32,47 @@ jQuery(document).ready(function($) {
         $('#wrap-asignaciones .wrap-acciones').hide();
         $('#wrap-asignaciones .wrap-gestion[data-target="' + action + '"], #wrap-asignaciones .volver').show();
 
-        // Inicializar el calendario directamente
-        var calendarEl = document.getElementById('calendar');
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'listWeek',
-            height: 700,
-            headerToolbar: {
-                left: 'prev,next today', // Botones de navegación
-                center: 'title', // Título del mes/semana/día
-                right: 'verMes,verLista' // Botones personalizados
-            },
-            customButtons: {
-                verMes: {
-                    text: "Mes",
-                    click: function() {
-                        calendar.changeView('dayGridMonth'); // Cambiar a vista mensual
-                    }
-                },
-                verLista: {
-                    text: "Lista",
-                    click: function() {
-                        calendar.changeView('listWeek'); // Cambiar a vista lista
-                    }
-                }
-            },
-            events: [{
-                title: 'Reunión con cliente',
-                start: '2025-01-24T10:00:00', // Evento con hora específica
-                end: '2025-01-25T12:00:00'
-            }, {
-                title: 'Llamada de seguimiento',
-                start: '2025-01-24T15:30:00', // Otro evento en el mismo día
-                end: '2025-01-24T16:00:00'
-            }, {
-                title: 'Evento durante la semana',
-                start: '2025-01-25T09:00:00', // Evento en un día diferente
-                end: '2025-01-25T10:00:00'
-            }]
-
-        });
-        calendar.setOption('locale', 'es');
         calendar.render();
         calendar.updateSize();
     });
+
+    $(document).on('change', '#id_conductor_asignado_filtcal', function(event) {
+        const conductorId = $(this).val();
+
+        $.ajax({
+            url: asignacionAjax.ajaxurl, // URL definida en WordPress
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'filtrar_asignaciones', // Acción de WordPress
+                conductor_id: conductorId // ID del conductor seleccionado
+            },
+            success: function(data) {
+                console.log('Eventos recibidos:', JSON.stringify(data, null, 2));
+
+                if (Array.isArray(data)) {
+                    // Limpia las fuentes de eventos existentes
+                    calendar.getEventSources().forEach(source => source.remove());
+
+                    // Añade los nuevos eventos al calendario
+                    calendar.addEventSource({
+                        events: data, // Agrega directamente el array de eventos
+                        color: 'blue', // Color opcional para los eventos
+                        textColor: 'white' // Color opcional del texto
+                    });
+
+                    // Refresca los eventos del calendario
+                    calendar.refetchEvents();
+                } else {
+                    console.error('El formato de los datos no es un array:', data);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar los eventos:', error);
+            }
+        });
+    });
+
 
     $(document).on('click', '#wrap-asignaciones .volver .button', function(event) {
         event.preventDefault();

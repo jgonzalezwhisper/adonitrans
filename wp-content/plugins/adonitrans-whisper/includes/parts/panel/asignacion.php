@@ -199,6 +199,47 @@
         </div>
 
         <div class="wrap wrap-gestion wrap-calendario-asignaciones" data-target="ver-calendario" style="display:none">
+            <div class="wrap">
+                <form id="filt-cal-form" method="post" class="formplug" autocomplete="off">
+                    <?php
+                        $argscon = array(
+                            'role'    => 'conductor',
+                            'orderby' => 'display_name',
+                            'order'   => 'ASC',
+                            'meta_query' => array(
+                                array(
+                                    'key'   => 'estado_usuario',
+                                    'value' => 'Activo',
+                                    'compare' => '='
+                                )
+                            )
+                        );
+                        $user_query = new WP_User_Query($argscon);
+                        $conductores = $user_query->get_results();
+                    ?>
+                    <div class="wrap">
+                        <label for="id_conductor_asignado_filtcal">Conductor Asignado</label>
+                        <select id="id_conductor_asignado_filtcal" name="id_conductor_asignado" required>
+                            <option value="">Selecciona un Conductor</option>
+                            <?php foreach ($conductores as $conductor): ?>
+                            <?php
+                                $user_id = $conductor->ID;
+                                $first_name = get_user_meta($user_id, 'first_name', true);
+                                $last_name = get_user_meta($user_id, 'last_name', true);
+                                $email = $conductor->user_email;
+                                $name = trim("$first_name $last_name");
+                                $display_name = $name ? $name : $conductor->display_name;
+                            ?>
+                            <option value="<?php echo esc_attr($user_id); ?>">
+                                <?php echo esc_html("$display_name ($email)"); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>  
+                </form>
+            </div>
+            <br>
+                
             <div id="calendar"></div>
         </div>
 </div>

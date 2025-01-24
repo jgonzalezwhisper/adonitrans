@@ -15,6 +15,37 @@ function create_asignacion_function() {
     $inicio_semana_asignacion = sanitize_text_field($_POST['inicio_semana_asignacion']);
     $fin_semana_asignacion = sanitize_text_field($_POST['fin_semana_asignacion']);
 
+    // Verificar si ya existe un post con el mismo conductor y rango de fechas
+    $args = [
+        'post_type'  => 'asignacion',
+        'post_status' => 'publish',
+        'meta_query' => [
+            'relation' => 'AND',
+            [
+                'key' => 'id_conductor_asignado',
+                'value' => $id_conductor_asignado,
+                'compare' => '='
+            ],
+            [
+                'key' => 'inicio_semana_asignacion',
+                'value' => $inicio_semana_asignacion,
+                'compare' => '='
+            ],
+            [
+                'key' => 'fin_semana_asignacion',
+                'value' => $fin_semana_asignacion,
+                'compare' => '='
+            ]
+        ]
+    ];
+    
+    $query = new WP_Query($args);
+
+    if ($query->have_posts()) {
+        wp_send_json_error(['message' => 'Ya existe una asignación con este conductor y rango de fechas.']);
+        wp_die();
+    }
+
     $dias_inicio = sanitize_text_field($_POST['dia_inicio_de_asignacion']);
     $dias_fin = sanitize_text_field($_POST['dia_fin_de_asignacion']);
     $franjas_horarias = sanitize_text_field($_POST['franja_horaria_asignacion']);
@@ -162,4 +193,68 @@ function load_asignacion_data_function() {
         'fin_semana_asignacion' => $fin_semana_asignacion,
         'asignaciones_de_la_semana' => $asignaciones_de_la_semana,
     ]);
+}
+
+
+add_action('wp_ajax_filtrar_asignaciones', 'func_filtrar_asignaciones');
+add_action('wp_ajax_nopriv_filtrar_asignaciones', 'func_filtrar_asignaciones');
+function func_filtrar_asignaciones() {
+    // Verifica y sanitiza los datos recibidos
+    $conductor_id = isset($_POST['conductor_id']) ? intval($_POST['conductor_id']) : 0;
+
+    if (!$conductor_id) {
+        wp_send_json_error('No se proporcionó un ID de conductor válido.');
+    }
+
+    // Consulta para obtener los posts relacionados
+    $args = array(
+        'post_type'      => 'asignacion',
+        'posts_per_page' => -1,
+        'meta_query'     => array(
+            array(
+                'key'     => 'id_conductor_asignado',
+                'value'   => $conductor_id,
+                'compare' => '='
+            )
+        )
+    );
+    $query = new WP_Query($args);
+    $events = array();
+
+    // Obtener datos del usuario
+    $user_info = get_userdata($conductor_id);
+
+    if ($user_info) {
+        // Obtener el primer nombre
+        $first_name = get_user_meta($conductor_id, 'first_name', true);
+
+        // Obtener el correo electrónico
+        $email = $user_info->user_email;
+    }
+
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+
+            // Obtén el campo repetidor
+            $repetidor = get_field('asignaciones_de_la_semana'); // Usando ACF
+
+            if ($repetidor) {
+                foreach ($repetidor as $asignacion) {
+                    $events[] = array(
+                        'title'  =>  $asignacion['franja_horaria_asignacion'],
+                        'namcond'=> $first_name,
+                        'mailcon'=> $email,
+                        'start'  => format_date_for_input($asignacion['dia_inicio_de_asignacion']),
+                        'end'    => format_date_for_input($asignacion['dia_fin_de_asignacion']),
+                    );
+                }
+            }
+        }
+    }
+
+    wp_reset_postdata();
+
+    // Enviar los eventos como respuesta en formato JSON
+    wp_send_json($events);
 }
