@@ -64,6 +64,7 @@ body.adonitrans-plug {
         display: flex;
         align-items: center;
         position: relative;
+        z-index: 99;
 
         .img_user {
           width: 40px;

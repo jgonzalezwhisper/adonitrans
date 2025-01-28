@@ -84,12 +84,12 @@
 
 			input {
 				width: 95%;
-			    font-size: 16px;
-			  appearance: none;
-			  border-radius: .375rem;
-			  border: 1px solid #e6e6e6;
-			  padding: .5rem .75rem;
-			  box-shadow: 0px 2px 2px 0 rgba(0,0,0,0.1);
+				font-size: 16px;
+				appearance: none;
+				border-radius: .375rem;
+				border: 1px solid #e6e6e6;
+				padding: .5rem .75rem;
+				box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.1);
 			}
 
 			i {
@@ -120,43 +120,121 @@
 
 		}
 
-		.wrap{
-			input, select{
+		.wrap {
+			input,
+			select {
 				width: 95%;
-			    font-size: 16px;
-			  appearance: none;
-			  border-radius: .375rem;
-			  border: 1px solid #e6e6e6;
-			  padding: .5rem .75rem;
-			  box-shadow: 0px 2px 2px 0 rgba(0,0,0,0.1);
-			  background-color: #fff;
-			}
-			#generate-password, #add-payment-row{
 				font-size: 16px;
-				  font-weight: 600;
-				  color: #086ACF;
-				  text-decoration: underline;
-				  transition: .5s;
+				appearance: none;
+				border-radius: .375rem;
+				border: 1px solid #e6e6e6;
+				padding: .5rem .75rem;
+				box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.1);
+				background-color: #fff;
 			}
-			.select2-selection__rendered{
-				border-radius: .375rem!important;
-				  border: 1px solid #e6e6e6;
-				  padding: .5rem .75rem!important;
-				  box-shadow: 0px 2px 2px 0 rgba(0,0,0,0.1);
-				  line-height: 1em!important;
-				  font-size: 17px;
+
+			#generate-password,
+			#add-payment-row {
+				font-size: 16px;
+				font-weight: 600;
+				color: #086ACF;
+				text-decoration: underline;
+				transition: .5s;
 			}
-			.select2-container{
-				font-size: 17px!important;
-				.select2-selection--single{
+
+			.select2-selection__rendered {
+				border-radius: .375rem !important;
+				border: 1px solid #e6e6e6;
+				padding: .5rem .75rem !important;
+				box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.1);
+				line-height: 1em !important;
+				font-size: 17px;
+			}
+
+			.select2-container {
+				font-size: 17px !important;
+
+				.select2-selection--single {
 					border: 0;
 				}
+
 			}
+
+			.radio-button {
+				display: flex;
+				flex-wrap: wrap;
+				column-gap: 25px;
+
+				[type="radio"] {
+					display: none;
+
+					+ label {
+						position: relative;
+						padding-left: 28px;
+						cursor: pointer;
+						line-height: 20px;
+						display: inline-block;
+						color: #666;
+					}
+
+					&:checked,
+					&:not(:checked) {
+						position: absolute;
+						left: -9999px;
+
+						+ label::before,
+						+ label::after{
+							content: '';
+							position: absolute;
+							border-radius: 100%;
+						}
+
+						+ label::before {
+							left: 0;
+							top: 0;
+							width: 18px;
+							height: 18px;
+							background: #fff;
+						}
+
+						+ label::after {
+							width: 12px;
+							height: 12px;
+							background: $primary-color;
+							position: absolute;
+							top: 3px;
+							left: 3px;
+							-webkit-transition: all 0.2s ease;
+							transition: all 0.2s ease;
+						}
+
+					}
+
+					
+
+					&:not(:checked) + label:after {
+						opacity: 0;
+						-webkit-transform: scale(0);
+						transform: scale(0);
+					}
+
+					&:checked + label:after {
+						opacity: 1;
+						-webkit-transform: scale(1);
+						transform: scale(1);
+					}
+
+				}
+
+			}
+
 		}
-		.wrap-2{
+
+		.wrap-2 {
 			width: 49%;
 			float: left;
 		}
+
 	}
 
 	.button {
@@ -184,52 +262,57 @@
 		}
 
 		&.button-remove {
-          background: #e18d8d;
-          color: #fff;
+			background: #e18d8d;
+			color: #fff;
 
-          &:hover {
-            background: #f95959;
-            margin-left: 10px;
-          }
+			&:hover {
+				background: #f95959;
+				margin-left: 10px;
+			}
 
-          i {
-            margin-right: 10px;
-            transition: transform 0.3s ease;
+			i {
+				margin-right: 10px;
+				transition: transform 0.3s ease;
 
-            &:hover {
-              font-size: 16px;
-            }
-          }
-        }
+				&:hover {
+					font-size: 16px;
+				}
 
-        &.button-add {
-          background: #0054ae;
-          color: #fff;
+			}
 
-          &:hover {
-            background: #086ACF;
-            margin-left: 10px;
-          }
+		}
 
-          i {
-            margin-right: 10px;
+		&.button-add {
+			background: #0054ae;
+			color: #fff;
 
-            &:hover {
-              font-size: 16px;
-            }
-          }
-        }
+			&:hover {
+				background: #086ACF;
+				margin-left: 10px;
+			}
 
-        &.button-save {
-          background: #FCD722;
-          color: #000;
+			i {
+				margin-right: 10px;
 
-          &:hover {
-            background: #086ACF;
-            margin-top: -5px;
-            color: #fff;
-          }
-        }
+				&:hover {
+					font-size: 16px;
+				}
+
+			}
+
+		}
+
+		&.button-save {
+			background: #FCD722;
+			color: #000;
+
+			&:hover {
+				background: #086ACF;
+				margin-top: -5px;
+				color: #fff;
+			}
+
+		}
 
 	}
 
@@ -243,7 +326,7 @@
 		row-gap: 16px;
 		margin: 0px 20px;
 
-		p{
+		p {
 			font-size: 18px;
 			font-weight: 400;
 		}
@@ -267,11 +350,14 @@
 
 		}
 
-		.wrap-gestion-vehiculos, .wrap-gestion-empresas, .wrap-listado-recorridos, .wrap-gestion-recorridos{
+		.wrap-gestion-vehiculos,
+		.wrap-gestion-empresas,
+		.wrap-listado-recorridos,
+		.wrap-gestion-recorridos {
 			width: 100%;
-			  background: #fff;
-			  padding: 25px;
-			  border-radius: 20px;
+			background: #fff;
+			padding: 25px;
+			border-radius: 20px;
 		}
 
 	}
@@ -384,12 +470,14 @@
 				background-color: #f9f9f9;
 				border-top: 1px solid #ddd;
 
-				#documentos-repetidor{
-					h3{
+				#documentos-repetidor {
+					h3 {
 						font-size: 19px;
-  						font-weight: 500;
+						font-weight: 500;
 					}
+
 				}
+
 			}
 
 			.campo {
@@ -501,7 +589,7 @@
 			font-size: 16px;
 			margin-top: 20px;
 
-			i{
+			i {
 				margin-right: 10px;
 			}
 
@@ -515,20 +603,26 @@
 	}
 
 }
-.swal2-container{
-	.swal2-popup{
-		.swal2-actions{
-			.swal2-confirm{
-				button{
-				background-color: $primary-color;
-				padding: 12px 30px;
-				border-radius: 20px;
+
+.swal2-container {
+	.swal2-popup {
+		.swal2-actions {
+			.swal2-confirm {
+				button {
+					background-color: $primary-color;
+					padding: 12px 30px;
+					border-radius: 20px;
 				}
-				&:hover{
+
+				&:hover {
 					background-color: $secondary-color;
 					color: #000;
 				}
+
 			}
+
 		}
+
 	}
+
 }

@@ -242,4 +242,134 @@
                 
             <div id="calendar"></div>
         </div>
+
+        <div class="wrap wrap-gestion wrap-calendario-asignaciones" data-target="exportar" style="display:none">
+            <div class="wrap">
+                <form id="filt-excel-form" method="post" class="formplug" autocomplete="off">
+                    <?php
+                        $argscon = array(
+                            'role'    => 'conductor',
+                            'orderby' => 'display_name',
+                            'order'   => 'ASC',
+                            'meta_query' => array(
+                                array(
+                                    'key'   => 'estado_usuario',
+                                    'value' => 'Activo',
+                                    'compare' => '='
+                                )
+                            )
+                        );
+                        $user_query = new WP_User_Query($argscon);
+                        $conductores = $user_query->get_results();
+
+                        $empresa_posts = get_posts([
+                            'post_type' => 'empresa',
+                            'numberposts' => -1,
+                            'fields' => ['ID', 'post_title'],
+                        ]);
+                        $empresa_posts_data = array_map(function($post) {
+                            return [
+                                'ID' => $post->ID,
+                                'post_title' => $post->post_title,
+                            ];
+                        }, $empresa_posts);
+
+                        $argscol = [
+                            'role' => 'colaborador',
+                            'orderby' => 'display_name',
+                            'order'   => 'ASC',
+                            'meta_query' => array(
+                                array(
+                                    'key'   => 'estado_usuario',
+                                    'value' => 'Activo',
+                                    'compare' => '='
+                                )
+                            ),
+                            'fields' => ['ID', 'user_login', 'user_email', 'first_name', 'last_name'], // Campos que necesitamos
+                        ];
+
+                        $user_query_col = new WP_User_Query($argscol);
+                        $colaboradores = $user_query_col->get_results();
+                    ?>
+                    <div class="wrap">
+                        <div for="id_conductor_asignado_filtcal">Filtrar Por</div>
+                        <div class="radio-button">
+                            <div class="radio">
+                                <input type="radio" id="radfiltexcel1" name="tipo-consulta" value="conductor" checked>
+                                <label for="radfiltexcel1" data-valor="conductor">Conductor</label>
+                            </div>
+                            <div class="radio">
+                                <input type="radio" id="radfiltexcel2" name="tipo-consulta" value="empresa">
+                                <label for="radfiltexcel2" data-valor="empresa">Empresa</label>
+                            </div>
+                            <div class="radio">
+                                <input type="radio" id="radfiltexcel3" name="tipo-consulta" value="colaborador">
+                                <label for="radfiltexcel3" data-valor="colaborador">Colaborador</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wrap wrap-2">
+                        <label for="desde_formexcel">Desde: </label>
+                        <input type="date" id="desde_formexcel" name="desde_formexcel" value="" placeholder="dd/mm/yyyy">
+                    </div>
+                    <div class="wrap wrap-2">
+                        <label for="hasta_formexcel">Hasta: </label>
+                        <input type="date" id="hasta_formexcel" name="hasta_formexcel" value="" placeholder="dd/mm/yyyy">
+                    </div>
+                    <div class="wrap wrap-select" data-select="conductor">
+                        <label for="selexc_conductor">Conductor</label>
+                        <select id="selexc_conductor" name="selexc_conductor" >
+                            <option value="">Selecciona un Conductor</option>
+                            <?php foreach ($conductores as $conductor): ?>
+                            <?php
+                                $user_id = $conductor->ID;
+                                $first_name = get_user_meta($user_id, 'first_name', true);
+                                $last_name = get_user_meta($user_id, 'last_name', true);
+                                $email = $conductor->user_email;
+                                $name = trim("$first_name $last_name");
+                                $display_name = $name ? $name : $conductor->display_name;
+                            ?>
+                            <option value="<?php echo esc_attr($user_id); ?>">
+                                <?php echo esc_html("$display_name ($email)"); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div> 
+
+                    <div class="wrap wrap-select" data-select="empresa" style="display:none">
+                        <label for="selexc_empresa">Empresa</label>
+                        <select id="selexc_empresa" name="selexc_empresa" >
+                            <option value="">Selecciona una Empresa</option>
+                            <?php foreach ($empresa_posts_data as $post_data): ?>
+                                <option value="<?php echo $post_data['ID']; ?>"><?php echo esc_html($post_data['post_title']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>  
+
+                    <div class="wrap wrap-select" data-select="colaborador" style="display:none">
+                        <label for="selexc_colaborador">Colaboradores</label>
+                        <select id="selexc_colaborador" name="selexc_colaborador" >
+                            <option value="">Selecciona un Colaborador</option>
+                            <?php foreach ($colaboradores as $user): ?>
+                                <?php
+                                    $user_id = $user->ID;
+                                    $first_name = get_user_meta($user_id, 'first_name', true);
+                                    $last_name = get_user_meta($user_id, 'last_name', true);
+                                    
+                                    $user_name = $first_name . ' ' . $last_name;
+                                    $user_email = $user->user_email;
+                                ?>
+                                <option value="<?= $user_id; ?>"><?= "$user_name ($user_email)"; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="wrap">
+                        <button class="button button-add" type="submit">Generar Reporte</button>
+                    </div>  
+                </form>
+            </div>
+        </div>
+
+
 </div>

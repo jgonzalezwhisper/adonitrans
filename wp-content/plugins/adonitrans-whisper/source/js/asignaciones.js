@@ -47,32 +47,65 @@ jQuery(document).ready(function($) {
                 action: 'filtrar_asignaciones', // Acción de WordPress
                 conductor_id: conductorId // ID del conductor seleccionado
             },
+            beforeSend: function() {
+                $('body').addClass('actloader');
+            },
             success: function(data) {
-                console.log('Eventos recibidos:', JSON.stringify(data, null, 2));
 
                 if (Array.isArray(data)) {
+                    // Ajusta el rango de fechas para que FullCalendar las interprete correctamente
+                    const eventosAjustados = data.map(evento => {
+                        let nuevoEvento = {
+                            title: evento.title,
+                            namcond: evento.namcond,
+                            mailcon: evento.mailcon,
+                            start: evento.start,
+                            end: evento.end
+                        };
+
+                        if (nuevoEvento.end) {
+                            // Suma un día a la fecha final
+                            const fechaFin = new Date(nuevoEvento.end);
+                            fechaFin.setDate(fechaFin.getDate() + 1);
+                            nuevoEvento.end = fechaFin.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+                        }
+
+                        // Asigna un color dependiendo del title
+                        const colores = {
+                            Diurna: '#0077FB',
+                            Trasnocho: '#2b51a4',
+                            Partido: '#d4753f',
+                            Descanso: '#7fc356'
+                        };
+
+                        return {
+                            ...nuevoEvento,
+                            backgroundColor: colores[nuevoEvento.title] || 'blue', // Color de fondo según el title o azul por defecto
+                            borderColor: colores[nuevoEvento.title] || 'blue' // Color del borde
+                        };
+                    });
+
                     // Limpia las fuentes de eventos existentes
                     calendar.getEventSources().forEach(source => source.remove());
 
                     // Añade los nuevos eventos al calendario
                     calendar.addEventSource({
-                        events: data, // Agrega directamente el array de eventos
-                        color: 'blue', // Color opcional para los eventos
-                        textColor: 'white' // Color opcional del texto
+                        events: eventosAjustados, // Usa los eventos ajustados
+                        textColor: 'white' // Color del texto
                     });
 
                     // Refresca los eventos del calendario
                     calendar.refetchEvents();
-                } else {
-                    console.error('El formato de los datos no es un array:', data);
                 }
+
+                $('body').removeClass('actloader');
             },
             error: function(xhr, status, error) {
+                $('body').removeClass('actloader');
                 console.error('Error al cargar los eventos:', error);
             }
         });
     });
-
 
     $(document).on('click', '#wrap-asignaciones .volver .button', function(event) {
         event.preventDefault();
@@ -169,7 +202,7 @@ jQuery(document).ready(function($) {
                                     },
                                     success: function(response) {
                                         $("#informacion").html(response);
-                                        initVehiculos();
+                                        initAsignacion();
                                     },
                                     error: function() {
                                         $("#informacion").html("<p>Error al cargar el contenido. Intenta nuevamente.</p>");
@@ -342,7 +375,7 @@ jQuery(document).ready(function($) {
                                         },
                                         success: function(response) {
                                             $('#informacion').html(response);
-                                            initRecorridos();
+                                            initAsignacion();
                                         },
                                         error: function() {
                                             $('#informacion').html(
@@ -371,6 +404,136 @@ jQuery(document).ready(function($) {
                         });
                     },
                 });
+            },
+        });
+    });
+
+    /*REPORTES EN EXCEL*/
+
+    $(document).on('click', '#filt-excel-form .radio label', function(event) {
+        $('#filt-excel-form select').val(null).trigger('change');
+        let checkedRadio = $(this).data('valor');
+
+        $('#filt-excel-form .wrap-select').hide();
+        $('#filt-excel-form .wrap-select[data-select="' + checkedRadio + '"]').show();
+
+        // Eliminar las reglas anteriores
+        $('#filt-excel-form select').rules('remove', 'required');
+
+        // Añadir la regla de 'required' al select visible
+        if (checkedRadio === 'conductor') {
+            $('#selexc_conductor').rules('add', {
+                required: true,
+                messages: {
+                    required: "Por favor, selecciona un conductor." // Mensaje personalizado para conductor
+                }
+            });
+        } else if (checkedRadio === 'empresa') {
+            $('#selexc_empresa').rules('add', {
+                required: true,
+                messages: {
+                    required: "Por favor, selecciona una empresa." // Mensaje personalizado para empresa
+                }
+            });
+        } else if (checkedRadio === 'colaborador') {
+            $('#selexc_colaborador').rules('add', {
+                required: true,
+                messages: {
+                    required: "Por favor, selecciona un colaborador." // Mensaje personalizado para colaborador
+                }
+            });
+        }
+    });
+
+    // Al cambiar el valor de cualquier select, revalidar el formulario
+    $(document).on('change', '#filt-excel-form select', function(event) {
+        $(this).valid();
+    });
+
+    $(document).on('change', '#hasta_formexcel', function() {
+
+        var fechaHasta = $(this).val();
+        $('#desde_formexcel').attr('max', fechaHasta);
+    });
+
+    $(document).on('change', '#desde_formexcel', function() {
+        $('#hasta_formexcel').attr('min', $(this).val());
+    });
+
+    $(document).on('focusin', '#filt-excel-form', function() {
+
+        // Extender jQuery Validation para que funcione con select2 y elementos dinámicos
+        $.validator.setDefaults({
+            ignore: ':hidden:not(.select2-hidden-accessible)', // Ignorar elementos ocultos excepto select2
+        });
+
+        // Validación personalizada para select2
+        $.validator.addMethod("select2Required", function(value, element, param) {
+            return value !== null && value !== ""; // Validar que el valor no esté vacío
+        }, "Este dato es obligatorio");
+
+        $(this).validate({
+            rules: {
+                selexc_conductor: {
+                    select2Required: true,
+                },
+                desde: {
+                    required: true,
+                },
+                hasta: {
+                    required: true,
+                }
+            },
+            messages: {
+                selexc_conductor: "Por favor, selecciona un conductor.",
+                desde: "Este dato es obligatorio",
+                hasta: "Este dato es obligatorio"
+            },
+            submitHandler: function(form) {
+
+                // Recoger los datos del formulario
+                var formData = new FormData(form);
+                formData.append('action', 'gen_reporte_excel');
+
+                // Realizar la petición AJAX
+                $.ajax({
+                    url: asignacionAjax.ajaxurl, // Ruta del endpoint AJAX
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function() {
+                        $('body').addClass('actloader');
+                    },
+                    success: function(response) {
+                        // Si la respuesta contiene la URL del archivo generado, redirigir a esa URL
+                        if (response.success && response.data.file_url) {
+                            window.location.href = response.data.file_url;
+                        } else {
+                            // Mostrar un mensaje de error si no se generó correctamente el archivo
+                            Swal.fire({
+                                title: '¡Error!',
+                                text: 'Hubo un problema al generar el archivo. Por favor intenta nuevamente.',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar',
+                            });
+                        }
+
+                        // Eliminar el loader
+                        $('body').removeClass('actloader');
+                    },
+                    error: function() {
+                        $('body').removeClass('actloader');
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Hubo un problema al procesar el formulario. Por favor intenta nuevamente.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar',
+                        });
+                    },
+                });
+
+
             },
         });
     });

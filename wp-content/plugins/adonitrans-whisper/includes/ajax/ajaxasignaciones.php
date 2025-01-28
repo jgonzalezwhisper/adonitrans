@@ -13,38 +13,7 @@ function create_asignacion_function() {
     // Obtener los datos del formulario
     $id_conductor_asignado = sanitize_text_field($_POST['id_conductor_asignado']);
     $inicio_semana_asignacion = sanitize_text_field($_POST['inicio_semana_asignacion']);
-    $fin_semana_asignacion = sanitize_text_field($_POST['fin_semana_asignacion']);
-
-    // Verificar si ya existe un post con el mismo conductor y rango de fechas
-    $args = [
-        'post_type'  => 'asignacion',
-        'post_status' => 'publish',
-        'meta_query' => [
-            'relation' => 'AND',
-            [
-                'key' => 'id_conductor_asignado',
-                'value' => $id_conductor_asignado,
-                'compare' => '='
-            ],
-            [
-                'key' => 'inicio_semana_asignacion',
-                'value' => $inicio_semana_asignacion,
-                'compare' => '='
-            ],
-            [
-                'key' => 'fin_semana_asignacion',
-                'value' => $fin_semana_asignacion,
-                'compare' => '='
-            ]
-        ]
-    ];
-    
-    $query = new WP_Query($args);
-
-    if ($query->have_posts()) {
-        wp_send_json_error(['message' => 'Ya existe una asignación con este conductor y rango de fechas.']);
-        wp_die();
-    }
+    $fin_semana_asignacion = sanitize_text_field($_POST['fin_semana_asignacion']);    
 
     $dias_inicio = sanitize_text_field($_POST['dia_inicio_de_asignacion']);
     $dias_fin = sanitize_text_field($_POST['dia_fin_de_asignacion']);
@@ -64,13 +33,46 @@ function create_asignacion_function() {
 	$titulo = "$first_name ($email) -- $inicio_semana_asignacion // $fin_semana_asignacion";
 
     $accion1 = "Crear";   
-    $accion2 = "Creado";   
+    $accion2 = "Creada";   
 
     if (isset($_POST['asignacion-id']) && !empty($_POST['asignacion-id'])) {
         $post_id = $_POST['asignacion-id'];
         $accion1 = "Editar";   
-        $accion2 = "Editado"; 
+        $accion2 = "Editada"; 
     } else {
+
+        // Verificar si ya existe un post con el mismo conductor y rango de fechas
+        $args = [
+            'post_type'  => 'asignacion',
+            'post_status' => 'publish',
+            'meta_query' => [
+                'relation' => 'AND',
+                [
+                    'key' => 'id_conductor_asignado',
+                    'value' => $id_conductor_asignado,
+                    'compare' => '='
+                ],
+                [
+                    'key' => 'inicio_semana_asignacion',
+                    'value' => $inicio_semana_asignacion,
+                    'compare' => '='
+                ],
+                [
+                    'key' => 'fin_semana_asignacion',
+                    'value' => $fin_semana_asignacion,
+                    'compare' => '='
+                ]
+            ]
+        ];
+        
+        $query = new WP_Query($args);
+
+        if ($query->have_posts()) {
+            wp_send_json_error(['message' => 'Ya existe una asignación con este conductor y rango de fechas.']);
+            wp_die();
+        }
+
+
         $post_data = array(
             'post_type'   => 'asignacion',
             'post_status' => 'publish',
@@ -195,7 +197,7 @@ function load_asignacion_data_function() {
     ]);
 }
 
-
+/*GENERAR JSON PARA MOSTRAR EN FULL CALENDAR*/
 add_action('wp_ajax_filtrar_asignaciones', 'func_filtrar_asignaciones');
 add_action('wp_ajax_nopriv_filtrar_asignaciones', 'func_filtrar_asignaciones');
 function func_filtrar_asignaciones() {
@@ -257,4 +259,142 @@ function func_filtrar_asignaciones() {
 
     // Enviar los eventos como respuesta en formato JSON
     wp_send_json($events);
+}
+
+// Incluir las clases necesarias de PhpSpreadsheet
+require PATH_ADONITRANSPLUG . 'includes/librerias/vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+/* GENERAR EXCEL PARA EL REPORTE */
+function func_gen_reporte_excel() {
+    // Verificar si la solicitud es válida (si es necesario, añadir más validaciones)
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('No tienes permisos para generar el reporte.');
+    }
+
+    // Crear una nueva hoja de cálculo
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $sheet->setTitle('Reporte de Clientes');
+
+    // Incluir el nombre de la empresa en la celda A1 y centrarlo
+    $company_name = 'Empresa XYZ'; // Cambia esto por el nombre real de tu empresa
+    $sheet->setCellValue('A1', $company_name);
+    $sheet->mergeCells('A1:E1'); // Combina las celdas de A1 a E1
+    $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER); // Centra el texto
+
+    // URL del logo
+    $image_url = 'https://d3vweb.com/wp-content/uploads/2024/11/d3vweb.png'; // Ruta del logo de la empresa
+
+    // Descargar la imagen a un archivo temporal en el servidor
+    $tmp_image_path = download_image_to_temp($image_url);
+    
+    // Si la imagen fue descargada correctamente, agregarla al Excel
+    if ($tmp_image_path) {
+        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Logo de la Empresa');
+        $drawing->setPath($tmp_image_path); // Usamos el archivo temporal
+        $drawing->setHeight(50); // Establecer altura de la imagen
+        $drawing->setCoordinates('A2'); // Coordenadas donde se insertará la imagen
+        $drawing->setWorksheet($sheet);
+    }
+
+    // Definir el estilo para las celdas A4, B4, C4
+    $style = [
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Centrar horizontalmente
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,   // Centrar verticalmente
+        ],
+        'font' => [
+            'bold' => true, // Poner en negrita
+        ],
+    ];
+
+    // Definir los encabezados del Excel
+    $sheet->setCellValue('A4', 'ID')
+          ->setCellValue('B4', 'Nombre')
+          ->setCellValue('C4', 'Correo');
+
+    $sheet->getStyle('A4:C4')->applyFromArray($style);
+
+    // Obtener los datos (esto es solo un ejemplo, deberías obtenerlos dinámicamente)
+    $data = array(
+        array(1, 'Juan Pérez', 'juan.perez@example.com'),
+        array(2, 'Ana Gómez', 'ana.gomez@example.com'),
+        array(3, 'Carlos Sánchez', 'carlos.sanchez@example.com'),
+        array(4, 'Marta Rodríguez', 'marta.rodriguez@example.com'),
+        array(5, 'Pedro García', 'pedro.garcia@example.com'),
+        array(6, 'Lucía Fernández', 'lucia.fernandez@example.com'),
+        array(7, 'David López', 'david.lopez@example.com'),
+        array(8, 'Raquel Martínez', 'raquel.martinez@example.com'),
+        array(9, 'Javier Pérez', 'javier.perez@example.com'),
+        array(10, 'Clara Sánchez', 'clara.sanchez@example.com'),
+        array(11, 'Antonio Ruiz', 'antonio.ruiz@example.com'),
+        array(12, 'María González', 'maria.gonzalez@example.com'),
+        array(13, 'Luis Díaz', 'luis.diaz@example.com'),
+        array(14, 'Elena Romero', 'elena.romero@example.com'),
+        array(15, 'José Hernández', 'jose.hernandez@example.com'),
+        array(16, 'Isabel Torres', 'isabel.torres@example.com'),
+        array(17, 'Manuel Castro', 'manuel.castro@example.com'),
+        array(18, 'Sofía Navarro', 'sofia.navarro@example.com'),
+        array(19, 'Felipe Pérez', 'felipe.perez@example.com'),
+        array(20, 'Pablo Soto', 'pablo.soto@example.com'),
+        array(21, 'Laura Molina', 'laura.molina@example.com'),
+        array(22, 'Ricardo Vargas', 'ricardo.vargas@example.com'),
+        array(23, 'Ana Ruiz', 'ana.ruiz@example.com'),
+        array(24, 'Tomás Gómez', 'tomas.gomez@example.com'),
+        array(25, 'Sonia Rodríguez', 'sonia.rodriguez@example.com'),
+        array(26, 'Víctor López', 'victor.lopez@example.com'),
+        array(27, 'Beatriz Fernández', 'beatriz.fernandez@example.com'),
+        array(28, 'Martín Martínez', 'martin.martinez@example.com'),
+        array(29, 'Patricia Díaz', 'patricia.diaz@example.com'),
+        array(30, 'Eduardo Sánchez', 'eduardo.sanchez@example.com'),
+    );
+
+
+    // Rellenar la hoja con los datos
+    $row = 5; // Comenzamos en la fila 5 porque las filas 1 a 4 están ocupadas
+    foreach ($data as $item) {
+        $sheet->setCellValue('A' . $row, $item[0])
+              ->setCellValue('B' . $row, $item[1])
+              ->setCellValue('C' . $row, $item[2]);
+        $row++;
+    }
+
+    // Crear un escritor para el archivo Excel
+    $writer = new Xlsx($spreadsheet);
+
+    $fecha_hora = date('Y-m-d_H-i-s'); // Ejemplo: 2025-01-27_14-30-45
+
+
+    // Guardar el archivo en un directorio temporal
+    $file_path = wp_upload_dir()['path'] . '/Reporte-' . $fecha_hora . '.xlsx';
+    $writer->save($file_path);
+
+    // Devolver la URL del archivo generado en vez de enviarlo directamente
+    wp_send_json_success(array('file_url' => wp_upload_dir()['url'] . '/Reporte-' . $fecha_hora . '.xlsx'));
+}
+add_action('wp_ajax_gen_reporte_excel', 'func_gen_reporte_excel');
+add_action('wp_ajax_nopriv_gen_reporte_excel', 'func_gen_reporte_excel');
+
+// Función para descargar la imagen desde una URL a un archivo temporal
+function download_image_to_temp($image_url) {
+    // Obtener la imagen de la URL
+    $image_data = file_get_contents($image_url);
+
+    if ($image_data === false) {
+        return false; // Error al descargar la imagen
+    }
+
+    // Crear un archivo temporal para guardar la imagen
+    $tmp_file_path = sys_get_temp_dir() . '/' . basename($image_url);
+
+    // Guardar la imagen en el archivo temporal
+    file_put_contents($tmp_file_path, $image_data);
+
+    return $tmp_file_path;
 }
