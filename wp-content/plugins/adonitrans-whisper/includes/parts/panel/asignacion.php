@@ -350,6 +350,13 @@
                         </select>
                     </div>  
 
+                    <div class="wrap wrap-select" data-select="selexc_colaboradorxempresa" style="display:none">
+                        <label for="selexc_colaboradorxempresa">Colaborador</label>
+                        <select id="selexc_colaboradorxempresa" name="selexc_colaboradorxempresa" >
+                            <option value="">Selecciona un Colaborador</option>
+                        </select>
+                    </div>
+
                     <div class="wrap wrap-select" data-select="colaborador" style="display:none">
                         <label for="selexc_colaborador">Colaboradores</label>
                         <select id="selexc_colaborador" name="selexc_colaborador" >

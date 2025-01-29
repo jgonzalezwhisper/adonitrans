@@ -261,6 +261,49 @@ function func_filtrar_asignaciones() {
     wp_send_json($events);
 }
 
+add_action('wp_ajax_get_colaboradores_by_empresa', 'get_colaboradores_by_empresa');
+add_action('wp_ajax_nopriv_get_colaboradores_by_empresa', 'get_colaboradores_by_empresa');
+function get_colaboradores_by_empresa() {
+    $empresa_id = intval($_POST['empresa_id']);
+
+    $argscol = [
+        'role' => 'colaborador',
+        'orderby' => 'display_name',
+        'order'   => 'ASC',
+        'meta_query' => array(
+            array(
+                'key'   => 'estado_usuario',
+                'value' => 'Activo',
+                'compare' => '='
+            ),
+            array(
+                'key'   => 'empresa_asociada_usuario',
+                'value' => $empresa_id,
+                'compare' => '='
+            )
+        ),
+        'fields' => ['ID', 'user_email'],
+    ];
+
+    $user_query_col = new WP_User_Query($argscol);
+    $colaboradores = $user_query_col->get_results();
+
+    $response = array();
+    foreach ($colaboradores as $colaborador) {
+        $first_name = get_user_meta($colaborador->ID, 'first_name', true);
+        $last_name = get_user_meta($colaborador->ID, 'last_name', true);
+        $user_email = $colaborador->user_email; // El correo electrónico ya está disponible en el objeto
+
+        $response[] = array(
+            'ID' => $colaborador->ID,
+            'display_name' => trim($first_name . ' ' . $last_name) ?: $colaborador->display_name,
+            'user_email' => $user_email
+        );
+    }
+
+    wp_send_json_success($response);
+}
+
 // Incluir las clases necesarias de PhpSpreadsheet
 require PATH_ADONITRANSPLUG . 'includes/librerias/vendor/autoload.php';
 
@@ -465,8 +508,7 @@ function func_gen_reporte_excel() {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
     } else if ($tipo_consulta == 'recorrido') {
-
-        $id_colaborador = intval($_POST['selexc_colaborador']); 
+        $id_empresa = intval($_POST['selexc_empresa']);
 
         $first_name = get_user_meta($id_colaborador, 'first_name', true);
         $last_name = get_user_meta($id_colaborador, 'last_name', true);
@@ -490,32 +532,32 @@ function func_gen_reporte_excel() {
             ];
         }
 
-        // Agregar filtro por colaborador si se recibe un valor en selexc_colaborador
-        if (!empty($_POST['selexc_colaborador'])) {
+        // Agregar filtro por colaborador si se recibe un valor en selexc_colaboradorxempresa
+        if (!empty($_POST['selexc_colaboradorxempresa'])) {
             $meta_query[] = [
                 'key'     => 'id_solicitante_recorrido',
-                'value'   => $_POST['selexc_colaborador'],
+                'value'   => $_POST['selexc_colaboradorxempresa'],
                 'compare' => '='
             ];
         }
 
         $query = new WP_Query([
-            'post_type'      => 'recorrido', // Cambia esto al tipo de post que corresponda
-            'posts_per_page' => -1,    // Sin límite, para obtener todos los resultados
+            'post_type'      => 'recorrido', 
+            'posts_per_page' => -1,    
             'meta_query'     => $meta_query,
-            'fields'         => 'ids', // Solo obtener IDs
+            'fields'         => 'ids', 
         ]);
 
         if ($query->have_posts()) {
-            $headers = ['Empresa', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
-            $filtpor = "Colaborador: $first_name $last_name";
-            $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
+            $headers = ['Colaborador', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
+            $data = []; 
 
             // Recorrer los posts
             foreach ($query->posts as $post_id) {
 
-                $empresa_solicitante_recorrido = get_field('empresa_solicitante_recorrido', $post_id);
-                $nombre_empresa = get_the_title( $empresa_solicitante_recorrido );
+                $id_solicitante_recorrido = get_field('id_solicitante_recorrido', $post_id)['ID'];
+                $nombre_colaborador = get_user_meta($id_solicitante_recorrido, 'first_name', true)." ".get_user_meta($id_solicitante_recorrido, 'last_name', true);
 
                 $nombre_conductor = "Sin Asignar";
 
@@ -525,7 +567,7 @@ function func_gen_reporte_excel() {
                 }
 
                 $data[] = [
-                    $nombre_empresa,
+                    $nombre_colaborador,
                     $nombre_conductor,
                     get_field('estado_del_recorrido', $post_id),
                     get_field('fecha_inicio_recorrido', $post_id),

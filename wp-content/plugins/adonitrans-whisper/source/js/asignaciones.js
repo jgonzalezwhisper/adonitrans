@@ -442,9 +442,45 @@ jQuery(document).ready(function($) {
                     required: "Por favor, selecciona un colaborador." // Mensaje personalizado para colaborador
                 }
             });
+            $('#selexc_colaborador').prop('disabled', false);
         } else if (checkedRadio === 'recorrido') {
-            $('#selexc_conductor, #selexc_empresa, #selexc_colaborador').rules('remove', 'required');
-            $('#filt-excel-form .wrap-select[data-select="colaborador"], #filt-excel-form .wrap-select[data-select="empresa"]').show();
+            $('#selexc_conductor, #selexc_empresa, #selexc_colaborador, #selexc_colaboradorxempresa').rules('remove', 'required');
+            $('#filt-excel-form .wrap-select[data-select="empresa"],#filt-excel-form .wrap-select[data-select="selexc_colaboradorxempresa"]').show();
+            $('#selexc_colaboradorxempresa').prop('disabled', true);
+        }
+    });
+
+    // Manejar el cambio en el select de empresa
+    $(document).on('change', '#selexc_empresa', function(event) {
+        // Verificar si el radio button "recorrido" está seleccionado
+        if ($('#radfiltexcel4').is(':checked')) {
+            let empresaId = $(this).val();
+
+            if (empresaId) {
+                // Hacer una solicitud AJAX para obtener los colaboradores asociados a la empresa seleccionada
+                $.ajax({
+                    url: asignacionAjax.ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'get_colaboradores_by_empresa',
+                        empresa_id: empresaId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            let colaboradores = response.data;
+                            let options = '<option value="">Selecciona un Colaborador</option>';
+
+                            colaboradores.forEach(function(colaborador) {
+                                options += '<option value="' + colaborador.ID + '">' + colaborador.display_name + ' (' + colaborador.user_email + ')</option>';
+                            });
+
+                            $('#selexc_colaboradorxempresa').html(options).prop('disabled', false).trigger('change');
+                        }
+                    }
+                });
+            } else {
+                $('#selexc_colaboradorxempresa').html('<option value="">Selecciona un Colaborador</option>').prop('disabled', true).trigger('change');
+            }
         }
     });
 
