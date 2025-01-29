@@ -269,114 +269,422 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /* GENERAR EXCEL PARA EL REPORTE */
 function func_gen_reporte_excel() {
-    // Verificar si la solicitud es válida (si es necesario, añadir más validaciones)
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('No tienes permisos para generar el reporte.');
+
+    if ( !isset($_POST['tipo-consulta']) || !isset($_POST['desde_formexcel']) || !isset($_POST['hasta_formexcel']) ) {
+        wp_send_json_error('Faltan datos necesarios para generar el reporte.');
     }
 
-    // Crear una nueva hoja de cálculo
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
+    if ( empty($_POST['tipo-consulta']) || empty($_POST['desde_formexcel']) || empty($_POST['hasta_formexcel']) ) {
+        wp_send_json_error('No se recibió la suficiente información para generar el reporte.');
+    }
 
+    $tipo_consulta = $_POST['tipo-consulta'];
+    $desde_formexcel = $_POST['desde_formexcel'];
+    $hasta_formexcel = $_POST['hasta_formexcel'];
+
+    if ($tipo_consulta == 'conductor') {
+        if ( !isset($_POST['selexc_conductor']) || empty($_POST['selexc_conductor']) ) {
+            wp_send_json_error('Es necesario seleccionar un Conductor.');
+        }
+
+        $id_conductor = intval($_POST['selexc_conductor']); 
+
+        $first_name = get_user_meta($id_conductor, 'first_name', true);
+        $last_name = get_user_meta($id_conductor, 'last_name', true);
+
+        $query = new WP_Query([
+            'post_type'  => 'asignacion',
+            'posts_per_page' => -1,
+            'meta_query' => [
+                'relation' => 'AND',
+                [
+                    'key'     => 'id_conductor_asignado',
+                    'value'   => $id_conductor,
+                    'compare' => '='
+                ],
+                [
+                    'key'     => 'inicio_semana_asignacion',
+                    'value'   => $desde_formexcel,
+                    'compare' => '>='
+                ],
+                [
+                    'key'     => 'fin_semana_asignacion',
+                    'value'   => $hasta_formexcel,
+                    'compare' => '<='
+                ],
+            ],
+            'fields'         => 'ids',
+        ]);
+
+        if ($query->have_posts()) {
+            $headers = ['Fecha Inicio', 'Fecha Final', 'Franja Horaria'];
+            $filtpor = "Conductor: $first_name $last_name";
+            $data = [];
+
+            // Recorrer los posts
+            foreach ($query->posts as $post_id) {
+                $repetidor = get_field('asignaciones_de_la_semana', $post_id); // Recuperar el campo ACF
+
+                if ($repetidor) {
+                    foreach ($repetidor as $fila) {
+                        $data[] = [
+                            $fila['dia_inicio_de_asignacion'],
+                            $fila['dia_fin_de_asignacion'],
+                            $fila['franja_horaria_asignacion']
+                        ];
+                    }
+                }
+            }
+
+            wp_reset_postdata(); // Restablecer la consulta
+        } else {
+            wp_send_json_error('No se encontraron datos para generar el reporte.');
+        }
+    } else if ($tipo_consulta == 'empresa') {
+        if ( !isset($_POST['selexc_empresa']) || empty($_POST['selexc_empresa']) ) {
+            wp_send_json_error('Es necesario seleccionar una Empresa.');
+        }
+
+        $id_empresa = intval($_POST['selexc_empresa']); 
+
+        $query = new WP_Query([
+            'post_type'      => 'recorrido', // Cambia esto al tipo de post que corresponda
+            'posts_per_page' => -1,    // Sin límite, para obtener todos los resultados
+            'meta_query'     => [
+                'relation' => 'AND',
+                [
+                    'key'     => 'empresa_solicitante_recorrido',
+                    'value'   => $id_empresa,
+                    'compare' => '='
+                ],
+                [
+                    'key'     => 'fecha_inicio_recorrido',
+                    'value'   => [$desde_formexcel, $hasta_formexcel],
+                    'compare' => 'BETWEEN',
+                    'type'    => 'DATE' // Especifica que las fechas son de tipo "DATE"
+                ],
+            ],
+            'fields'         => 'ids', // Solo obtener IDs
+        ]);
+
+        if ($query->have_posts()) {
+            $headers = ['Solicitante', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
+            $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
+
+            // Recorrer los posts
+            foreach ($query->posts as $post_id) {
+
+                $id_solicitante_recorrido = get_field('id_solicitante_recorrido', $post_id)['ID'];
+                $nombre_solicitante = get_user_meta($id_solicitante_recorrido, 'first_name', true)." ".get_user_meta($id_solicitante_recorrido, 'last_name', true);
+
+                $nombre_conductor = "Sin Asignar";
+
+                if (get_field('id_conductor_recorrido', $post_id)) {
+                    $id_conductor_recorrido = get_field('id_conductor_recorrido', $post_id)['ID'];
+                    $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
+                }
+
+                $data[] = [
+                    $nombre_solicitante,
+                    $nombre_conductor,
+                    get_field('estado_del_recorrido', $post_id),
+                    get_field('fecha_inicio_recorrido', $post_id),
+                    get_field('hora_inicio_recorrido', $post_id),
+                    get_field('ciudad_inicial_recorrido', $post_id),
+                    get_field('barrio_inicial_recorrido', $post_id),
+                    get_field('centro_de_costo', $post_id),
+                ];
+            }
+
+            wp_reset_postdata();
+        } else {
+            wp_send_json_error('No se encontraron datos para generar el reporte.');
+        }
+    } else if ($tipo_consulta == 'colaborador') {
+        if ( !isset($_POST['selexc_colaborador']) || empty($_POST['selexc_colaborador']) ) {
+            wp_send_json_error('Es necesario seleccionar un Colaborador.');
+        }
+        $id_colaborador = intval($_POST['selexc_colaborador']); 
+
+        $first_name = get_user_meta($id_colaborador, 'first_name', true);
+        $last_name = get_user_meta($id_colaborador, 'last_name', true);
+
+        $query = new WP_Query([
+            'post_type'      => 'recorrido', // Cambia esto al tipo de post que corresponda
+            'posts_per_page' => -1,    // Sin límite, para obtener todos los resultados
+            'meta_query'     => [
+                'relation' => 'AND',
+                [
+                    'key'     => 'id_solicitante_recorrido',
+                    'value'   => $id_colaborador,
+                    'compare' => '='
+                ],
+                [
+                    'key'     => 'fecha_inicio_recorrido',
+                    'value'   => [$desde_formexcel, $hasta_formexcel],
+                    'compare' => 'BETWEEN',
+                    'type'    => 'DATE' // Especifica que las fechas son de tipo "DATE"
+                ],
+            ],
+            'fields'         => 'ids', // Solo obtener IDs
+        ]);
+
+        if ($query->have_posts()) {
+            $headers = ['Empresa', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $filtpor = "Colaborador: $first_name $last_name";
+            $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
+
+            // Recorrer los posts
+            foreach ($query->posts as $post_id) {
+
+                $empresa_solicitante_recorrido = get_field('empresa_solicitante_recorrido', $post_id);
+                $nombre_empresa = get_the_title( $empresa_solicitante_recorrido );
+
+                $nombre_conductor = "Sin Asignar";
+
+                if (get_field('id_conductor_recorrido', $post_id)) {
+                    $id_conductor_recorrido = get_field('id_conductor_recorrido', $post_id)['ID'];
+                    $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
+                }
+
+                $data[] = [
+                    $nombre_empresa,
+                    $nombre_conductor,
+                    get_field('estado_del_recorrido', $post_id),
+                    get_field('fecha_inicio_recorrido', $post_id),
+                    get_field('hora_inicio_recorrido', $post_id),
+                    get_field('ciudad_inicial_recorrido', $post_id),
+                    get_field('barrio_inicial_recorrido', $post_id),
+                    get_field('centro_de_costo', $post_id),
+                ];
+            }
+
+            wp_reset_postdata();
+        } else {
+            wp_send_json_error('No se encontraron datos para generar el reporte.');
+        }
+    } else if ($tipo_consulta == 'recorrido') {
+
+        $id_colaborador = intval($_POST['selexc_colaborador']); 
+
+        $first_name = get_user_meta($id_colaborador, 'first_name', true);
+        $last_name = get_user_meta($id_colaborador, 'last_name', true);
+
+        $meta_query = [
+            'relation' => 'AND',
+            [
+                'key'     => 'fecha_inicio_recorrido',
+                'value'   => [$desde_formexcel, $hasta_formexcel],
+                'compare' => 'BETWEEN',
+                'type'    => 'DATE' // Especifica que las fechas son de tipo "DATE"
+            ]
+        ];
+
+        // Agregar filtro por empresa si se recibe un valor en selexc_empresa
+        if (!empty($_POST['selexc_empresa'])) {
+            $meta_query[] = [
+                'key'     => 'empresa_solicitante_recorrido',
+                'value'   => $_POST['selexc_empresa'],
+                'compare' => '='
+            ];
+        }
+
+        // Agregar filtro por colaborador si se recibe un valor en selexc_colaborador
+        if (!empty($_POST['selexc_colaborador'])) {
+            $meta_query[] = [
+                'key'     => 'id_solicitante_recorrido',
+                'value'   => $_POST['selexc_colaborador'],
+                'compare' => '='
+            ];
+        }
+
+        $query = new WP_Query([
+            'post_type'      => 'recorrido', // Cambia esto al tipo de post que corresponda
+            'posts_per_page' => -1,    // Sin límite, para obtener todos los resultados
+            'meta_query'     => $meta_query,
+            'fields'         => 'ids', // Solo obtener IDs
+        ]);
+
+        if ($query->have_posts()) {
+            $headers = ['Empresa', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $filtpor = "Colaborador: $first_name $last_name";
+            $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
+
+            // Recorrer los posts
+            foreach ($query->posts as $post_id) {
+
+                $empresa_solicitante_recorrido = get_field('empresa_solicitante_recorrido', $post_id);
+                $nombre_empresa = get_the_title( $empresa_solicitante_recorrido );
+
+                $nombre_conductor = "Sin Asignar";
+
+                if (get_field('id_conductor_recorrido', $post_id)) {
+                    $id_conductor_recorrido = get_field('id_conductor_recorrido', $post_id)['ID'];
+                    $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
+                }
+
+                $data[] = [
+                    $nombre_empresa,
+                    $nombre_conductor,
+                    get_field('estado_del_recorrido', $post_id),
+                    get_field('fecha_inicio_recorrido', $post_id),
+                    get_field('hora_inicio_recorrido', $post_id),
+                    get_field('ciudad_inicial_recorrido', $post_id),
+                    get_field('barrio_inicial_recorrido', $post_id),
+                    get_field('centro_de_costo', $post_id),
+                ];
+            }
+
+            wp_reset_postdata();
+        } else {
+            wp_send_json_error('No se encontraron datos para generar el reporte.');
+        }
+
+    }
+
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
     $sheet->setTitle('Reporte de Clientes');
 
-    // Incluir el nombre de la empresa en la celda A1 y centrarlo
-    $company_name = 'Empresa XYZ'; // Cambia esto por el nombre real de tu empresa
-    $sheet->setCellValue('A1', $company_name);
-    $sheet->mergeCells('A1:E1'); // Combina las celdas de A1 a E1
-    $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER); // Centra el texto
+    // Ajuste de anchos y combinación de celdas
+    $sheet->getColumnDimension('A')->setWidth(30);
+    $sheet->getColumnDimension('B')->setWidth(30);
+    $sheet->getColumnDimension('C')->setWidth(35);
 
-    // URL del logo
-    $image_url = 'https://d3vweb.com/wp-content/uploads/2024/11/d3vweb.png'; // Ruta del logo de la empresa
+    $sheet->mergeCells('A1:C6');
+    $sheet->mergeCells('A7:C7');
 
-    // Descargar la imagen a un archivo temporal en el servidor
+    $sheet->getStyle('A1:C6')->applyFromArray([
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+        ],
+    ]);
+
+    // Ruta del logo
+    $image_url = 'https://d3vweb.com/wp-content/uploads/2024/11/d3vweb.png'; // Cambia por tu logo
     $tmp_image_path = download_image_to_temp($image_url);
-    
-    // Si la imagen fue descargada correctamente, agregarla al Excel
+
     if ($tmp_image_path) {
         $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
         $drawing->setName('Logo');
         $drawing->setDescription('Logo de la Empresa');
-        $drawing->setPath($tmp_image_path); // Usamos el archivo temporal
-        $drawing->setHeight(50); // Establecer altura de la imagen
-        $drawing->setCoordinates('A2'); // Coordenadas donde se insertará la imagen
+        $drawing->setPath($tmp_image_path);
+        $drawing->setHeight(80); // Ajusta la altura de la imagen
+        $drawing->setCoordinates('A1'); // Coordenada inicial
+        $drawing->setOffsetX(50); // Centrar el logo horizontalmente
+        $drawing->setOffsetY(10); // Ajustar el espacio vertical
         $drawing->setWorksheet($sheet);
     }
 
-    // Definir el estilo para las celdas A4, B4, C4
-    $style = [
+    // Nombre de la empresa
+    $company_name = 'AdoniGO';
+    $sheet->setCellValue('A7', $company_name);
+    $sheet->getStyle('A7')->applyFromArray([
         'alignment' => [
-            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Centrar horizontalmente
-            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,   // Centrar verticalmente
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
         ],
         'font' => [
-            'bold' => true, // Poner en negrita
+            'bold' => true,
+            'size' => 18,
         ],
-    ];
+    ]);
+    $sheet->getRowDimension(7)->setRowHeight(45);
 
-    // Definir los encabezados del Excel
-    $sheet->setCellValue('A4', 'ID')
-          ->setCellValue('B4', 'Nombre')
-          ->setCellValue('C4', 'Correo');
+    // Filtrado por
+    $sheet->setCellValue('A8', 'Filtrado por: ' . ucfirst(strtolower($tipo_consulta)));
+    $sheet->getStyle('A8')->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'size' => 14,
+        ],
+    ]);
 
-    $sheet->getStyle('A4:C4')->applyFromArray($style);
+    // Conductor
+    $sheet->setCellValue('A9', $filtpor);
+    $sheet->getStyle('A9')->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'size' => 14,
+        ],
+    ]);
 
-    // Obtener los datos (esto es solo un ejemplo, deberías obtenerlos dinámicamente)
-    $data = array(
-        array(1, 'Juan Pérez', 'juan.perez@example.com'),
-        array(2, 'Ana Gómez', 'ana.gomez@example.com'),
-        array(3, 'Carlos Sánchez', 'carlos.sanchez@example.com'),
-        array(4, 'Marta Rodríguez', 'marta.rodriguez@example.com'),
-        array(5, 'Pedro García', 'pedro.garcia@example.com'),
-        array(6, 'Lucía Fernández', 'lucia.fernandez@example.com'),
-        array(7, 'David López', 'david.lopez@example.com'),
-        array(8, 'Raquel Martínez', 'raquel.martinez@example.com'),
-        array(9, 'Javier Pérez', 'javier.perez@example.com'),
-        array(10, 'Clara Sánchez', 'clara.sanchez@example.com'),
-        array(11, 'Antonio Ruiz', 'antonio.ruiz@example.com'),
-        array(12, 'María González', 'maria.gonzalez@example.com'),
-        array(13, 'Luis Díaz', 'luis.diaz@example.com'),
-        array(14, 'Elena Romero', 'elena.romero@example.com'),
-        array(15, 'José Hernández', 'jose.hernandez@example.com'),
-        array(16, 'Isabel Torres', 'isabel.torres@example.com'),
-        array(17, 'Manuel Castro', 'manuel.castro@example.com'),
-        array(18, 'Sofía Navarro', 'sofia.navarro@example.com'),
-        array(19, 'Felipe Pérez', 'felipe.perez@example.com'),
-        array(20, 'Pablo Soto', 'pablo.soto@example.com'),
-        array(21, 'Laura Molina', 'laura.molina@example.com'),
-        array(22, 'Ricardo Vargas', 'ricardo.vargas@example.com'),
-        array(23, 'Ana Ruiz', 'ana.ruiz@example.com'),
-        array(24, 'Tomás Gómez', 'tomas.gomez@example.com'),
-        array(25, 'Sonia Rodríguez', 'sonia.rodriguez@example.com'),
-        array(26, 'Víctor López', 'victor.lopez@example.com'),
-        array(27, 'Beatriz Fernández', 'beatriz.fernandez@example.com'),
-        array(28, 'Martín Martínez', 'martin.martinez@example.com'),
-        array(29, 'Patricia Díaz', 'patricia.diaz@example.com'),
-        array(30, 'Eduardo Sánchez', 'eduardo.sanchez@example.com'),
-    );
+    // Fecha inicio consulta
+    $sheet->setCellValue('A10', 'Fecha Inicio Consulta: ' . $desde_formexcel);
+    $sheet->getStyle('A10')->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'size' => 14,
+        ],
+    ]);
 
+    // Fecha final consulta
+    $sheet->setCellValue('A11', 'Fecha Final Consulta: ' . $hasta_formexcel);
+    $sheet->getStyle('A11')->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'size' => 14,
+        ],
+    ]);
 
-    // Rellenar la hoja con los datos
-    $row = 5; // Comenzamos en la fila 5 porque las filas 1 a 4 están ocupadas
+    $col = 'A';
+    foreach ($headers as $header) {
+        $sheet->setCellValue($col . '13', $header);
+        $sheet->getStyle($col . '13')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 16],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER]
+        ]);
+        $col++;
+    }
+
+    // Encabezados de columnas para los datos
+    /*$sheet->setCellValue('A13', 'Fecha Inicio')
+          ->setCellValue('B13', 'Fecha Final')
+          ->setCellValue('C13', 'Franja');
+    $sheet->getStyle('A13:C13')->applyFromArray([
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+        ],
+        'font' => [
+            'bold' => true,
+            'size' => 16,
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+            ],
+        ],
+    ]);*/
+
+    // Datos del reporte
+    /*$data = $asignaciones;
+    $row = 14;
     foreach ($data as $item) {
-        $sheet->setCellValue('A' . $row, $item[0])
-              ->setCellValue('B' . $row, $item[1])
-              ->setCellValue('C' . $row, $item[2]);
+        $sheet->setCellValue('A' . $row, $item['dia_inicio_de_asignacion'])
+              ->setCellValue('B' . $row, $item['dia_fin_de_asignacion'])
+              ->setCellValue('C' . $row, $item['franja_horaria_asignacion']);
+        $row++;
+    }*/
+
+    $row = 14;
+    foreach ($data as $rowData) {
+        $col = 'A';
+        foreach ($rowData as $cellData) {
+            $sheet->setCellValue($col . $row, $cellData);
+            $col++;
+        }
         $row++;
     }
 
-    // Crear un escritor para el archivo Excel
-    $writer = new Xlsx($spreadsheet);
-
-    $fecha_hora = date('Y-m-d_H-i-s'); // Ejemplo: 2025-01-27_14-30-45
-
-
-    // Guardar el archivo en un directorio temporal
-    $file_path = wp_upload_dir()['path'] . '/Reporte-' . $fecha_hora . '.xlsx';
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+    $fecha_hora = date('Y-m-d_H-i-s');
+    $file_path = wp_upload_dir()['path'] . '/Reporte-'.$tipo_consulta.'-'. $fecha_hora . '.xlsx';
     $writer->save($file_path);
 
-    // Devolver la URL del archivo generado en vez de enviarlo directamente
-    wp_send_json_success(array('file_url' => wp_upload_dir()['url'] . '/Reporte-' . $fecha_hora . '.xlsx'));
+    wp_send_json_success(['file_url' => wp_upload_dir()['url'] . '/Reporte-'.$tipo_consulta.'-'. $fecha_hora . '.xlsx']);
 }
 add_action('wp_ajax_gen_reporte_excel', 'func_gen_reporte_excel');
 add_action('wp_ajax_nopriv_gen_reporte_excel', 'func_gen_reporte_excel');

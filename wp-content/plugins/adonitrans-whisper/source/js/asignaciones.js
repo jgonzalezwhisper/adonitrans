@@ -418,7 +418,7 @@ jQuery(document).ready(function($) {
         $('#filt-excel-form .wrap-select[data-select="' + checkedRadio + '"]').show();
 
         // Eliminar las reglas anteriores
-        $('#filt-excel-form select').rules('remove', 'required');
+        $('#selexc_conductor, #selexc_empresa, #selexc_colaborador').rules('remove', 'required');
 
         // Añadir la regla de 'required' al select visible
         if (checkedRadio === 'conductor') {
@@ -442,12 +442,15 @@ jQuery(document).ready(function($) {
                     required: "Por favor, selecciona un colaborador." // Mensaje personalizado para colaborador
                 }
             });
+        } else if (checkedRadio === 'recorrido') {
+            $('#selexc_conductor, #selexc_empresa, #selexc_colaborador').rules('remove', 'required');
+            $('#filt-excel-form .wrap-select[data-select="colaborador"], #filt-excel-form .wrap-select[data-select="empresa"]').show();
         }
     });
 
     // Al cambiar el valor de cualquier select, revalidar el formulario
-    $(document).on('change', '#filt-excel-form select', function(event) {
-        $(this).valid();
+    $(document).on('change', '#selexc_conductor, #selexc_empresa, #selexc_colaborador', function(event) {
+        $('#filt-excel-form').valid();
     });
 
     $(document).on('change', '#hasta_formexcel', function() {
@@ -460,82 +463,69 @@ jQuery(document).ready(function($) {
         $('#hasta_formexcel').attr('min', $(this).val());
     });
 
-    $(document).on('focusin', '#filt-excel-form', function() {
-
-        // Extender jQuery Validation para que funcione con select2 y elementos dinámicos
-        $.validator.setDefaults({
-            ignore: ':hidden:not(.select2-hidden-accessible)', // Ignorar elementos ocultos excepto select2
-        });
-
-        // Validación personalizada para select2
-        $.validator.addMethod("select2Required", function(value, element, param) {
-            return value !== null && value !== ""; // Validar que el valor no esté vacío
-        }, "Este dato es obligatorio");
-
-        $(this).validate({
-            rules: {
-                selexc_conductor: {
-                    select2Required: true,
-                },
-                desde: {
-                    required: true,
-                },
-                hasta: {
-                    required: true,
-                }
-            },
-            messages: {
-                selexc_conductor: "Por favor, selecciona un conductor.",
-                desde: "Este dato es obligatorio",
-                hasta: "Este dato es obligatorio"
-            },
-            submitHandler: function(form) {
-
-                // Recoger los datos del formulario
-                var formData = new FormData(form);
-                formData.append('action', 'gen_reporte_excel');
-
-                // Realizar la petición AJAX
-                $.ajax({
-                    url: asignacionAjax.ajaxurl, // Ruta del endpoint AJAX
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    beforeSend: function() {
-                        $('body').addClass('actloader');
-                    },
-                    success: function(response) {
-                        // Si la respuesta contiene la URL del archivo generado, redirigir a esa URL
-                        if (response.success && response.data.file_url) {
-                            window.location.href = response.data.file_url;
-                        } else {
-                            // Mostrar un mensaje de error si no se generó correctamente el archivo
-                            Swal.fire({
-                                title: '¡Error!',
-                                text: 'Hubo un problema al generar el archivo. Por favor intenta nuevamente.',
-                                icon: 'error',
-                                confirmButtonText: 'Aceptar',
-                            });
+    $(document).on('ajaxComplete', function() {
+        if ($('#filt-excel-form').length) {
+            setTimeout(function() {
+                $('#filt-excel-form').validate({
+                    rules: {
+                        selexc_conductor: {
+                            required: true
+                        },
+                        desde_formexcel: {
+                            required: true
+                        },
+                        hasta_formexcel: {
+                            required: true
                         }
-
-                        // Eliminar el loader
-                        $('body').removeClass('actloader');
                     },
-                    error: function() {
-                        $('body').removeClass('actloader');
-                        Swal.fire({
-                            title: '¡Error!',
-                            text: 'Hubo un problema al procesar el formulario. Por favor intenta nuevamente.',
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar',
+                    messages: {
+                        selexc_conductor: "Por favor, selecciona un conductor.",
+                        desde_formexcel: "Este dato es obligatorio",
+                        hasta_formexcel: "Este dato es obligatorio"
+                    },
+                    submitHandler: function(form) {
+                        event.preventDefault();
+
+                        var formData = new FormData(form);
+                        formData.append('action', 'gen_reporte_excel');
+
+                        $.ajax({
+                            url: asignacionAjax.ajaxurl,
+                            type: 'POST',
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            beforeSend: function() {
+                                $('body').addClass('actloader');
+                            },
+                            success: function(response) {
+                                $('body').removeClass('actloader');
+                                if (response.success && response.data.file_url) {
+                                    window.location.href = response.data.file_url;
+                                } else {
+                                    Swal.fire({
+                                        title: '¡Error!',
+                                        text: response.data,
+                                        icon: 'error',
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            },
+                            error: function(response) {
+                                $('body').removeClass('actloader');
+                                Swal.fire({
+                                    title: '¡Error!',
+                                    text: response.data,
+                                    icon: 'error',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
                         });
-                    },
+                    }
                 });
-
-
-            },
-        });
+            }, 500); // Pequeña espera para asegurarse de que el formulario esté listo
+        }
     });
+
 
 });

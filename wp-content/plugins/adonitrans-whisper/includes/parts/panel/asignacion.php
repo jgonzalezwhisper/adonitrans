@@ -243,7 +243,7 @@
             <div id="calendar"></div>
         </div>
 
-        <div class="wrap wrap-gestion wrap-calendario-asignaciones" data-target="exportar" style="display:none">
+        <div class="wrap wrap-gestion wrap-exportar-asignaciones" data-target="exportar" style="display:none">
             <div class="wrap">
                 <form id="filt-excel-form" method="post" class="formplug" autocomplete="off">
                     <?php
@@ -292,7 +292,7 @@
                         $colaboradores = $user_query_col->get_results();
                     ?>
                     <div class="wrap">
-                        <div for="id_conductor_asignado_filtcal">Filtrar Por</div>
+                        <div for="id_conductor_asignado_filtcal"><strong>Filtrar Por:</strong></div>
                         <div class="radio-button">
                             <div class="radio">
                                 <input type="radio" id="radfiltexcel1" name="tipo-consulta" value="conductor" checked>
@@ -306,15 +306,19 @@
                                 <input type="radio" id="radfiltexcel3" name="tipo-consulta" value="colaborador">
                                 <label for="radfiltexcel3" data-valor="colaborador">Colaborador</label>
                             </div>
+                            <div class="radio">
+                                <input type="radio" id="radfiltexcel4" name="tipo-consulta" value="recorrido">
+                                <label for="radfiltexcel4" data-valor="recorrido">Recorrido</label>
+                            </div>
                         </div>
                     </div>
                     <div class="wrap wrap-2">
                         <label for="desde_formexcel">Desde: </label>
-                        <input type="date" id="desde_formexcel" name="desde_formexcel" value="" placeholder="dd/mm/yyyy">
+                        <input type="date" id="desde_formexcel" name="desde_formexcel" value="" placeholder="dd/mm/yyyy" required>
                     </div>
                     <div class="wrap wrap-2">
                         <label for="hasta_formexcel">Hasta: </label>
-                        <input type="date" id="hasta_formexcel" name="hasta_formexcel" value="" placeholder="dd/mm/yyyy">
+                        <input type="date" id="hasta_formexcel" name="hasta_formexcel" value="" placeholder="dd/mm/yyyy" required>
                     </div>
                     <div class="wrap wrap-select" data-select="conductor">
                         <label for="selexc_conductor">Conductor</label>
