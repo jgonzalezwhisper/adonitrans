@@ -508,10 +508,6 @@ function func_gen_reporte_excel() {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
     } else if ($tipo_consulta == 'recorrido') {
-        $id_empresa = intval($_POST['selexc_empresa']);
-
-        $first_name = get_user_meta($id_colaborador, 'first_name', true);
-        $last_name = get_user_meta($id_colaborador, 'last_name', true);
 
         $meta_query = [
             'relation' => 'AND',
@@ -548,9 +544,13 @@ function func_gen_reporte_excel() {
             'fields'         => 'ids', 
         ]);
 
+        $id_empresa = (isset($_POST['selexc_empresa']) && !empty($_POST['selexc_empresa'])) ? intval($_POST['selexc_empresa']) : 0;
+        $post_empresa = get_post($id_empresa); 
+        $nomb_empresa = ($post_empresa) ? esc_html(get_the_title($id_empresa)) : "Todas";
+
         if ($query->have_posts()) {
             $headers = ['Colaborador', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
-            $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
+            $filtpor = 'Empresa: ' . $nomb_empresa;
             $data = []; 
 
             // Recorrer los posts
