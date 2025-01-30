@@ -24,8 +24,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Ignorar Composer y dependencias no necesarias
-vendor/
-composer.lock
+# vendor/
+# composer.lock
 
 # Ignorar el cache del servidor
 cache/
