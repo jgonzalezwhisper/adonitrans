@@ -18,9 +18,6 @@ function obtener_conductores_asignados() {
     $hora_solicitud_24h = convertir_a_24h($hora_solicitud);
     $franja_consulta ="";
 
-    error_log(print_r($fecha_solicitud,true));
-    error_log(print_r($id_recorrido,true));
-
     foreach ($franjas_general as $franja) {
         $hora_inicio_franja = convertir_a_24h($franja['hora_inicio']);
         $hora_fin_franja = convertir_a_24h($franja['hora_fin']);
@@ -30,45 +27,6 @@ function obtener_conductores_asignados() {
             break;
         }
     }
-
-    // Crear el array de argumentos para la consulta WP_Query
-    $args_asig = array(
-        'post_type'      => 'asignacion',
-        'posts_per_page' => -1,
-        'meta_query'     => array(
-            'relation' => 'AND',
-            array(
-                'key'     => 'asignaciones_de_la_semana',
-                'compare' => 'EXISTS'
-            ),
-            array(
-                'relation' => 'OR',
-                array(
-                    'key'     => 'asignaciones_de_la_semana_$_dia_inicio_de_asignacion',
-                    'value'   => $fecha_solicitud,
-                    'compare' => '<=',
-                    'type'    => 'DATE'
-                ),
-                array(
-                    'key'     => 'asignaciones_de_la_semana_$_dia_fin_de_asignacion',
-                    'value'   => $fecha_solicitud,
-                    'compare' => '>=',
-                    'type'    => 'DATE'
-                )
-            ),
-            array(
-                'key'     => 'asignaciones_de_la_semana_$_franja_horaria_asignacion',
-                'value'   => $franja_consulta,
-                'compare' => '='
-            )
-        ),
-        'fields'         => 'ID'
-    );
-
-    // Realizar la consulta
-    $query_asig = new WP_Query($args_asig);
-
-    error_log(print_r($query_asig,true));
 
     $argscon = array(
         'role'    => 'conductor',
