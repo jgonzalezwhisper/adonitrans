@@ -42,19 +42,6 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_cached_usage() {
-		$cache_key = 'elementor_ai_usage';
-		$cache_time = 24 * HOUR_IN_SECONDS;
-		$usage = get_site_transient( $cache_key );
-
-		if ( ! $usage ) {
-			$usage = $this->get_usage();
-			set_site_transient( $cache_key, $usage, $cache_time );
-		}
-
-		return $usage;
-	}
-
 	public function get_remote_config() {
 		return $this->ai_request(
 			'GET',
@@ -75,6 +62,32 @@ class Ai extends Library {
 				'client_version' => $data['payload']['client_version'],
 				'client_session_id' => $data['payload']['client_session_id'],
 
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
+	/**
+	 * @param array $event_data {
+	 *     @type string $name
+	 *     @type array $data
+	 *     @type array $client {
+	 *         @type string $name
+	 *         @type string $version
+	 *         @type string $session_id
+	 *     }
+	 * }
+	 */
+	public function send_event( array $event_data ) : void {
+		$this->ai_request(
+			'POST',
+			'client-events/events',
+			[
+				'payload' => $event_data,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -849,6 +862,24 @@ class Ai extends Library {
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
+		);
+	}
+
+	public function get_animation( $data, $context, $request_ids ) {
+		return $this->ai_request(
+			'POST',
+			'text/get-motion-effect',
+			[
+				'prompt' => $data['payload']['prompt'],
+				'motionEffectType' => $data['payload']['motionEffectType'],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 

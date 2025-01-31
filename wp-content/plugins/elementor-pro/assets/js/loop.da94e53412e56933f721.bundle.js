@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.26.0 - 07-01-2025 */
+/*! elementor-pro - v3.27.0 - 27-01-2025 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["loop"],{
 

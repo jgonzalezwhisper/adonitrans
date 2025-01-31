@@ -104,7 +104,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.elementor .elementor-html5-video {
+.elementor .elementor-background-video-hosted {
   object-fit: cover;
 }
 .elementor .elementor-background-overlay {

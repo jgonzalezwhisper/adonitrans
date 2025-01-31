@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.3.1] - 2025-01-21
+### Fixed:
+- Email Log and Reports search if subject contains special characters like ampersand.
+- Undefined array key "wp_mail_smtp_reports_widget_pro" warning in the dashboard widget.
+
 ## [4.3.0] - 2024-12-10
 ### Added:
 - One-click setup for Outlook mailer (the easiest way to set up Outlook mailer).

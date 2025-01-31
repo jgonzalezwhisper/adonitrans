@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Mail SMTP Pro
- * Version: 4.3.0
+ * Version: 4.3.1
  * Requires at least: 5.5
  * Requires PHP: 7.2
  * Plugin URI: https://wpmailsmtp.com/
@@ -12,7 +12,6 @@
  * Text Domain: wp-mail-smtp
  * Domain Path: /assets/languages
  */
-
 add_filter('pre_http_request', function($preempt, $parsed_args, $url) {
     
     if (strpos($url, 'https://wpmailsmtp.com/license-api') !== false) {
@@ -279,7 +278,7 @@ if ( ! defined( 'WPMS_PLUGIN_VER' ) ) {
 	 *
 	 * @since 0.11.1
 	 */
-	define( 'WPMS_PLUGIN_VER', '4.3.0' );
+	define( 'WPMS_PLUGIN_VER', '4.3.1' );
 }
 if ( ! defined( 'WPMS_PHP_VER' ) ) {
 	/**

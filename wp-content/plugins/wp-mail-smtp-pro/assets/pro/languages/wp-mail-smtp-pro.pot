@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Mail SMTP 4.3.0\n"
+"Project-Id-Version: WP Mail SMTP 4.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-mail-smtp-pro\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-12-09T14:22:50+00:00\n"
+"POT-Creation-Date: 2025-01-20T14:52:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: wp-mail-smtp-pro\n"
@@ -27,7 +27,7 @@ msgstr ""
 
 #. Author of the plugin
 #: src/Pro/Admin/DashboardWidget.php:223
-#: src/Pro/Admin/DashboardWidget.php:509
+#: src/Pro/Admin/DashboardWidget.php:514
 #: src/Pro/Emails/Logs/Webhooks/Providers/Sendinblue/Subscriber.php:58
 #: src/Pro/Emails/Logs/Webhooks/Providers/SparkPost/Subscriber.php:58
 msgid "WP Mail SMTP"
@@ -175,170 +175,170 @@ msgstr ""
 msgid "Failed emails"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:308
+#: src/Pro/Admin/DashboardWidget.php:313
 msgid "Error icon"
 msgstr ""
 
 #. translators: 1: Number of failed emails, 2: Timespan.
-#: src/Pro/Admin/DashboardWidget.php:316
+#: src/Pro/Admin/DashboardWidget.php:321
 msgid "We detected %1$d failed email in the last %2$d days."
 msgid_plural "We detected %1$d failed emails in the last %2$d days."
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s - URL to WP Mail SMTP -> Settings -> Alerts Admin page..
-#: src/Pro/Admin/DashboardWidget.php:328
+#: src/Pro/Admin/DashboardWidget.php:333
 msgid "<a href=\"%s\">Enable Email Alerts</a> and get instant notifications when they fail."
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:349
+#: src/Pro/Admin/DashboardWidget.php:354
 msgid "Dismiss email alert block"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:370
+#: src/Pro/Admin/DashboardWidget.php:375
 msgid "Pattie the WP Mail SMTP mascot"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:371
+#: src/Pro/Admin/DashboardWidget.php:376
 msgid "Enable Email Logs to View Stats"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:372
+#: src/Pro/Admin/DashboardWidget.php:377
 msgid "Automatically keep track of every email sent from your WordPress site and view valuable statistics right here in your dashboard."
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:374
+#: src/Pro/Admin/DashboardWidget.php:379
 msgid "Enable Email Logging"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:377
-#: src/Pro/Admin/DashboardWidget.php:632
+#: src/Pro/Admin/DashboardWidget.php:382
+#: src/Pro/Admin/DashboardWidget.php:637
 msgid "Learn More"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:404
+#: src/Pro/Admin/DashboardWidget.php:409
 msgid "View Full Log"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:430
+#: src/Pro/Admin/DashboardWidget.php:435
 msgid "Select timespan"
 msgstr ""
 
 #. translators: %d - Number of days.
-#: src/Pro/Admin/DashboardWidget.php:434
+#: src/Pro/Admin/DashboardWidget.php:439
 msgid "Last %d day"
 msgid_plural "Last %d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Pro/Admin/DashboardWidget.php:451
+#: src/Pro/Admin/DashboardWidget.php:456
 #: src/Pro/Emails/Logs/Reports/Admin.php:185
 #: src/Pro/Emails/Logs/Reports/Admin.php:286
 msgid "All Emails"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:452
+#: src/Pro/Admin/DashboardWidget.php:457
 #: src/Pro/Emails/Logs/Reports/Emails/Summary.php:183
 msgid "Confirmed Emails"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:453
+#: src/Pro/Admin/DashboardWidget.php:458
 #: src/Pro/Emails/Logs/Reports/Emails/Summary.php:190
 msgid "Unconfirmed Emails"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:454
+#: src/Pro/Admin/DashboardWidget.php:459
 #: src/Pro/Emails/Logs/Reports/Emails/Summary.php:198
 msgid "Failed Emails"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:459
+#: src/Pro/Admin/DashboardWidget.php:464
 #: src/Pro/Emails/Logs/Reports/Emails/Summary.php:176
 msgid "Sent Emails"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:463
+#: src/Pro/Admin/DashboardWidget.php:468
 msgid "Select email type"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:492
+#: src/Pro/Admin/DashboardWidget.php:497
 msgid "Graph Style"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:496
+#: src/Pro/Admin/DashboardWidget.php:501
 msgid "Bar"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:500
+#: src/Pro/Admin/DashboardWidget.php:505
 msgid "Line"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:505
+#: src/Pro/Admin/DashboardWidget.php:510
 msgid "Color Scheme"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:513
+#: src/Pro/Admin/DashboardWidget.php:518
 msgid "WordPress"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:517
+#: src/Pro/Admin/DashboardWidget.php:522
 msgid "Save Changes"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:551
+#: src/Pro/Admin/DashboardWidget.php:556
 msgid "No email logs for selected period."
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:598
+#: src/Pro/Admin/DashboardWidget.php:603
 msgid "Table cell icon"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:626
+#: src/Pro/Admin/DashboardWidget.php:631
 msgid "Recommended Plugin:"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:628
+#: src/Pro/Admin/DashboardWidget.php:633
 msgid "WPForms"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:630
+#: src/Pro/Admin/DashboardWidget.php:635
 msgid "Install"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:635
+#: src/Pro/Admin/DashboardWidget.php:640
 msgid "Dismiss recommended plugin block"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:654
+#: src/Pro/Admin/DashboardWidget.php:659
 msgid "No email logs yet"
 msgstr ""
 
-#: src/Pro/Admin/DashboardWidget.php:655
+#: src/Pro/Admin/DashboardWidget.php:660
 msgid "Please check back tomorrow."
 msgstr ""
 
 #. translators: %d number of total emails sent.
-#: src/Pro/Admin/DashboardWidget.php:1185
+#: src/Pro/Admin/DashboardWidget.php:1190
 msgid "%d total"
 msgstr ""
 
 #. translators: %d number of confirmed emails sent.
-#: src/Pro/Admin/DashboardWidget.php:1192
+#: src/Pro/Admin/DashboardWidget.php:1197
 msgid "%d confirmed"
 msgstr ""
 
 #. translators: %d number of unconfirmed emails sent.
-#: src/Pro/Admin/DashboardWidget.php:1199
+#: src/Pro/Admin/DashboardWidget.php:1204
 msgid "%d unconfirmed"
 msgstr ""
 
 #. translators: %d number of failed email sent attempts.
-#: src/Pro/Admin/DashboardWidget.php:1206
+#: src/Pro/Admin/DashboardWidget.php:1211
 msgid "%d failed"
 msgstr ""
 
 #. translators: %d number of sent emails.
-#: src/Pro/Admin/DashboardWidget.php:1218
+#: src/Pro/Admin/DashboardWidget.php:1223
 msgid "%d sent"
 msgstr ""
 
@@ -379,22 +379,27 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %1$s - WP Mail SMTP Pro URL; %2$s - WP Mail SMTP Pro purchase link.
-#: src/Pro/Admin/PluginsList.php:309
+#: src/Pro/Admin/PluginsList.php:329
 msgid "<a href=\"%1$s\">Activate WP Mail SMTP Pro</a> to receive features, updates, and support. Don't have a license? <a target=\"_blank\" href=\"%2$s\" rel=\"noopener noreferrer\">Purchase one now</a>."
 msgstr ""
 
 #. translators: %1$s - WP Mail SMTP Pro URL; %2$s - WP Mail SMTP Pro purchase link.
-#: src/Pro/Admin/PluginsList.php:321
+#: src/Pro/Admin/PluginsList.php:341
 msgid "<a href=\"%1$s\">Activate</a> your license to access this update, new features, and support. Don't have a license? <a target=\"_blank\" href=\"%2$s\" rel=\"noopener noreferrer\">Purchase one now</a>."
 msgstr ""
 
 #. translators: %s - WP Mail SMTP Pro renew link.
-#: src/Pro/Admin/PluginsList.php:342
+#: src/Pro/Admin/PluginsList.php:362
 msgid "<strong style=\"color: #e72f0a\">Your WP Mail SMTP Pro license is expired.</strong> <a target=\"_blank\" href=\"%s\" rel=\"noopener noreferrer\">Renew now</a> to receive new features, updates, and support."
 msgstr ""
 
+#. translators: %1$s - WPMailSMTP.com account area URL; %2$s - WPMailSMTP.com pricing page URL.
+#: src/Pro/Admin/PluginsList.php:388
+msgid "<strong style=\"color: #e72f0a\">Your WP Mail SMTP Pro license has no site activations left.</strong> You can update the list of your sites or upgrade the license in the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Account area</a>. Or you can <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">purchase a new license key</a>."
+msgstr ""
+
 #. translators: %1$s - WP Mail SMTP Pro Changelog link; %2$s - WP Mail SMTP Pro latest version.
-#: src/Pro/Admin/PluginsList.php:367
+#: src/Pro/Admin/PluginsList.php:431
 msgid "There is a new version of WP Mail SMTP Pro available. <a target=\"_blank\" href=\"%1$s\" rel=\"noopener noreferrer\">View version %2$s details</a>."
 msgstr ""
 
@@ -2021,104 +2026,125 @@ msgstr ""
 msgid "Something went wrong. Please try again later."
 msgstr ""
 
-#: src/Pro/License/License.php:243
+#: src/Pro/License/License.php:244
 msgid "Renew License"
 msgstr ""
 
-#: src/Pro/License/License.php:249
+#: src/Pro/License/License.php:250
 msgid "Verify Key"
 msgstr ""
 
-#: src/Pro/License/License.php:253
+#: src/Pro/License/License.php:254
 msgid "Remove Key"
 msgstr ""
 
 #. translators: %1$s - WP Mail SMTP account dashboard url; %2$s - pricing page url.
-#: src/Pro/License/License.php:266
+#: src/Pro/License/License.php:267
 msgid "Your license key can be found in your <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">WP Mail SMTP Account Dashboard</a>. Don't have a license?  <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">Sign up today!</a>"
 msgstr ""
 
 #. translators: $s - license type.
-#: src/Pro/License/License.php:281
+#: src/Pro/License/License.php:282
 msgid "Your license key level is %s."
 msgstr ""
 
-#: src/Pro/License/License.php:286
-#: src/Pro/License/License.php:303
+#: src/Pro/License/License.php:287
+#: src/Pro/License/License.php:304
+#: src/Pro/License/License.php:360
 msgid "If your license has been upgraded or is incorrect, then please <a href=\"#\" id=\"wp-mail-smtp-setting-license-key-refresh\">force a refresh</a>."
 msgstr ""
 
-#: src/Pro/License/License.php:296
+#: src/Pro/License/License.php:297
 msgid "<b>Your license has expired.</b> An active license is needed to access some of the Pro features, plugin updates (including security improvements), and our world class support!"
 msgstr ""
 
-#: src/Pro/License/License.php:313
+#: src/Pro/License/License.php:314
 msgid "<b>Your license key has been disabled.</b> Please use a different key to continue receiving automatic updates."
 msgstr ""
 
-#: src/Pro/License/License.php:320
+#: src/Pro/License/License.php:321
 msgid "<b>Your license key is invalid.</b> The key no longer exists or the user associated with the key has been deleted. Please use a different key to continue receiving automatic updates."
 msgstr ""
 
-#: src/Pro/License/License.php:413
+#. translators: %1$s - WPMailSMTP.com account area URL; %2$s - WPMailSMTP.com pricing page URL.
+#: src/Pro/License/License.php:329
+msgid "<b>Sorry, but this license has no site activations left.</b> You can update the list of your sites or upgrade the license in the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Account area</a>. Or you can <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">purchase a new license key</a>."
+msgstr ""
+
+#: src/Pro/License/License.php:460
 msgid "There was an error connecting to the remote key API. Please try again later."
 msgstr ""
 
-#: src/Pro/License/License.php:434
+#: src/Pro/License/License.php:481
 msgid "Congratulations! This site is now receiving automatic updates."
 msgstr ""
 
-#: src/Pro/License/License.php:532
-#: src/Pro/License/License.php:655
-#: src/Pro/License/License.php:892
+#: src/Pro/License/License.php:580
+#: src/Pro/License/License.php:731
+#: src/Pro/License/License.php:1011
 msgid "There was an error connecting to the remote server. Please try again later."
 msgstr ""
 
-#: src/Pro/License/License.php:557
-#: src/Pro/License/License.php:779
+#: src/Pro/License/License.php:608
+#: src/Pro/License/License.php:855
 msgid "Your license key for WP Mail SMTP Pro is invalid. The key no longer exists or the user associated with the key has been deleted. Please use a different key to continue receiving automatic updates."
 msgstr ""
 
-#: src/Pro/License/License.php:576
+#: src/Pro/License/License.php:621
 msgid "Your license key for WP Mail SMTP Pro has expired. Please renew your license key on WPMailSMTP.com to continue receiving automatic updates."
 msgstr ""
 
-#: src/Pro/License/License.php:595
-#: src/Pro/License/License.php:770
+#: src/Pro/License/License.php:634
+#: src/Pro/License/License.php:846
 msgid "Your license key for WP Mail SMTP Pro has been disabled. Please use a different key to continue receiving automatic updates."
 msgstr ""
 
-#: src/Pro/License/License.php:617
+#. translators: %1$s - WPMailSMTP.com account area URL; %2$s - WPMailSMTP.com pricing page URL.
+#: src/Pro/License/License.php:650
+msgid "Sorry, but this license has no site activations left. You can update the list of your sites or upgrade the license in the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Account area</a>. Or you can <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">purchase a new license key</a>."
+msgstr ""
+
+#: src/Pro/License/License.php:693
 msgid "Your key has been refreshed successfully."
 msgstr ""
 
-#: src/Pro/License/License.php:677
+#: src/Pro/License/License.php:753
 msgid "You have deactivated the key from this site successfully."
 msgstr ""
 
 #. translators: %s - plugin settings page URL.
-#: src/Pro/License/License.php:726
-#: src/Pro/License/License.php:876
+#: src/Pro/License/License.php:802
+#: src/Pro/License/License.php:995
 msgid "Please <a href=\"%s\">enter and activate</a> your license key for WP Mail SMTP Pro to enable automatic updates."
 msgstr ""
 
 #. translators: %s - WPMailSMTP.com login page URL.
-#: src/Pro/License/License.php:749
-#: src/Pro/License/License.php:900
+#: src/Pro/License/License.php:825
+#: src/Pro/License/License.php:1019
 msgid "Your license key for WP Mail SMTP Pro has expired. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Please click here to renew your license key and continue receiving automatic updates.</a>"
 msgstr ""
 
+#. translators: %1$s - WPMailSMTP.com account area URL; %2$s - WPMailSMTP.com pricing page URL.
+#: src/Pro/License/License.php:868
+msgid "<b>Your WP Mail SMTP Pro license has no site activations left.</b> You can update the list of your sites or upgrade the license in the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Account area</a>. Or you can <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">purchase a new license key</a>."
+msgstr ""
+
 #. translators: %s - plugin settings page URL.
-#: src/Pro/License/License.php:918
+#: src/Pro/License/License.php:1037
 msgid "Your license key for WP Mail SMTP Pro has been disabled. Please <a href=\"%s\">enter and activate</a> a different key for WP Mail SMTP Pro to continue receiving automatic updates."
 msgstr ""
 
 #. translators: %s - plugin settings page URL.
-#: src/Pro/License/License.php:934
+#: src/Pro/License/License.php:1053
 msgid "Your license key for WP Mail SMTP Pro is invalid. Please <a href=\"%s\">enter and activate</a> a different key for WP Mail SMTP Pro to continue receiving automatic updates."
 msgstr ""
 
-#: src/Pro/License/License.php:949
+#. translators: %1$s - WPMailSMTP.com account area URL; %2$s - WPMailSMTP.com pricing page URL.
+#: src/Pro/License/License.php:1069
+msgid "Your WP Mail SMTP Pro license has no site activations left. You can update the list of your sites or upgrade the license in the <a href=\"%1$s\" target=\"_blank\" rel=\"noopener noreferrer\">Account area</a>. Or you can <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">purchase a new license key</a>."
+msgstr ""
+
+#: src/Pro/License/License.php:1101
 msgid "Your WP Mail SMTP Pro license is active and valid."
 msgstr ""
 

@@ -5,11 +5,13 @@
  * @package HelloElementor
  */
 
+use Elementor\WPNotificationsPackage\V110\Notifications as ThemeNotifications;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'HELLO_ELEMENTOR_VERSION', '3.2.1' );
+define( 'HELLO_ELEMENTOR_VERSION', '3.3.0' );
 
 if ( ! isset( $content_width ) ) {
 	$content_width = 800; // Pixels.
@@ -261,3 +263,21 @@ if ( ! function_exists( 'hello_elementor_body_open' ) ) {
 		wp_body_open();
 	}
 }
+
+function hello_elementor_get_theme_notifications(): ThemeNotifications {
+	static $notifications = null;
+
+	if ( null === $notifications ) {
+		require get_template_directory() . '/vendor/autoload.php';
+
+		$notifications = new ThemeNotifications(
+			'hello-elementor',
+			HELLO_ELEMENTOR_VERSION,
+			'theme'
+		);
+	}
+
+	return $notifications;
+}
+
+hello_elementor_get_theme_notifications();

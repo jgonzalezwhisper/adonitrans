@@ -170,7 +170,7 @@ class Container extends Element_Base {
 			#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
 				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
+				<video class="elementor-background-video-hosted" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
 		<div class="elementor-shape elementor-shape-top"></div>
@@ -216,7 +216,7 @@ class Container extends Element_Base {
 					$video_tag_attributes .= ' loop';
 				}
 				?>
-				<video class="elementor-background-video-hosted elementor-html5-video" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
+				<video class="elementor-background-video-hosted" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
 			<?php endif; ?>
 		</div><?php
 	}
@@ -664,6 +664,20 @@ class Container extends Element_Base {
 					'styles' => [
 						[
 							'name' => 'e-swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+					],
+					'scripts' => [
+						[
+							'name' => 'swiper',
 							'conditions' => [
 								'terms' => [
 									[
@@ -1368,6 +1382,104 @@ class Container extends Element_Base {
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--padding-top: {{TOP}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'heading_grid_item',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Grid Item', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_column',
+			[
+				'label' => esc_html__( 'Column Span', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => ' Default',
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+					'custom' => 'Custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: span {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_column_custom',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: {{VALUE}}',
+				],
+				'condition' => [
+					'grid_column' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_row',
+			[
+				'label' => esc_html__( 'Row Span', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => ' Default',
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+					'custom' => 'Custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: span {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_row_custom',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'separator' => 'after',
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: {{VALUE}}',
+				],
+				'condition' => [
+					'grid_row' => 'custom',
 				],
 			]
 		);

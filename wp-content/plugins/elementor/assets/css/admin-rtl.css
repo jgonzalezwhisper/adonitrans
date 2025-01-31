@@ -1,4 +1,4 @@
-/*! elementor - v3.26.0 - 07-01-2025 */
+/*! elementor - v3.27.0 - 27-01-2025 */
 .elementor-button,
 .e-btn,
 #elementor-deactivate-feedback-modal .dialog-skip,
@@ -2420,6 +2420,10 @@ fieldset:disabled a.e-button {
 .e-experiment__title__tag__secondary {
   background: rgba(0, 0, 0, 0.1);
   color: inherit;
+}
+.e-experiment__title__tag__deprecated {
+  background: #e66;
+  color: white;
 }
 .e-experiment__table-title {
   margin: 30px 0;

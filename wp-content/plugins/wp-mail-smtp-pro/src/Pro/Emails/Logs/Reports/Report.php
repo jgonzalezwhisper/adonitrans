@@ -737,7 +737,7 @@ class Report {
 		if ( ! empty( $this->params['search'] ) ) {
 			$where[] = $wpdb->prepare(
 				'subject LIKE %s',
-				'%' . $wpdb->esc_like( $this->params['search'] ) . '%'
+				'%' . $wpdb->esc_like( wp_kses( $this->params['search'], [] ) ) . '%'
 			);
 		}
 

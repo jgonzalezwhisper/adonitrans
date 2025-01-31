@@ -1,4 +1,4 @@
-/*! elementor - v3.26.0 - 07-01-2025 */
+/*! elementor - v3.27.0 - 27-01-2025 */
 .elementor-control-unit-1 {
   width: 27px;
 }
@@ -3084,7 +3084,6 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   height: 100%;
   background-size: cover;
   background-position: center;
-  padding-block-end: 42.8571%;
 }
 .elementor-control-media-area {
   background-image: linear-gradient(45deg, var(--e-a-border-color-bold) 25%, transparent 0, transparent 75%, var(--e-a-border-color-bold) 0, var(--e-a-border-color-bold)), linear-gradient(45deg, var(--e-a-border-color-bold) 25%, transparent 0, transparent 75%, var(--e-a-border-color-bold) 0, var(--e-a-border-color-bold));
