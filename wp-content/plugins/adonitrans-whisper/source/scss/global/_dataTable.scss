@@ -83,17 +83,35 @@
 					font-size: 14px;
 				}
 			}
-			.Activo, .Activa{
+			.activo, .activa{
 				color: #30bf30;
     			font-weight: 700;
 			}
-			.Inactivo, .Inactiva{
+			.inactivo, .inactiva{
 				color: red;
     			font-weight: 700;
 			}
-			.Pendiente{
+			.pendiente{
 				color: #ff8100;
     			font-weight: 700;
+			}
+			.por-asignar{
+				color: red;
+    			font-weight: 700;
+			}
+			.en-curso {
+			    color: #007bff;
+			    font-weight: 700;
+			}
+
+			.finalizado {
+			    color: #28a745; 
+			    font-weight: 700;
+			}
+
+			.cancelado {
+			    color: #6c757d;
+			    font-weight: 700;
 			}
 			.acciones {
 				.accion {

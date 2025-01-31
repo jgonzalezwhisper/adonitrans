@@ -386,6 +386,36 @@ form {
     text-shadow: 0 0 4px rgba(0, 0, 0, .45)
   }
 
+  &.activo,
+  &.activa {
+    background-color: #30bf30;
+  }
+
+  &.inactivo,
+  &.inactiva {
+    background-color: red;
+  }
+
+  &.pendiente {
+    background-color: #ff8100;
+  }
+
+  &.por-asignar {
+    background-color: red;
+  }
+
+  &.en-curso {
+    background-color: #007bff;
+  }
+
+  &.finalizado {
+    background-color: #28a745;
+  }
+
+  &.cancelado {
+    background-color: #6c757d;
+  }
+
 }
 
 .dropdown-menu-user {

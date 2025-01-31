@@ -46,7 +46,7 @@
                                 <td><?= get_the_ID(); ?></td>
                                 <td><?= $placa_vehiculo ?></td>
                                 <td><?= $tipo_vehiculo; ?></td>
-                                <td class="<?= $estado_vehiculo; ?>"><?= $estado_vehiculo; ?></td>
+                                <td class="<?= str_replace(' ', '-', strtolower($estado_vehiculo)); ?>"><?= $estado_vehiculo; ?></td>
                                 <td>
                                     <div class="acciones">
                                         <button class="accion edit-vehiculo" data-id="<?= get_the_ID(); ?>"><i class="icofont-pencil"></i>Editar</button>

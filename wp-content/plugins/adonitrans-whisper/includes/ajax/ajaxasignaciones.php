@@ -1,5 +1,190 @@
 <?php
 
+function convertir_a_24h($hora) {
+    return date("H:i:s", strtotime($hora));
+}
+
+function obtener_conductores_asignados() {
+    // Verificar si se ha enviado la fecha de solicitud por AJAX
+    if (!isset($_POST['id_recorrido'])) {
+        wp_send_json_error('Fecha de solicitud no proporcionada.');
+    }
+
+    $id_recorrido = intval($_POST['id_recorrido']);
+    $fecha_solicitud = get_field('fecha_inicio_recorrido', $id_recorrido);
+    $fecha_solicitud = date('Y-m-d', strtotime(str_replace('/', '-', $fecha_solicitud)));
+    $hora_solicitud = get_field('hora_inicio_recorrido', $id_recorrido);
+    $franjas_general = get_field('franjas_horas_trabajo', 'option');
+    $hora_solicitud_24h = convertir_a_24h($hora_solicitud);
+    $franja_consulta ="";
+
+    error_log(print_r($fecha_solicitud,true));
+    error_log(print_r($id_recorrido,true));
+
+    foreach ($franjas_general as $franja) {
+        $hora_inicio_franja = convertir_a_24h($franja['hora_inicio']);
+        $hora_fin_franja = convertir_a_24h($franja['hora_fin']);
+        
+        if ($hora_solicitud_24h >= $hora_inicio_franja && $hora_solicitud_24h < $hora_fin_franja) {
+            $franja_consulta = $franja['nombre'];
+            break;
+        }
+    }
+
+    // Crear el array de argumentos para la consulta WP_Query
+    $args_asig = array(
+        'post_type'      => 'asignacion',
+        'posts_per_page' => -1,
+        'meta_query'     => array(
+            'relation' => 'AND',
+            array(
+                'key'     => 'asignaciones_de_la_semana',
+                'compare' => 'EXISTS'
+            ),
+            array(
+                'relation' => 'OR',
+                array(
+                    'key'     => 'asignaciones_de_la_semana_$_dia_inicio_de_asignacion',
+                    'value'   => $fecha_solicitud,
+                    'compare' => '<=',
+                    'type'    => 'DATE'
+                ),
+                array(
+                    'key'     => 'asignaciones_de_la_semana_$_dia_fin_de_asignacion',
+                    'value'   => $fecha_solicitud,
+                    'compare' => '>=',
+                    'type'    => 'DATE'
+                )
+            ),
+            array(
+                'key'     => 'asignaciones_de_la_semana_$_franja_horaria_asignacion',
+                'value'   => $franja_consulta,
+                'compare' => '='
+            )
+        ),
+        'fields'         => 'ID'
+    );
+
+    // Realizar la consulta
+    $query_asig = new WP_Query($args_asig);
+
+    error_log(print_r($query_asig,true));
+
+    $argscon = array(
+        'role'    => 'conductor',
+        'orderby' => 'display_name',
+        'order'   => 'ASC',
+        'meta_query' => array(
+            array(
+                'key'   => 'estado_usuario',
+                'value' => 'Activo',
+                'compare' => '='
+            )
+        ),
+        'fields' => 'ID'
+    );
+
+    $user_query = new WP_User_Query($argscon);
+    $conductores = $user_query->get_results();
+
+    // Array para almacenar los conductores que cumplen con las condiciones
+    $conductores_asignados = array();
+
+    foreach ($conductores as $conductor) {
+        $conductor_id = $conductor;
+
+        // Obtener las asignaciones del conductor donde la fecha de solicitud esté entre inicio_semana_asignacion y fin_semana_asignacion
+        $args_asignaciones = [
+            'post_type'  => 'asignacion',
+            'post_status' => 'publish',
+            'meta_query' => [
+                'relation' => 'AND',
+                [
+                    'key' => 'id_conductor_asignado',
+                    'value' => $conductor_id,
+                    'compare' => '='
+                ],
+                [
+                    'key' => 'inicio_semana_asignacion',
+                    'value' => $fecha_solicitud,
+                    'compare' => '<=', // La fecha de inicio debe ser menor o igual a la fecha de solicitud
+                    'type'    => 'DATE'
+                ],
+                [
+                    'key' => 'fin_semana_asignacion',
+                    'value' => $fecha_solicitud,
+                    'compare' => '>=', // La fecha de fin debe ser mayor o igual a la fecha de solicitud
+                    'type'    => 'DATE'
+                ]
+            ]
+        ];
+
+        $query_asignaciones = new WP_Query($args_asignaciones);
+
+        if ($query_asignaciones->have_posts()) {
+            while ($query_asignaciones->have_posts()) {
+                $query_asignaciones->the_post();
+
+                // Obtener el campo repetidor de asignaciones de la semana
+                $asignaciones_semana = get_field('asignaciones_de_la_semana');
+
+                if ($asignaciones_semana) {
+                    foreach ($asignaciones_semana as $asignacion) {
+                        $dia_inicio = $asignacion['dia_inicio_de_asignacion'];
+                        $dia_fin = $asignacion['dia_fin_de_asignacion'];
+                        $franja_horaria = $asignacion['franja_horaria_asignacion'];
+
+                        // Convertimos las fechas para la comparación
+                        $fecha_solicitud_dt = DateTime::createFromFormat('Y-m-d', $fecha_solicitud);
+                        $dia_inicio_dt = DateTime::createFromFormat('d/m/Y', $dia_inicio);
+                        $dia_fin_dt = DateTime::createFromFormat('d/m/Y', $dia_fin);
+
+                        // Verificar si la fecha de solicitud está dentro del rango de días de la asignación
+                        if ($fecha_solicitud_dt >= $dia_inicio_dt && $fecha_solicitud_dt <= $dia_fin_dt) {
+                            if ($franja_horaria == $franja_consulta) {
+                                // Convertimos la hora de solicitud al formato de comparación
+                                $hora_solicitud_dt = DateTime::createFromFormat('H:i', $hora_solicitud);
+
+                                // Buscar la franja válida en la que cae la hora de solicitud
+                                foreach ($franjas_general as $franja) {
+                                    $hora_inicio_dt = DateTime::createFromFormat('H:i', $franja['hora_inicio']);
+                                    $hora_fin_dt = DateTime::createFromFormat('H:i', $franja['hora_fin']);
+
+                                    // Si la hora de solicitud está dentro del rango de la franja horaria
+                                    if ($hora_solicitud_dt >= $hora_inicio_dt && $hora_solicitud_dt <= $hora_fin_dt) {
+                                        // Verificar si la franja horaria del conductor coincide con la franja de solicitud
+                                        if ($franja['nombre'] == $franja_horaria) {
+                                            $nombre = get_user_meta($conductor, 'first_name', true);
+                                            $apellido = get_user_meta($conductor, 'last_name', true);
+                                            $conductor_info = array(
+                                                'id' => $conductor,
+                                                'nombre' => $nombre . " " . $apellido
+                                            );
+
+                                            // Evitar duplicados en $conductores_asignados
+                                            if (!in_array($conductor_info, $conductores_asignados)) {
+                                                $conductores_asignados[] = $conductor_info;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    wp_send_json_error(array('message' => 'No hay asignaciones para la fecha, consulta a soporte.'));
+                }
+            }
+        }
+        wp_reset_postdata();
+    }
+
+    // Devolver los conductores asignados en formato JSON
+    wp_send_json_success($conductores_asignados);
+}
+add_action('wp_ajax_obtener_conductores_asignados', 'obtener_conductores_asignados');
+add_action('wp_ajax_nopriv_obtener_conductores_asignados', 'obtener_conductores_asignados');
+
 /*ACCION AJAX PARA CREAR O EDITAR DATOS DE UNA ASIGNACION*/
 add_action('wp_ajax_create_asignacion', 'create_asignacion_function');
 add_action('wp_ajax_nopriv_create_asignacion', 'create_asignacion_function');

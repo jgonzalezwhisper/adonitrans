@@ -65,7 +65,7 @@
                             <td><?= $first_name . ' ' . $last_name; ?></td>
                             <td><?= $user->user_email; ?></td>
                             <td><?= $primary_role; ?></td>
-                            <td class="<?= $estado_usuario; ?>"><?= $estado_usuario; ?></td>
+                            <td class="<?= str_replace(' ', '-', strtolower($estado_usuario)); ?>"><?= $estado_usuario; ?></td>
                             <td>
                                 <div class="acciones">
                                     <button class="accion edit-user button-save" data-userid="<?= $user->ID; ?>"><i class="icofont-pencil"></i>Editar</button>

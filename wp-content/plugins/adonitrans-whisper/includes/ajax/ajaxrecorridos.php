@@ -129,7 +129,7 @@ function create_recorrido_function() {
     update_field('barrio_final_recorrido', $barrio_fin, $post_id);
     update_field('fecha_inicio_recorrido', $fecha_inicio_recorrido, $post_id);
     update_field('hora_inicio_recorrido', $hora_inicio_recorrido, $post_id);
-    update_field('estado_del_recorrido', 'Pendiente', $post_id);
+    update_field('estado_del_recorrido', 'Por Asignar', $post_id);
     if (!empty($centro_de_costo)) {
         update_field('centro_de_costo', $centro_de_costo, $post_id);
     }
@@ -198,6 +198,7 @@ function load_recorrido_data_function() {
         'barrio_inicio'          => get_field('barrio_inicial_recorrido', $post_id),
         'ciudad_fin'             => get_field('ciudad_final_recorrido_codigo', $post_id),
         'barrio_fin'             => get_field('barrio_final_recorrido', $post_id),
+        'estado_del_recorrido'   => str_replace(' ', '-', strtolower(get_field('estado_del_recorrido', $post_id))),
     ];
 
     // Si el usuario es administrador o empresa, añadir más datos

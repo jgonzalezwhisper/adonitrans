@@ -102,13 +102,16 @@
                                 <td><?= get_the_title( ) ?></td>
                                 <td><?= get_the_title( $empresa_asociada ); ?></td>
                                 <td class="colaborador"><?= $first_name ?> - <span class="email"><?= $email ?></span></td>
-                                <td class="<?= $estado_recorrido; ?>"><?= $estado_recorrido; ?></td>
+                                <td class="<?= str_replace(' ', '-', strtolower($estado_recorrido)); ?>"><?= $estado_recorrido; ?></td>
                                 <td>
                                     <div class="acciones">
                                         <?php if ($user_role !== 'colaborador'): ?>
                                             <button class="accion edit-recorrido" data-id="<?= get_the_ID(); ?>">Editar</button>
                                         <?php endif ?>
                                         <button class="accion delete-recorrido" data-id="<?= get_the_ID(); ?>">Eliminar</button>
+                                        <?php if ($estado_recorrido !== 'Por Asignar' && $estado_recorrido !== 'Cancelado'): ?>
+                                            <button class="accion ver-recorrido" data-id="<?= get_the_ID(); ?>">Ver</button>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -122,7 +125,7 @@
         </div>
 
         <div class="wrap-gestion-recorridos" style="display:none">
-            <div class="wrap wrap-title">
+            <div id="wrap-titform-recorrido" class="wrap wrap-title">
                 <h3 class="title">Crear Solicitud Recorrido</h3>
             </div>
             <?php

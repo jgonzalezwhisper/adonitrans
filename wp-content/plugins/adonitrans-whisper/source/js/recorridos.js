@@ -155,12 +155,13 @@ jQuery(document).ready(function($) {
         $('#recorrido-form')[0].reset();
         $("#recorrido-id").text('').val('');
         $('#select-rolesusuario').val(null).trigger('change');
+        $('#wrap-recorridos #wrap-titform-recorrido').removeClass().addClass('wrap wrap-title');
         $("#wrap-recorridos .wrap-gestion-recorridos").hide();
         $("#wrap-recorridos .wrap-listado-recorridos").show();
     });
 
     $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .edit-recorrido', function(event) {
-
+        // Configuración inicial del formulario
         $('#wrap-recorridos .wrap-gestion-recorridos button[type="submit"]').text('Editar Solicitud');
         $('#wrap-recorridos .wrap-gestion-recorridos .title').text('Editar Solicitud');
         $("#wrap-recorridos .wrap-listado-recorridos").hide();
@@ -170,7 +171,7 @@ jQuery(document).ready(function($) {
         $("#recorrido-form #recorrido-id").val(post_id);
         $('body').addClass('actloader');
 
-        // Enviar la solicitud AJAX para obtener los datos del usuario
+        // Enviar la solicitud AJAX para obtener los datos del recorrido
         $.ajax({
             url: recorridoAjax.ajaxurl,
             method: 'POST',
@@ -180,19 +181,77 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
+                    // Llenar los campos del formulario con los datos del recorrido
                     $.each(response.data, function(key, value) {
                         if (key === 'id_solicitante_recorrido' || key === 'ciudad_inicio' || key === 'ciudad_fin') {
                             $('#' + key).val(value).trigger('change');
+                        } else if (key === 'estado_del_recorrido') {
+                            $('#wrap-recorridos #wrap-titform-recorrido').addClass(value);
                         } else {
                             $('#' + key).val(value);
                         }
                     });
 
+                    // Verificar si el selector de conductores existe
+                    if ($('#id_conductor_recorrido').length) {
+                        // Obtener la fecha de inicio del recorrido desde el formulario
+                        let id_recorrido = $('#recorrido-id').val();
+
+                        // Llamar a la función obtener_conductores_asignados si el selector existe
+                        $.ajax({
+                            url: recorridoAjax.ajaxurl,
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                action: 'obtener_conductores_asignados',
+                                id_recorrido: id_recorrido
+                            },
+                            success: function(response) {
+                                console.log(response);
+                                if (response.success) {
+                                    // Limpiar el selector de conductores
+                                    $('#id_conductor_recorrido').html('<option value="0">Selecciona un Conductor</option>');
+
+                                    // Llenar el selector de conductores con los datos obtenidos
+                                    $.each(response.data, function(index, conductor) {
+                                        $('#id_conductor_recorrido').append(
+                                            `<option value="${conductor.id}">${conductor.nombre}</option>`
+                                        );
+                                    });
+
+                                    // Seleccionar el conductor asignado al recorrido (si existe)
+                                    if (response.data.id_conductor_recorrido) {
+                                        $('#id_conductor_recorrido').val(response.data.id_conductor_recorrido);
+                                    }
+                                } else {
+                                    Swal.fire({
+                                        title: '¡Error!',
+                                        text: response.data,
+                                        icon: 'error',
+                                        confirmButtonText: 'Aceptar',
+                                    });
+                                }
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    title: '¡Error!',
+                                    text: 'Error en la solicitud AJAX para obtener conductores.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Aceptar',
+                                });
+                            }
+                        });
+                    }
+
+                    // Llenar campos que dependen de otros selectores
                     setTimeout(() => {
                         $('#barrio_inicio').val(response.data.barrio_inicio).trigger('change');
                         $('#barrio_fin').val(response.data.barrio_fin).trigger('change');
                         $('#centro_de_costo').val(response.data.centro_de_costo).trigger('change');
                     }, 1000);
+
+                    
+
                     $('body').removeClass('actloader');
                 } else {
                     $('body').removeClass('actloader');
@@ -213,7 +272,6 @@ jQuery(document).ready(function($) {
                     confirmButtonText: 'Aceptar',
                 });
             },
-
         });
     });
 

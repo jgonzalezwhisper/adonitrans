@@ -48,7 +48,7 @@
                             <tr>
                                 <td><?= get_the_ID(); ?></td>
                                 <td><?= get_the_title() ?></td>
-                                <td class="<?= $estado_de_la_empresa; ?>"><?= $estado_de_la_empresa; ?></td>
+                                <td class="<?= str_replace(' ', '-', strtolower($estado_de_la_empresa)); ?>"><?= $estado_de_la_empresa; ?></td>
                                 <td class="center"><?= $numero_usuarios; ?></td>
                                 <td class="center">
                                     <div class="acciones">

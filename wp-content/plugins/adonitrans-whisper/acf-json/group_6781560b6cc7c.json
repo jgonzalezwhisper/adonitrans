@@ -184,6 +184,27 @@
             "append": ""
         },
         {
+            "key": "field_679c24f25a68f",
+            "label": "Ciudad Inicial Recorrido Codigo",
+            "name": "ciudad_inicial_recorrido_codigo",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_67815a3f3f19b",
             "label": "Barrio Inicial Recorrido",
             "name": "barrio_inicial_recorrido",
@@ -208,6 +229,27 @@
             "key": "field_67815a963f19c",
             "label": "Ciudad Final Recorrido",
             "name": "ciudad_final_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_679c25075a690",
+            "label": "Ciudad Final Recorrido Codigo",
+            "name": "ciudad_final_recorrido_codigo",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -397,5 +439,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1738250854
+    "modified": 1738286361
 }
