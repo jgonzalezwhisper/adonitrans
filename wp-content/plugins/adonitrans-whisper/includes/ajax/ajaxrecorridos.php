@@ -1,4 +1,58 @@
 <?php
+function consultar_ciudades_por_empresa() {
+    // Verificar si se recibió el user_id por POST
+    if (!isset($_POST['id_solicitante'])) {
+        wp_send_json_error('No se recibió el user_id');
+        return;
+    }
+
+    $user_id = intval($_POST['id_solicitante']);
+
+    // Obtener la empresa asociada al usuario
+    $empresa_asociada = get_field('empresa_asociada_usuario', 'user_' . $user_id);
+
+    if (!$empresa_asociada) {
+        wp_send_json_error('No se encontró una empresa asociada al usuario');
+        return;
+    }
+
+    // Argumentos para WP_Query
+    $argsciudadxcol = array(
+        'post_type'      => 'ciudad', // Tipo de post
+        'posts_per_page' => -1,       // Obtener todos los posts
+        'meta_key'       => 'empresa_asociada_a_ciudad', // Campo ACF
+        'meta_value'     => $empresa_asociada->ID,       // Valor a comparar
+    );
+
+    // Ejecutar la consulta
+    $queryxcolciu = new WP_Query($argsciudadxcol);
+
+    // Array para almacenar los resultados
+    $resultados = array();
+
+    // Verificar si hay posts
+    if ($queryxcolciu->have_posts()) {
+        while ($queryxcolciu->have_posts()) {
+            $queryxcolciu->the_post();
+
+            // Obtener el valor del campo ACF 'ciudad_para_empresa'
+            $ciudad_para_empresa = get_field('ciudad_para_empresa', get_the_ID());
+
+            // Almacenar en el array
+            $resultados[] = array(
+                'id' => get_the_ID(),
+                'ciudad_para_empresa' => $ciudad_para_empresa
+            );
+        }
+        wp_reset_postdata();
+    }
+
+    // Devolver los resultados en formato JSON
+    wp_send_json_success($resultados);
+}
+add_action('wp_ajax_consultar_ciudades_por_empresa', 'consultar_ciudades_por_empresa');
+add_action('wp_ajax_nopriv_consultar_ciudades_por_empresa', 'consultar_ciudades_por_empresa');
+
 add_action('wp_ajax_get_barrios', 'obtener_barrios_por_ciudad');
 add_action('wp_ajax_nopriv_get_barrios', 'obtener_barrios_por_ciudad');
 function obtener_barrios_por_ciudad() {
@@ -8,12 +62,28 @@ function obtener_barrios_por_ciudad() {
 
     $ciudad_id = intval($_POST['ciudad_id']);
     $barrios = [];
-    $grupo_datos = get_field('grupo_datos_de_barrios', $ciudad_id);
+    $repetidor_de_barrios = get_field('repetidor_de_barrios', $ciudad_id);
+    // Array para almacenar los valores de zona y barrio
+    $barrios = array();
 
-    if (!empty($grupo_datos['repetidor_de_barrios'])) {
-        foreach ($grupo_datos['repetidor_de_barrios'] as $barrio) {
-            $barrios[] = $barrio['barrio'];
+    // Verificar si el repetidor tiene datos
+    if ($repetidor_de_barrios && is_array($repetidor_de_barrios)) {
+        // Iterar sobre cada fila del repetidor
+        foreach ($repetidor_de_barrios as $fila) {
+            // Obtener los valores de los subcampos 'zona' y 'barrio'
+            $zona = isset($fila['zona']) ? $fila['zona'] : '';
+            $barrio = isset($fila['barrio']) ? $fila['barrio'] : '';
+
+            // Almacenar en el array
+            $barrios[] = array(
+                'zona' => $zona,
+                'barrio' => $barrio
+            );
         }
+        // Función de comparación para ordenar por 'barrio'
+        usort($barrios, function($a, $b) {
+            return strcmp($a['barrio'], $b['barrio']);
+        });
     }
 
     if (!empty($barrios)) {

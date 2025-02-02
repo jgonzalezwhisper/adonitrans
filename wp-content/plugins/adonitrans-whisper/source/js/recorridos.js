@@ -3,6 +3,12 @@ jQuery(document).ready(function($) {
     $(document).on('change', '#id_solicitante_recorrido', function() {
         let idSolicitante = $(this).val();
         let centro_de_costo = $("#centro_de_costo");
+        let ciudad_inicio = $("#ciudad_inicio");
+        let selectBarrio = $('#barrio_inicio');
+        let selectBarrioFin = $('#barrio_fin');
+        let selectCiudadFin = $('#ciudad_fin');
+        let ciudadAdicionalRecorrido = $('.ciudad_adicional_recorrido');
+        let plantillarecorridociudad = $('#plantilla-recorrido .ciudad');
 
         if (idSolicitante !== '0') {
             $.ajax({
@@ -40,19 +46,78 @@ jQuery(document).ready(function($) {
                     });
                 }
             });
+
+            $.ajax({
+                url: recorridoAjax.ajaxurl,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'consultar_ciudades_por_empresa',
+                    id_solicitante: idSolicitante,
+                },
+                success: function(response) {
+                    if (response.success && response.data.length > 0) {
+
+                        $('#wrap-puntos-recorrido .franja').not(':first').each(function() {
+                            $(this).find('.remove').click();
+                        });
+
+                        // Limpiar el select antes de agregar nuevas opciones
+                        ciudad_inicio.empty().append('<option value="0">Selecciona una ciudad</option>');
+                        selectCiudadFin.empty().append('<option value="0">Selecciona una ciudad</option>');
+                        selectBarrio.empty().append('<option value="0">Selecciona un barrio</option>');
+                        selectBarrioFin.empty().append('<option value="0">Selecciona un barrio</option>');
+
+                        // Añadir las opciones dinámicamente
+                        $.each(response.data, function(index, ciudad) {
+                            ciudad_inicio.append('<option value="' + ciudad.id + '">' + ciudad.ciudad_para_empresa + '</option>');
+                            selectCiudadFin.append('<option value="' + ciudad.id + '">' + ciudad.ciudad_para_empresa + '</option>');
+
+                            ciudadAdicionalRecorrido.each(function() {
+                                $(this).append('<option value="' + ciudad.id + '">' + ciudad.ciudad_para_empresa + '</option>');
+                            });
+
+                            plantillarecorridociudad.each(function() {
+                                $(this).append('<option value="' + ciudad.id + '">' + ciudad.ciudad_para_empresa + '</option>');
+                            });
+                            
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.data.message || 'No se encontraron centros de costo.'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar los centros de costo. Intenta nuevamente.'
+                    });
+                }
+            });
         } else {
+            ciudad_inicio.empty().append('<option value="0">Selecciona una ciudad</option>');
+            selectCiudadFin.empty().append('<option value="0">Selecciona una ciudad</option>');
+            selectBarrio.empty().append('<option value="0">Selecciona un barrio</option>');
+            selectBarrioFin.empty().append('<option value="0">Selecciona un barrio</option>');
+
             centro_de_costo.prop('disabled', true).trigger('change');
             centro_de_costo.empty().append('<option value="0">Selecciona un centro de costo</option>').trigger('change');
         }
     });
 
     $(document).on('change', '#ciudad_inicio', function() {
-        var ciudadId = $(this).val();
-        var selectBarrio = $('#barrio_inicio');
-        var selectBarrioFin = $('#barrio_fin');
-        var selectCiudadFin = $('#ciudad_fin');
+        let ciudadId = $(this).val();
+        let selectBarrio = $('#barrio_inicio');
+        let selectBarrioFin = $('#barrio_fin');
+        let selectCiudadFin = $('#ciudad_fin');
+        let ciudadAdicionalRecorrido = $('.ciudad_adicional_recorrido');
 
         selectCiudadFin.val(ciudadId).trigger('change').prop('disabled', false);
+        ciudadAdicionalRecorrido.val(ciudadId).trigger('change').prop('disabled', false);
 
         if (ciudadId !== '0') {
             selectBarrio.empty().append('<option value="0">Selecciona un barrio</option>').trigger('change');
@@ -68,13 +133,28 @@ jQuery(document).ready(function($) {
                 },
                 success: function(response) {
                     if (response.success) {
+                        // Limpiar los selects antes de agregar nuevas opciones
+                        selectBarrio.empty().append('<option value="">Selecciona un barrio</option>');
+                        selectBarrioFin.empty().append('<option value="">Selecciona un barrio</option>');
+
+                        // Iterar sobre cada barrio en response.data
                         $.each(response.data, function(index, barrio) {
-                            selectBarrio.append('<option value="' + barrio + '">' + barrio + '</option>');
-                            selectBarrioFin.append('<option value="' + barrio + '">' + barrio + '</option>');
+                            // Crear una opción para el select de inicio
+                            selectBarrio.append(
+                                '<option data-zona="' + barrio.zona + '" value="' + barrio.barrio + '">' + barrio.barrio + '</option>'
+                            );
+
+                            // Crear una opción para el select de fin
+                            selectBarrioFin.append(
+                                '<option data-zona="' + barrio.zona + '" value="' + barrio.barrio + '">' + barrio.barrio + '</option>'
+                            );
                         });
+
+                        // Habilitar los selects y disparar el evento change
                         selectBarrio.prop('disabled', false).trigger('change');
                         selectBarrioFin.prop('disabled', false).trigger('change');
                     } else {
+                        // Mostrar un mensaje de error si no hay datos
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
@@ -83,6 +163,7 @@ jQuery(document).ready(function($) {
                     }
                 },
                 error: function() {
+                    // Mostrar un mensaje de error si la solicitud falla
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -99,11 +180,11 @@ jQuery(document).ready(function($) {
     });
 
     $(document).on('change', '#ciudad_fin', function() {
-        var ciudadId = $(this).val();
-        var selectBarrio = $('#barrio_fin');
+        let ciudadId = $(this).val();
+        let selectBarrioFin = $('#barrio_fin');
 
         if (ciudadId !== '0') {
-            selectBarrio.empty().append('<option value="0">Selecciona un barrio</option>');
+            selectBarrioFin.empty().append('<option value="0">Selecciona un barrio</option>');
 
             $.ajax({
                 url: recorridoAjax.ajaxurl,
@@ -115,11 +196,18 @@ jQuery(document).ready(function($) {
                 },
                 success: function(response) {
                     if (response.success) {
+                        selectBarrioFin.empty().append('<option value="">Selecciona un barrio</option>');
+
+                        // Iterar sobre cada barrio en response.data
                         $.each(response.data, function(index, barrio) {
-                            selectBarrio.append('<option value="' + barrio + '">' + barrio + '</option>');
+                            // Crear una opción para el select de fin
+                            selectBarrioFin.append(
+                                '<option data-zona="' + barrio.zona + '" value="' + barrio.barrio + '">' + barrio.barrio + '</option>'
+                            );
                         });
-                        selectBarrio.prop('disabled', false);
+                        selectBarrioFin.prop('disabled', false).trigger('change');
                     } else {
+                        // Mostrar un mensaje de error si no hay datos
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
@@ -128,6 +216,7 @@ jQuery(document).ready(function($) {
                     }
                 },
                 error: function() {
+                    // Mostrar un mensaje de error si la solicitud falla
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -136,10 +225,125 @@ jQuery(document).ready(function($) {
                 }
             });
         } else {
-            selectBarrio.prop('disabled', true);
-            selectBarrio.empty().append('<option value="0">Selecciona un barrio</option>');
+            selectBarrioFin.prop('disabled', true);
+            selectBarrioFin.empty().append('<option value="0">Selecciona un barrio</option>');
         }
     });
+
+    /*FRANJAS DE ASIGNACION*/
+    function validarUltimaFranja() {
+        var ultimaFranja = $('#wrap-punto-recorrido .franja').last();
+        var ciudadSeleccionada = ultimaFranja.find('.ciudad_adicional_recorrido').val();
+        var barrioSeleccionado = ultimaFranja.find('.barrio_adicional_recorrido').val();
+
+        // Habilitar o deshabilitar el botón según los valores seleccionados
+        if (ciudadSeleccionada && barrioSeleccionado) {
+            $('.button-add').prop('disabled', false);
+        } else {
+            $('.button-add').prop('disabled', true);
+        }
+    }
+
+    // Escuchar cambios en los selects dentro de #wrap-punto-recorrido
+    $(document).on('change', '.ciudad_adicional_recorrido, .barrio_adicional_recorrido', function() {
+        validarUltimaFranja();
+    });
+
+    // Evento para añadir una nueva franja
+    $(document).on('click', '#wrap-puntos-recorrido .button-add', function(e) {
+        e.preventDefault();
+
+        var franjaCount = $('#wrap-puntos-recorrido .franja').length;
+
+        // Clonar desde la plantilla oculta
+        var newRow = $('#plantilla-recorrido .franja').clone();
+
+        // Cambiar clases antes de agregar la nueva fila
+        newRow.find('.ciudad').removeClass('ciudad').addClass('ciudad_adicional_recorrido');
+        newRow.find('.barrio').removeClass('barrio').addClass('barrio_adicional_recorrido');
+
+        // Agregar la nueva fila al DOM antes de inicializar Select2
+        $('#wrap-punto-recorrido').append(newRow);
+
+        // Inicializar Select2 en los nuevos elementos
+        $('#wrap-punto-recorrido .ciudad_adicional_recorrido').last().select2();
+        $('#wrap-punto-recorrido .barrio_adicional_recorrido').last().select2();
+
+        // Deshabilitar el botón hasta que la nueva franja tenga valores seleccionados
+        $('.button-add').prop('disabled', true);
+    });
+
+    $(document).on('click', '#wrap-puntos-recorrido .remove', function(e) {
+        e.preventDefault();
+
+        var $wrapFranjas = $('#wrap-punto-recorrido');
+        var $franja = $(this).closest('.franja');
+
+        if ($wrapFranjas.find('.franja').length > 1) {
+            $franja.remove();
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No se puede eliminar',
+                text: 'Debe haber al menos una franja horaria configurada',
+                confirmButtonText: 'Entendido'
+            });
+        }
+    });
+
+    // Manejar el cambio de ciudad para cargar los barrios
+    $(document).on('change', '.ciudad_adicional_recorrido', function() {
+        var ciudadId = $(this).val();
+        var $barrioSelect = $(this).closest('.franja').find('.barrio_adicional_recorrido');
+
+        if (ciudadId) {
+            $.ajax({
+                url: recorridoAjax.ajaxurl,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'get_barrios',
+                    ciudad_id: ciudadId,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Limpiar el select antes de agregar nuevas opciones
+                        $barrioSelect.empty().append('<option value="">Selecciona un barrio</option>');
+
+                        // Iterar sobre cada barrio en response.data
+                        $.each(response.data, function(index, barrio) {
+                            $barrioSelect.append(
+                                '<option data-zona="' + barrio.zona + '" value="' + barrio.barrio + '">' + barrio.barrio + '</option>'
+                            );
+                        });
+
+                        // Habilitar el select y disparar el evento change
+                        $barrioSelect.prop('disabled', false).trigger('change');
+                    } else {
+                        // Mostrar un mensaje de error si no hay datos
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.data.message || 'No se encontraron barrios.'
+                        });
+                    }
+                },
+                error: function() {
+                    // Mostrar un mensaje de error si la solicitud falla
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar los barrios. Intenta nuevamente.'
+                    });
+                }
+            });
+        } else {
+            $barrioSelect.empty().append('<option value="">Selecciona un barrio</option>').prop('disabled', true);
+        }
+    });
+
+    /*FIN FRANJAS*/
+
 
     $(document).on('click', '#crear-recorrido', function(event) {
         event.preventDefault();
@@ -151,7 +355,7 @@ jQuery(document).ready(function($) {
         $("#wrap-recorridos .wrap-gestion-recorridos").show();
     });
 
-    $(document).on('click', '#wrap-recorridos .wrap-gestion-recorridos button[type="button"]', function(event) {
+    $(document).on('click', '#wrap-recorridos .wrap-gestion-recorridos .cancelar', function(event) {
         $('#recorrido-form')[0].reset();
         $("#recorrido-id").text('').val('');
         $('#select-rolesusuario').val(null).trigger('change');
@@ -250,7 +454,7 @@ jQuery(document).ready(function($) {
                         $('#centro_de_costo').val(response.data.centro_de_costo).trigger('change');
                     }, 1000);
 
-                    
+
 
                     $('body').removeClass('actloader');
                 } else {

@@ -129,12 +129,41 @@
                 <h3 class="title">Crear Solicitud Recorrido</h3>
             </div>
             <?php
-                $ciudades = get_posts([
-                    'post_type'      => 'ciudad',
-                    'posts_per_page' => -1,
-                    'post_status'    => 'publish',
-                    'fields'         => ['ID', 'post_title'], 
-                ]);
+
+                if ($user_role === 'colaborador') {
+                    $empresa_asociada = get_field('empresa_asociada_usuario', 'user_' . $user_id);
+                    
+                    // Argumentos para WP_Query
+                    $argsciudadxcol = array(
+                        'post_type'      => 'ciudad', // Tipo de post
+                        'posts_per_page' => -1,       // Obtener todos los posts (puedes limitarlo si es necesario)
+                        'meta_key'       => 'empresa_asociada_a_ciudad', // Campo ACF
+                        'meta_value'     => $empresa_asociada->ID,           // Valor a comparar
+                    );
+
+                    // Ejecutar la consulta
+                    $queryxcolciu = new WP_Query($argsciudadxcol);
+
+                    // Array para almacenar los resultados
+                    $resultados = array();
+
+                    // Verificar si hay posts
+                    if ($queryxcolciu->have_posts()) {
+                        while ($queryxcolciu->have_posts()) {
+                            $queryxcolciu->the_post();
+
+                            // Obtener el valor del campo ACF 'ciudad_para_empresa' usando get_post_meta
+                            $ciudad_para_empresa = get_field('ciudad_para_empresa',get_the_ID());
+
+                            // Almacenar en el array
+                            $resultados[] = array(
+                                'id' => get_the_ID(),
+                                'ciudad_para_empresa' => $ciudad_para_empresa
+                            );
+                        }
+                        wp_reset_postdata();
+                    }
+                }
 
                 if ($user_role === 'administrator') {
                     $argscol = array(
@@ -234,15 +263,16 @@
                     <label for="ciudad_inicio">Ciudad Inicio</label>
                     <select id="ciudad_inicio" name="ciudad_inicio" required>
                         <option value="">Selecciona una ciudad</option>
-                        <?php if (!empty($ciudades)): ?>
-                            <?php foreach ($ciudades as $ciudad): ?>
-                                <option value="<?php echo esc_attr($ciudad->ID); ?>">
-                                    <?php echo esc_html($ciudad->post_title); ?>
+                        <?php if (!empty($resultados)): ?>
+                            <?php foreach ($resultados as $ciudad): ?>
+                                <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                    <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
                                 </option>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
                 </div>
+
                 <div class="wrap wrap-2">
                     <label for="barrio_inicio">Barrio Inicio</label>
                     <select id="barrio_inicio" name="barrio_inicio" disabled required>
@@ -254,10 +284,10 @@
                     <label for="ciudad_fin">Ciudad Fin</label>
                     <select id="ciudad_fin" name="ciudad_fin" disabled required>
                         <option value="">Selecciona una ciudad</option>
-                        <?php if (!empty($ciudades)): ?>
-                            <?php foreach ($ciudades as $ciudad): ?>
-                                <option value="<?php echo esc_attr($ciudad->ID); ?>">
-                                    <?php echo esc_html($ciudad->post_title); ?>
+                        <?php if (!empty($resultados)): ?>
+                            <?php foreach ($resultados as $ciudad): ?>
+                                <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                    <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
                                 </option>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -269,6 +299,64 @@
                         <option value="">Selecciona un Barrio</option>
                     </select>
                 </div>
+
+                <div id="wrap-puntos-recorrido" class="wrap wrap-fanjas">
+                    <h5>Añadir Punto Recorrido</h5>
+
+                    <!-- Plantilla oculta -->
+                    <div id="plantilla-recorrido" style="display: none;">
+                        <div class="franja">
+                            <div class="franja_item">
+                                <label for="ciudad_adicional_recorrido">Ciudad</label>
+                                <select class="ciudad" name="ciudad_adicional_recorrido[]">
+                                    <option value="">Selecciona una ciudad</option>
+                                    <?php if (!empty($resultados)): ?>
+                                        <?php foreach ($resultados as $ciudad): ?>
+                                            <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                                <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+                            <div class="franja_item">
+                                <label for="barrio_adicional_recorrido">Barrio</label>
+                                <select class="barrio" name="barrio_adicional_recorrido[]">
+                                    <option value="">Selecciona un barrio</option>
+                                </select>
+                            </div>
+                            <button type="button" class="button remove">Eliminar Punto</button>
+                        </div>
+                    </div>
+
+                    <div id="wrap-punto-recorrido" class="wrap-franja">
+
+                        <div class="franja">
+                            <div class="franja_item">
+                                <label for="ciudad_adicional_recorrido">Ciudad</label>
+                                <select class="ciudad_adicional_recorrido" name="ciudad_adicional_recorrido[]" >
+                                    <option value="">Selecciona una ciudad</option>
+                                    <?php if (!empty($resultados)): ?>
+                                        <?php foreach ($resultados as $ciudad): ?>
+                                            <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                                <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+                            <div class="franja_item">
+                                <label for="barrio_adicional_recorrido">Barrio</label>
+                                <select class="barrio_adicional_recorrido" name="barrio_adicional_recorrido[]">
+                                    <option value="">Selecciona un barrio</option>
+                                </select>
+                            </div>
+                        </div>                        
+                    </div>
+
+                    <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir Punto</a>   
+                </div>
+
                 <div class="wrap wrap-2">
                     <label for="fecha_inicio_recorrido">Fecha Inicio (DD/MM/YYYY)</label>
                     <input type="date" id="fecha_inicio_recorrido" name="fecha_inicio_recorrido" value="" placeholder="dd/mm/yyyy">
@@ -289,8 +377,6 @@
                         </div>
                     <?php endif ?>
                     <?php if ( $user_role === 'colaborador' || $user_role === 'empresa' ):
-
-                        $empresa_asociada = get_field('empresa_asociada_usuario', 'user_' . $user_id);
                         $centros_costo_empresa = get_field('centros_de_costos_empresa', $empresa_asociada->ID); ?>
                         <div class="wrap">
                             <label for="centro_de_costo">Centro de Costo</label>
@@ -305,7 +391,7 @@
                 <?php endif ?>
                 <div class="wrap">
                     <button class="button button-add" type="submit" name="submit-user">Crear Solicitud</button>
-                    <button class="button button-remove" type="button" id="cancelar-recorrido-btn">Cancelar</button>
+                    <button class="button button-remove cancelar" type="button" id="cancelar-recorrido-btn">Cancelar</button>
                 </div>
             </form>
         </div> 

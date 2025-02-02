@@ -149,7 +149,7 @@ window.initRecorridos = function initRecorridos() {
         ]
     });
 
-    jQuery('#ciudad_inicio, #barrio_inicio, #ciudad_fin, #barrio_fin').select2({
+    jQuery('#ciudad_inicio, #barrio_inicio, #ciudad_fin, #barrio_fin, .ciudad_adicional_recorrido, .barrio_adicional_recorrido').select2({
         placeholder: "Selecciona un Valor",
         width: '100%'
     });
@@ -158,6 +158,21 @@ window.initRecorridos = function initRecorridos() {
             placeholder: "Selecciona un Valor",
             width: '100%'
         });
+    }
+
+    validarUltimaFranja();
+}
+
+function validarUltimaFranja() {
+    var ultimaFranja = jQuery('#wrap-punto-recorrido .franja').last();
+    var ciudad = ultimaFranja.find('.ciudad_adicional_recorrido').val();
+    var barrio = ultimaFranja.find('.barrio_adicional_recorrido').val();
+
+    // Habilitar o deshabilitar el botón de añadir franja
+    if (ciudad && barrio) {
+        jQuery('.button-add').prop('disabled', false);
+    } else {
+        jQuery('.button-add').prop('disabled', true);
     }
 }
 

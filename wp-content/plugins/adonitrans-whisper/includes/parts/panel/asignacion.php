@@ -93,7 +93,7 @@
 
                 <div class="wrap"></div>
 
-                <div id="wrap-asignacion-dias" class="wrap wrap-fanjas">
+                <div id="wrap-asignacion-dias" class="wrap wrap-fanjas wrap-franjas-repetidor">
 
                     <div id="wrap-asignacion-dia" class="wrap-franja">
 
