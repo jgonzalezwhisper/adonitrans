@@ -29,6 +29,8 @@ function add_custom_user_roles() {
         'propietario_vehiculo' => 'Propietario Vehiculo',
         'conductor'            => 'Conductor',
         'colaborador'          => 'Colaborador',
+        'supervisores'         => 'Supervisores',
+        'flotantes'            => 'Flotantes',
         'empresa'              => 'Empresa',
     ];
 

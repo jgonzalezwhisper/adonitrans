@@ -165,7 +165,7 @@
                     }
                 }
 
-                if ($user_role === 'administrator') {
+                if ($user_role === 'administrator' || $user_role === 'operaciones_1') {
                     $argscol = array(
                         'role'    => 'colaborador',
                         'orderby' => 'display_name',
@@ -206,9 +206,12 @@
             ?>
             <form id="recorrido-form" method="post" class="formplug" autocomplete="off">
                 <?php wp_nonce_field('create_recorrido_action', 'create_recorrido_nonce'); ?>
-                <input type="hidden" id="recorrido-id" name="recorrido-id" value="">           
+                <input type="hidden" id="recorrido-id" name="recorrido-id" value="">   
 
-                <?php if ($user_role === 'administrator' || $user_role === 'empresa'): ?>
+                <input type="hidden" id="barrio_zona_inicio" name="barrio_zona_inicio" value="">
+                <input type="hidden" id="barrio_zona_fin" name="barrio_zona_fin" value="">    
+
+                <?php if ($user_role === 'administrator' || $user_role === 'empresa' || $user_role === 'operaciones_1'): ?>
                     <div class="wrap wrap-2">
                         <label for="id_solicitante_recorrido">Colaborador Solicitante</label>
                         <select id="id_solicitante_recorrido" name="id_solicitante_recorrido" class="<?php echo $user_role === 'administrator' ? 'admin-select-solicitante' : ''; ?>" required>
@@ -230,25 +233,11 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <?php if ($user_role === 'administrator'): ?>
+                    <?php if ($user_role === 'administrator' || $user_role === 'operaciones_1' ): ?>
                         <div class="wrap wrap-2">
                             <label for="id_conductor_recorrido">Conductor Asignado</label>
                             <select id="id_conductor_recorrido" name="id_conductor_recorrido">
                                 <option value="0">Selecciona un Conductor</option>
-                                <?php foreach ($conductores as $conductor): ?>
-                                    <?php
-                                    $user_id = $conductor->ID;
-                                    $first_name = get_user_meta($user_id, 'first_name', true);
-                                    $last_name = get_user_meta($user_id, 'last_name', true);
-                                    $email = $conductor->user_email;
-
-                                    $name = trim("$first_name $last_name");
-                                    $display_name = $name ? $name : $conductor->display_name;
-                                    ?>
-                                    <option value="<?php echo esc_attr($user_id); ?>">
-                                        <?php echo esc_html("$display_name ($email)"); ?>
-                                    </option>
-                                <?php endforeach; ?>
                             </select>
                         </div>
                     <?php endif ?>
@@ -321,6 +310,7 @@
                             </div>
                             <div class="franja_item">
                                 <label for="barrio_adicional_recorrido">Barrio</label>
+                                <input type="hidden" class="barrio_adicional_zona" name="barrio_adicional_zona[]" value="">
                                 <select class="barrio" name="barrio_adicional_recorrido[]">
                                     <option value="">Selecciona un barrio</option>
                                 </select>
@@ -347,6 +337,7 @@
                             </div>
                             <div class="franja_item">
                                 <label for="barrio_adicional_recorrido">Barrio</label>
+                                <input type="hidden" class="barrio_adicional_zona" name="barrio_adicional_zona[]" value="">
                                 <select class="barrio_adicional_recorrido" name="barrio_adicional_recorrido[]">
                                     <option value="">Selecciona un barrio</option>
                                 </select>
@@ -372,7 +363,7 @@
                         <div class="wrap">
                             <label for="centro_de_costo">Centro de Costo</label>
                             <select id="centro_de_costo" name="centro_de_costo" disabled>
-                                <option value="0">Selecciona un Centro de Costo</option>                            
+                                <option value="0">Selecciona un Centro de Costo</option>
                             </select>
                         </div>
                     <?php endif ?>

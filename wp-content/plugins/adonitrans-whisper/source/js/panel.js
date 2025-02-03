@@ -163,18 +163,19 @@ window.initRecorridos = function initRecorridos() {
     validarUltimaFranja();
 }
 
-function validarUltimaFranja() {
+window.validarUltimaFranja = function validarUltimaFranja() {
     var ultimaFranja = jQuery('#wrap-punto-recorrido .franja').last();
+
+    if (ultimaFranja.length === 0) {
+        jQuery('.button-add').prop('disabled', true);
+        return;
+    }
+
     var ciudad = ultimaFranja.find('.ciudad_adicional_recorrido').val();
     var barrio = ultimaFranja.find('.barrio_adicional_recorrido').val();
-
-    // Habilitar o deshabilitar el botón de añadir franja
-    if (ciudad && barrio) {
-        jQuery('.button-add').prop('disabled', false);
-    } else {
-        jQuery('.button-add').prop('disabled', true);
-    }
+    jQuery('.button-add').prop('disabled', !(ciudad && barrio));
 }
+
 
 window.initVehiculos = function initVehiculos() {
     jQuery('#table-vehiculos').DataTable({

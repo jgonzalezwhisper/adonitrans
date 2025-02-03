@@ -80,7 +80,7 @@ jQuery(document).ready(function($) {
                             plantillarecorridociudad.each(function() {
                                 $(this).append('<option value="' + ciudad.id + '">' + ciudad.ciudad_para_empresa + '</option>');
                             });
-                            
+
                         });
                     } else {
                         Swal.fire({
@@ -137,17 +137,13 @@ jQuery(document).ready(function($) {
                         selectBarrio.empty().append('<option value="">Selecciona un barrio</option>');
                         selectBarrioFin.empty().append('<option value="">Selecciona un barrio</option>');
 
-                        // Iterar sobre cada barrio en response.data
                         $.each(response.data, function(index, barrio) {
-                            // Crear una opción para el select de inicio
-                            selectBarrio.append(
-                                '<option data-zona="' + barrio.zona + '" value="' + barrio.barrio + '">' + barrio.barrio + '</option>'
-                            );
+                            let dataZona = barrio.zona ? ' data-zona="' + barrio.zona + '"' : ''; // Agregar solo si existe
+                            let option = '<option' + dataZona + ' value="' + barrio.barrio + '">' + barrio.barrio + '</option>';
 
-                            // Crear una opción para el select de fin
-                            selectBarrioFin.append(
-                                '<option data-zona="' + barrio.zona + '" value="' + barrio.barrio + '">' + barrio.barrio + '</option>'
-                            );
+                            // Agregar la opción a los selects
+                            selectBarrio.append(option);
+                            selectBarrioFin.append(option);
                         });
 
                         // Habilitar los selects y disparar el evento change
@@ -230,48 +226,83 @@ jQuery(document).ready(function($) {
         }
     });
 
-    /*FRANJAS DE ASIGNACION*/
-    function validarUltimaFranja() {
-        var ultimaFranja = $('#wrap-punto-recorrido .franja').last();
-        var ciudadSeleccionada = ultimaFranja.find('.ciudad_adicional_recorrido').val();
-        var barrioSeleccionado = ultimaFranja.find('.barrio_adicional_recorrido').val();
+    $(document).on('change', '#barrio_inicio', function() {
+        let selectedOption = $(this).find('option:selected');
+        let zona = selectedOption.attr('data-zona');
 
-        // Habilitar o deshabilitar el botón según los valores seleccionados
-        if (ciudadSeleccionada && barrioSeleccionado) {
-            $('.button-add').prop('disabled', false);
-        } else {
-            $('.button-add').prop('disabled', true);
+        if (zona !== undefined && zona !== null && zona !== '') {
+            $("#barrio_zona_inicio").val(zona);
         }
-    }
+    });
+
+    $(document).on('change', '#barrio_fin', function() {
+        let selectedOption = $(this).find('option:selected');
+        let zona = selectedOption.attr('data-zona');
+
+        if (zona !== undefined && zona !== null && zona !== '') {
+            $("#barrio_zona_fin").val(zona);
+        }
+    });
+
+    /*FRANJAS DE ASIGNACION*/
+
+    window.validarUltimaFranja();
 
     // Escuchar cambios en los selects dentro de #wrap-punto-recorrido
     $(document).on('change', '.ciudad_adicional_recorrido, .barrio_adicional_recorrido', function() {
         validarUltimaFranja();
     });
 
-    // Evento para añadir una nueva franja
+    $(document).on('change', '.barrio_adicional_recorrido', function() {
+        let selectedOption = $(this).find('option:selected');
+        let zona = selectedOption.attr('data-zona');
+
+        if (zona !== undefined && zona !== null && zona !== '') {
+            $(this).closest('.franja_item').find('.barrio_adicional_zona').val(zona);
+        }
+    });
+
     $(document).on('click', '#wrap-puntos-recorrido .button-add', function(e) {
         e.preventDefault();
 
-        var franjaCount = $('#wrap-puntos-recorrido .franja').length;
+        // Verificar que existe al menos una franja antes de añadir una nueva
+        if ($('#wrap-punto-recorrido .franja').length === 0) {
+            console.error("Error: No se encontró la plantilla para clonar.");
+            $('.button-add').prop('disabled', true);
+            return;
+        }
 
-        // Clonar desde la plantilla oculta
+        // Clonar la plantilla oculta
         var newRow = $('#plantilla-recorrido .franja').clone();
 
-        // Cambiar clases antes de agregar la nueva fila
+        // Verificar si la plantilla se clonó correctamente
+        if (newRow.length === 0) {
+            console.error("Error: No se encontró la plantilla para clonar.");
+            return;
+        }
+
+        // Asegurar que no haya ids duplicados
+        newRow.removeAttr("id");
+
+        // Cambiar clases en los selects
         newRow.find('.ciudad').removeClass('ciudad').addClass('ciudad_adicional_recorrido');
         newRow.find('.barrio').removeClass('barrio').addClass('barrio_adicional_recorrido');
 
-        // Agregar la nueva fila al DOM antes de inicializar Select2
+        // Limpiar los valores de los selects y inputs clonados
+        newRow.find('select').val('');
+        newRow.find('.barrio_adicional_zona').val('');
+
+        // Agregar la nueva fila al contenedor
         $('#wrap-punto-recorrido').append(newRow);
 
         // Inicializar Select2 en los nuevos elementos
         $('#wrap-punto-recorrido .ciudad_adicional_recorrido').last().select2();
         $('#wrap-punto-recorrido .barrio_adicional_recorrido').last().select2();
 
-        // Deshabilitar el botón hasta que la nueva franja tenga valores seleccionados
-        $('.button-add').prop('disabled', true);
+        // Llamar a la validación para verificar si se debe habilitar el botón nuevamente
+        validarUltimaFranja();
     });
+
 
     $(document).on('click', '#wrap-puntos-recorrido .remove', function(e) {
         e.preventDefault();
@@ -312,9 +343,12 @@ jQuery(document).ready(function($) {
 
                         // Iterar sobre cada barrio en response.data
                         $.each(response.data, function(index, barrio) {
-                            $barrioSelect.append(
-                                '<option data-zona="' + barrio.zona + '" value="' + barrio.barrio + '">' + barrio.barrio + '</option>'
-                            );
+
+                            let dataZona = barrio.zona ? ' data-zona="' + barrio.zona + '"' : ''; // Agregar solo si existe
+                            let option = '<option' + dataZona + ' value="' + barrio.barrio + '">' + barrio.barrio + '</option>';
+
+                            // Agregar la opción a los selects
+                            $barrioSelect.append(option);
                         });
 
                         // Habilitar el select y disparar el evento change
@@ -385,78 +419,79 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    // Llenar los campos del formulario con los datos del recorrido
-                    $.each(response.data, function(key, value) {
-                        if (key === 'id_solicitante_recorrido' || key === 'ciudad_inicio' || key === 'ciudad_fin') {
-                            $('#' + key).val(value).trigger('change');
-                        } else if (key === 'estado_del_recorrido') {
-                            $('#wrap-recorridos #wrap-titform-recorrido').addClass(value);
-                        } else {
-                            $('#' + key).val(value);
-                        }
-                    });
 
-                    // Verificar si el selector de conductores existe
-                    if ($('#id_conductor_recorrido').length) {
-                        // Obtener la fecha de inicio del recorrido desde el formulario
-                        let id_recorrido = $('#recorrido-id').val();
+                    $("#fecha_inicio_recorrido").val(response.data.fecha_inicio_recorrido);
+                    $("#hora_inicio_recorrido").val(response.data.hora_inicio_recorrido);
 
-                        // Llamar a la función obtener_conductores_asignados si el selector existe
-                        $.ajax({
-                            url: recorridoAjax.ajaxurl,
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {
-                                action: 'obtener_conductores_asignados',
-                                id_recorrido: id_recorrido
-                            },
-                            success: function(response) {
-                                console.log(response);
-                                if (response.success) {
-                                    // Limpiar el selector de conductores
-                                    $('#id_conductor_recorrido').html('<option value="0">Selecciona un Conductor</option>');
-
-                                    // Llenar el selector de conductores con los datos obtenidos
-                                    $.each(response.data, function(index, conductor) {
-                                        $('#id_conductor_recorrido').append(
-                                            `<option value="${conductor.id}">${conductor.nombre}</option>`
-                                        );
-                                    });
-
-                                    // Seleccionar el conductor asignado al recorrido (si existe)
-                                    if (response.data.id_conductor_recorrido) {
-                                        $('#id_conductor_recorrido').val(response.data.id_conductor_recorrido);
-                                    }
-                                } else {
-                                    Swal.fire({
-                                        title: '¡Error!',
-                                        text: response.data,
-                                        icon: 'error',
-                                        confirmButtonText: 'Aceptar',
-                                    });
-                                }
-                            },
-                            error: function() {
-                                Swal.fire({
-                                    title: '¡Error!',
-                                    text: 'Error en la solicitud AJAX para obtener conductores.',
-                                    icon: 'error',
-                                    confirmButtonText: 'Aceptar',
-                                });
-                            }
-                        });
+                    if ($('#id_solicitante_recorrido').length) {
+                        $("#id_solicitante_recorrido").val(response.data.id_solicitante_recorrido).trigger('change');
                     }
 
                     // Llenar campos que dependen de otros selectores
                     setTimeout(() => {
-                        $('#barrio_inicio').val(response.data.barrio_inicio).trigger('change');
-                        $('#barrio_fin').val(response.data.barrio_fin).trigger('change');
+                        $('#ciudad_inicio').val(response.data.ciudad_inicio).trigger('change');
+                        $('#ciudad_fin').val(response.data.ciudad_fin).trigger('change');
                         $('#centro_de_costo').val(response.data.centro_de_costo).trigger('change');
                     }, 1000);
 
+                    setTimeout(() => {
+                        $('#barrio_inicio').val(response.data.barrio_inicio).trigger('change');
+                        $('#barrio_fin').val(response.data.barrio_fin).trigger('change');
+                    }, 1600);
+
+                    setTimeout(() => {
+                        // Puntos adicionales
+                        if (response.data.puntos_recorrido_adicionales && response.data.puntos_recorrido_adicionales.length) {
+                            let puntos = response.data.puntos_recorrido_adicionales;
+
+                            // Limpiar puntos existentes, excepto el primero
+                            $('#wrap-punto-recorrido .franja:not(:first)').remove();
+
+                            // Asignar el primer punto al HTML existente
+                            let primerPunto = puntos[0];
+                            $('#wrap-punto-recorrido .franja:first .ciudad_adicional_recorrido').val(primerPunto.ciudad).trigger('change');
+
+                            setTimeout(() => {
+                                $('#wrap-punto-recorrido .franja:first .barrio_adicional_recorrido').val(primerPunto.nombre_del_barrio).trigger('change');
+                            }, 1500);
+
+                            // Clonar y agregar los puntos restantes
+                            for (let i = 1; i < puntos.length; i++) {
+                                let punto = puntos[i];
+                                let newRow = $('#plantilla-recorrido .franja').clone().removeAttr("id");
+
+                                // Configurar los selects
+                                newRow.find('.ciudad').removeClass('ciudad').addClass('ciudad_adicional_recorrido').val(punto.ciudad).trigger('change');
+                                newRow.find('.barrio').removeClass('barrio').addClass('barrio_adicional_recorrido');
+
+                                // Inicializar Select2
+                                newRow.find('.ciudad_adicional_recorrido').select2({
+                                    allowClear: true,
+                                    width: '100%'
+                                });
+                                newRow.find('.barrio_adicional_recorrido').select2({
+                                    allowClear: true,
+                                    width: '100%'
+                                });
+
+                                // Agregar al contenedor
+                                $('#wrap-punto-recorrido').append(newRow);
+
+                                // // Asignar barrio con retraso
+                                // setTimeout(((barrioSelect, barrio) => {
+                                //     return () => barrioSelect.val(barrio).trigger('change');
+                                // })(newRow.find('.barrio_adicional_recorrido'), punto.nombre_del_barrio), 2500);
+                            }
+                        }
+                    }, 2000);
 
 
-                    $('body').removeClass('actloader');
+
+                    setTimeout(() => {
+                        $('body').removeClass('actloader');
+                    }, 2000);
+
+
                 } else {
                     $('body').removeClass('actloader');
                     Swal.fire({

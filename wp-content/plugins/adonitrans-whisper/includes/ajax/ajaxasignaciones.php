@@ -42,6 +42,8 @@ function obtener_conductores_asignados() {
         'fields' => 'ID'
     );
 
+    error_log(print_r($argscon,true));
+
     $user_query = new WP_User_Query($argscon);
     $conductores = $user_query->get_results();
 

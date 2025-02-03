@@ -151,6 +151,12 @@ function create_recorrido_function() {
     $ciudad_inicio = sanitize_text_field($_POST['ciudad_inicio']);
     $nombre_inicio = get_the_title( $ciudad_inicio );
     $barrio_inicio = sanitize_text_field($_POST['barrio_inicio']);
+    if (!empty($_POST['barrio_zona_inicio'])) {
+        $barrio_zona_inicio = sanitize_text_field($_POST['barrio_zona_inicio']);
+    }
+    if (!empty($_POST['barrio_zona_fin'])) {
+        $barrio_zona_fin = sanitize_text_field($_POST['barrio_zona_fin']);
+    }
     $ciudad_fin = sanitize_text_field($_POST['ciudad_fin']);
     $nombre_fin = get_the_title( $ciudad_fin );
     $barrio_fin = sanitize_text_field($_POST['barrio_fin']);
@@ -185,21 +191,58 @@ function create_recorrido_function() {
         }
     }
 
+    $estado_actual = get_field('estado_del_recorrido', $post_id);
+
     // Guardar campos personalizados usando ACF
     update_field('empresa_solicitante_recorrido', $empresa_solicitante_recorrido, $post_id);
     update_field('id_solicitante_recorrido', $id_solicitante_recorrido, $post_id);
     if (!empty($id_conductor_recorrido)) {
         update_field('id_conductor_recorrido', $id_conductor_recorrido, $post_id);
+        if (empty($estado_actual) || $estado_actual=='Por Asignar') {
+            update_field('estado_del_recorrido', 'Pendiente', $post_id);
+        }
     }
-    update_field('ciudad_inicial_recorrido', $nombre_inicio, $post_id);
-    update_field('ciudad_inicial_recorrido_codigo', $ciudad_inicio, $post_id);
+    update_field('ciudad_inicial_recorrido', $ciudad_inicio, $post_id);
     update_field('barrio_inicial_recorrido', $barrio_inicio, $post_id);
-    update_field('ciudad_final_recorrido', $nombre_fin, $post_id);
-    update_field('ciudad_final_recorrido_codigo', $ciudad_fin, $post_id);
+    update_field('ciudad_final_recorrido', $ciudad_fin, $post_id);
     update_field('barrio_final_recorrido', $barrio_fin, $post_id);
     update_field('fecha_inicio_recorrido', $fecha_inicio_recorrido, $post_id);
     update_field('hora_inicio_recorrido', $hora_inicio_recorrido, $post_id);
-    update_field('estado_del_recorrido', 'Por Asignar', $post_id);
+    
+
+    if (empty(get_field('estado_del_recorrido', $post_id))) {
+        update_field('estado_del_recorrido', 'Por Asignar', $post_id);
+    }
+
+    if (isset($_POST['ciudad_adicional_recorrido']) && isset($_POST['barrio_adicional_recorrido'])) {
+        // Obtener los valores de los campos
+        $ciudades = $_POST['ciudad_adicional_recorrido'];
+        $barrios = $_POST['barrio_adicional_recorrido'];     
+        if (!empty($_POST['barrio_adicional_zona'])) {
+            $zonas = $_POST['barrio_adicional_zona'];
+        }   
+        $puntos_recorrido = array();
+
+        $total_francjas = count($ciudades);
+        for ($i = 0; $i < $total_francjas; $i++) {
+            if (!empty($ciudades[$i]) && !empty($barrios[$i])) {
+                $puntos_recorrido[] = array(
+                    'ciudad' => $ciudades[$i],
+                    'zona_barrio' => $zonas[$i],
+                    'nombre_del_barrio' => $barrios[$i]
+                );
+            }
+        }
+        update_field('puntos_recorrido_adicionales', $puntos_recorrido, $post_id);
+    }
+
+    if (!empty($_POST['barrio_zona_inicio'])) {
+        update_field('barrio_zona_inicial_recorrido', $barrio_zona_inicio, $post_id);
+    }
+    if (!empty($_POST['barrio_zona_fin'])) {
+        update_field('barrio_final_recorrido_copiar', $barrio_zona_fin, $post_id);
+    }
+
     if (!empty($centro_de_costo)) {
         update_field('centro_de_costo', $centro_de_costo, $post_id);
     }
@@ -264,15 +307,32 @@ function load_recorrido_data_function() {
     $response = [
         'fecha_inicio_recorrido' => $fecha_inicio_recorrido,
         'hora_inicio_recorrido'  => format_time_input(get_field('hora_inicio_recorrido', $post_id)),
-        'ciudad_inicio'          => get_field('ciudad_inicial_recorrido_codigo', $post_id),
+        'ciudad_inicio'          => get_field('ciudad_inicial_recorrido', $post_id)->ID,
         'barrio_inicio'          => get_field('barrio_inicial_recorrido', $post_id),
-        'ciudad_fin'             => get_field('ciudad_final_recorrido_codigo', $post_id),
+        'ciudad_fin'             => get_field('ciudad_final_recorrido', $post_id)->ID,
         'barrio_fin'             => get_field('barrio_final_recorrido', $post_id),
         'estado_del_recorrido'   => str_replace(' ', '-', strtolower(get_field('estado_del_recorrido', $post_id))),
     ];
 
+    $puntos_recorrido = array();
+
+    if (have_rows('puntos_recorrido_adicionales', $post_id)) {
+        while (have_rows('puntos_recorrido_adicionales', $post_id)) {
+            the_row();
+            $puntos_recorrido[] = array(
+                'ciudad'           => get_sub_field('ciudad')->ID,
+                'zona_barrio'      => get_sub_field('zona_barrio'),
+                'nombre_del_barrio'=> get_sub_field('nombre_del_barrio')
+            );
+        }
+    }
+
+    if (!empty($puntos_recorrido)) {
+        $response['puntos_recorrido_adicionales'] = $puntos_recorrido;
+    }
+
     // Si el usuario es administrador o empresa, añadir más datos
-    if ($user_role === 'administrator' || $user_role === 'empresa') {
+    if ($user_role === 'administrator' || $user_role === 'empresa' || $user_role === 'operaciones_1') {
         $response['id_solicitante_recorrido'] = get_field('id_solicitante_recorrido', $post_id)['ID'];
         $response['id_conductor_recorrido']   = get_field('id_conductor_recorrido', $post_id);
         $response['centro_de_costo']          = get_field('centro_de_costo', $post_id);
