@@ -299,6 +299,10 @@
                                 <label for="radfiltexcel1" data-valor="conductor">Conductor</label>
                             </div>
                             <div class="radio">
+                                <input type="radio" id="radfiltexcel5" name="tipo-consulta" value="recxconductor">
+                                <label for="radfiltexcel5" data-valor="conductor">Recorrido por Conductor</label>
+                            </div>
+                            <div class="radio">
                                 <input type="radio" id="radfiltexcel2" name="tipo-consulta" value="empresa">
                                 <label for="radfiltexcel2" data-valor="empresa">Empresa</label>
                             </div>

@@ -92,7 +92,6 @@
                 "id": ""
             },
             "choices": {
-                "Por Asignar": "Por Asignar",
                 "Pendiente": "Pendiente",
                 "En curso": "En curso",
                 "Finalizado": "Finalizado",
@@ -213,27 +212,6 @@
             "append": ""
         },
         {
-            "key": "field_679fdd29d6e06",
-            "label": "Barrio Zona Inicial Recorrido",
-            "name": "barrio_zona_inicial_recorrido",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_67815a963f19c",
             "label": "Ciudad Final Recorrido",
             "name": "ciudad_final_recorrido",
@@ -284,27 +262,6 @@
             "append": ""
         },
         {
-            "key": "field_679fdd49d6e07",
-            "label": "Barrio Zona Final Recorrido",
-            "name": "barrio_final_recorrido_copiar",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_67815aac3f19e",
             "label": "Centro de Costo",
             "name": "centro_de_costo",
@@ -327,8 +284,8 @@
         },
         {
             "key": "field_67815ab63f19f",
-            "label": "Paradas Realizadas Recorrido",
-            "name": "paradas_realizadas_recorrido",
+            "label": "Adicionales Realizados Recorrido",
+            "name": "adicionales_realizados_recorrido",
             "aria-label": "",
             "type": "repeater",
             "instructions": "",
@@ -343,10 +300,77 @@
             "pagination": 0,
             "min": 0,
             "max": 0,
-            "collapsed": "",
-            "button_label": "Agregar Fila",
+            "collapsed": "field_67a10137af56d",
+            "button_label": "Agregar Adicional",
             "rows_per_page": 20,
-            "sub_fields": []
+            "sub_fields": [
+                {
+                    "key": "field_67a10137af56d",
+                    "label": "Nombre Adicional",
+                    "name": "nombre_adicional",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67815ab63f19f"
+                },
+                {
+                    "key": "field_67a1016caf56f",
+                    "label": "Valor",
+                    "name": "valor",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67815ab63f19f"
+                },
+                {
+                    "key": "field_67a1018caf570",
+                    "label": "Archivo",
+                    "name": "archivo",
+                    "aria-label": "",
+                    "type": "file",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_size": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_67815ab63f19f"
+                }
+            ]
         },
         {
             "key": "field_67815acc3f1a0",
@@ -435,104 +459,6 @@
             "step": "",
             "prepend": "",
             "append": ""
-        },
-        {
-            "key": "field_679ed58c428ff",
-            "label": "Puntos Recorrido Adicionales",
-            "name": "puntos_recorrido_adicionales",
-            "aria-label": "",
-            "type": "repeater",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "layout": "table",
-            "pagination": 0,
-            "min": 0,
-            "max": 0,
-            "collapsed": "",
-            "button_label": "Agregar Fila",
-            "rows_per_page": 20,
-            "sub_fields": [
-                {
-                    "key": "field_679ed87f8ea4d",
-                    "label": "Ciudad",
-                    "name": "ciudad",
-                    "aria-label": "",
-                    "type": "post_object",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "post_type": [
-                        "ciudad"
-                    ],
-                    "post_status": [
-                        "publish"
-                    ],
-                    "taxonomy": "",
-                    "return_format": "object",
-                    "multiple": 0,
-                    "allow_null": 0,
-                    "allow_in_bindings": 1,
-                    "bidirectional": 0,
-                    "ui": 1,
-                    "bidirectional_target": [],
-                    "parent_repeater": "field_679ed58c428ff"
-                },
-                {
-                    "key": "field_679fdd5ed6e08",
-                    "label": "Zona Barrio",
-                    "name": "zona_barrio",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "maxlength": "",
-                    "allow_in_bindings": 0,
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "parent_repeater": "field_679ed58c428ff"
-                },
-                {
-                    "key": "field_679ed7b842900",
-                    "label": "Nombre del Barrio",
-                    "name": "nombre_del_barrio",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "maxlength": "",
-                    "allow_in_bindings": 0,
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "parent_repeater": "field_679ed58c428ff"
-                }
-            ]
         }
     ],
     "location": [
@@ -553,5 +479,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1738530155
+    "modified": 1738617161
 }

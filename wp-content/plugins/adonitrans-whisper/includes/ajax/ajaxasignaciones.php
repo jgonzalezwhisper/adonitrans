@@ -528,7 +528,118 @@ function func_gen_reporte_excel() {
         } else {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
-    } else if ($tipo_consulta == 'empresa') {
+    } 
+    else if ($tipo_consulta == 'recxconductor') {
+        if ( !isset($_POST['selexc_conductor']) || empty($_POST['selexc_conductor']) ) {
+            wp_send_json_error('Es necesario seleccionar un Conductor.');
+        }
+
+        $id_conductor = intval($_POST['selexc_conductor']); 
+
+        $first_name = get_user_meta($id_conductor, 'first_name', true);
+        $last_name = get_user_meta($id_conductor, 'last_name', true);
+
+        $args = [
+            'post_type'      => 'recorrido',
+            'post_status'    => 'publish',
+            'fields'         => 'ids', // Solo retorna los IDs
+            'meta_query'     => [
+                'relation' => 'AND',
+                [
+                    'key'     => 'id_conductor_recorrido',
+                    'value'   => $id_conductor,
+                    'compare' => '='
+                ],
+                [
+                    'key'     => 'fecha_inicio_recorrido',
+                    'value'   => [$desde_formexcel, $hasta_formexcel],
+                    'compare' => 'BETWEEN',
+                    'type'    => 'DATE'
+                ],
+                [
+                    'key'     => 'estado_del_recorrido',
+                    'value'   => 'Finalizado',
+                    'compare' => '='
+                ]
+            ]
+        ];
+
+        $query = new WP_Query($args);
+        $post_ids = $query->posts; // Obtiene solo los IDs
+
+        if ($query->have_posts()) {
+            $headers = [
+                'Ruta',
+                'Valor Ruta',
+                'Fecha Recorrido',
+                'T. Espera',
+                '# Recorrido',
+                'Categoria',
+                'HI. Servicio',
+                'HF. Servicio',
+                'Serv. Trasmilenio (Horas)',
+                'Barrio',
+                'Placa',
+                'Nombre del Conductor',
+                'Observaciones',
+                'Nombre del Usuario'
+            ];
+            $filtpor = "Conductor: $first_name $last_name";
+            $data = [];
+
+            // Recorrer los posts
+            foreach ($post_ids as $post_id) {
+                $adicionales_recorrido = get_field('adicionales_realizados_recorrido', $post_id);
+                $ciudad_inicio = get_field('ciudad_para_empresa',get_field('ciudad_inicial_recorrido', $post_id));
+                $barrio_inicio = get_field('barrio_inicial_recorrido', $post_id);
+                $ciudad_fin = get_field('ciudad_para_empresa',get_field('ciudad_final_recorrido', $post_id));;
+                $barrio_fin = get_field('barrio_final_recorrido', $post_id);
+
+                $data[] = [
+                    "$ciudad_inicio ($barrio_inicio) - $ciudad_fin ($barrio_fin)",
+                    '100000',
+                    get_field('fecha_inicio_recorrido', $post_id),
+                    '0',
+                    $post_id,
+                    'Cat',
+                    get_field('hora_inicio_recorrido', $post_id),
+                    get_field('hora_final_recorrido', $post_id),
+                    "N/A",
+                    $barrio_inicio,
+                    "LKI28B",
+                    "Jose",
+                    "N/A",
+                    "N/A"
+                ];
+
+                if ($adicionales_recorrido) {
+                    foreach ($adicionales_recorrido as $adicional) {
+                        $data[] = [
+                            $adicional['nombre_adicional'],
+                            $adicional['valor'],
+                            get_field('fecha_inicio_recorrido', $post_id),
+                            '0',
+                            $post_id,
+                            'Cat',
+                            get_field('hora_inicio_recorrido', $post_id),
+                            get_field('hora_final_recorrido', $post_id),
+                            "N/A",
+                            $barrio_inicio,
+                            "LKI28B",
+                            "Jose",
+                            "N/A",
+                            "N/A"
+                        ];
+                    }
+                }
+            }
+
+            wp_reset_postdata(); // Restablecer la consulta
+        } else {
+            wp_send_json_error('No se encontraron datos para generar el reporte.');
+        }
+    }
+    else if ($tipo_consulta == 'empresa') {
         if ( !isset($_POST['selexc_empresa']) || empty($_POST['selexc_empresa']) ) {
             wp_send_json_error('Es necesario seleccionar una Empresa.');
         }
@@ -750,7 +861,7 @@ function func_gen_reporte_excel() {
     ]);
 
     // Ruta del logo
-    $image_url = 'https://d3vweb.com/wp-content/uploads/2024/11/d3vweb.png'; // Cambia por tu logo
+    $image_url = 'https://jagonzalez.org/wp-content/uploads/2025/02/adt-1-blue.png'; // Cambia por tu logo
     $tmp_image_path = download_image_to_temp($image_url);
 
     if ($tmp_image_path) {

@@ -421,7 +421,7 @@ jQuery(document).ready(function($) {
         $('#selexc_conductor, #selexc_empresa, #selexc_colaborador').rules('remove', 'required');
 
         // Añadir la regla de 'required' al select visible
-        if (checkedRadio === 'conductor') {
+        if (checkedRadio === 'conductor' || checkedRadio === 'recxconductor') {
             $('#selexc_conductor').rules('add', {
                 required: true,
                 messages: {
