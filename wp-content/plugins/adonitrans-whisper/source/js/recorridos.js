@@ -485,6 +485,52 @@ jQuery(document).ready(function($) {
                         }
                     }, 2000);
 
+                    // Verificar si el selector de conductores existe
+                    if ($('#id_conductor_recorrido').length) {
+                        let id_recorrido = $('#recorrido-id').val();
+
+                        // Llamar a la función obtener_conductores_asignados si el selector existe
+                        $.ajax({
+                            url: recorridoAjax.ajaxurl,
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                action: 'obtener_conductores_asignados',
+                                id_recorrido: id_recorrido
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    $('#id_conductor_recorrido').html('<option value="0">Selecciona un Conductor</option>');
+                                    $.each(response.data, function(index, conductor) {
+                                        $('#id_conductor_recorrido').append(
+                                            `<option value="${conductor.id}">${conductor.nombre}</option>`
+                                        );
+                                    });
+
+                                    // Asegúrate de seleccionar el conductor si existe
+                                    if (response.data.id_conductor_recorrido) {
+                                        $('#id_conductor_recorrido').val(response.data.id_conductor_recorrido).trigger('change');
+                                    }
+                                } else {
+                                    Swal.fire({
+                                        title: '¡Error!',
+                                        text: response.data,
+                                        icon: 'error',
+                                        confirmButtonText: 'Aceptar',
+                                    });
+                                }
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    title: '¡Error!',
+                                    text: 'Error en la solicitud AJAX para obtener conductores.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Aceptar',
+                                });
+                            }
+                        });
+                    }
+
 
 
                     setTimeout(() => {
