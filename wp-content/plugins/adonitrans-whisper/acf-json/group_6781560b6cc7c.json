@@ -92,6 +92,7 @@
                 "id": ""
             },
             "choices": {
+                "Por Asignar": "Por Asignar",
                 "Pendiente": "Pendiente",
                 "En curso": "En curso",
                 "Finalizado": "Finalizado",
@@ -212,6 +213,27 @@
             "append": ""
         },
         {
+            "key": "field_679fdd29d6e06",
+            "label": "Barrio Zona Inicial Recorrido",
+            "name": "barrio_zona_inicial_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_67815a963f19c",
             "label": "Ciudad Final Recorrido",
             "name": "ciudad_final_recorrido",
@@ -244,6 +266,27 @@
             "key": "field_67815aa23f19d",
             "label": "Barrio Final Recorrido",
             "name": "barrio_final_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_679fdd49d6e07",
+            "label": "Barrio Zona Final Recorrido",
+            "name": "barrio_final_recorrido_copiar",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -446,6 +489,28 @@
                     "parent_repeater": "field_679ed58c428ff"
                 },
                 {
+                    "key": "field_679fdd5ed6e08",
+                    "label": "Zona Barrio",
+                    "name": "zona_barrio",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_679ed58c428ff"
+                },
+                {
                     "key": "field_679ed7b842900",
                     "label": "Nombre del Barrio",
                     "name": "nombre_del_barrio",
@@ -488,5 +553,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1738516793
+    "modified": 1738530155
 }
