@@ -25,6 +25,9 @@
             </li>
             <li data-action="usuario">
                 <i class="icofont-users-social"></i> Usuarios
+            </li> 
+            <li data-action="conductor">
+                <i class="icofont-user"></i> Conductor
             </li>        
             <li data-action="empresa">
                 <i class="icofont-building-alt"></i> Empresas
