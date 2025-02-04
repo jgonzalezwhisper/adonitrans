@@ -678,6 +678,9 @@ function func_gen_reporte_excel() {
             ],
             'fields'         => 'ids', // Solo obtener IDs
         ]);
+        error_log(print_r($id_empresa,true));
+
+        error_log(print_r($query,true));
 
         if ($query->have_posts()) {
             $headers = ['Solicitante', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];

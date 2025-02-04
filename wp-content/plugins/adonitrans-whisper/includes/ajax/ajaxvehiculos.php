@@ -62,6 +62,36 @@ function create_vehiculo_function() {
     update_post_meta( $post_id, 'propietario_de_vehiculo', $propietario_de_vehiculo );
     update_post_meta( $post_id, 'conductor_del_vehiculo', $conductor_del_vehiculo );
 
+    // Definir el asunto y cuerpo del mensaje
+    $subject = 'Vehículo '.$accion2.' en AdoniGo';
+    $message = [
+        '<h2>Vehículo '.$accion2.'.</h2>',
+        '<p>Un Vehículo ha sido eliminado en AdoniGo. Los datos del Vehículo son:</p>',
+        sprintf('<p>Placa vehículo: <strong>%s</strong></p>', esc_html($placa_vehiculo)),
+        sprintf('<p>Cantidad pasajeros vehiculo: <strong>%s</strong></p>', esc_html($cantidad_pasajeros_vehiculo)),
+        sprintf('<p>Fecha vencimiento soat: <strong>%s</strong></p>', esc_html($fecha_vencimiento_soat)),
+        sprintf('<p>Fecha vencimiento tecno mecanica: <strong>%s</strong></p>', esc_html($fecha_vencimiento_tecno_mecanica)),
+    ];
+    // Obtener el correo del usuario actual
+    $current_user_email = wp_get_current_user()->user_email;
+
+    $recipient_email = sanitize_email($current_user_email);
+    $roles = ['operaciones_1', 'administrator'];
+    $users = get_users([
+        'role__in' => $roles,
+        'fields'   => ['user_email']
+    ]);
+    $cc_emails = wp_list_pluck($users, 'user_email');    
+
+    // Eliminar el correo del usuario actual si existe en el array $cc_emails
+    if (($key = array_search($current_user_email, $cc_emails)) !== false) {
+        unset($cc_emails[$key]);
+    }
+
+    // Llamar a la función de notificación con los nuevos parámetros
+    send_email_notification($subject, $message, $recipient_email, $cc_emails);
+
+
     // Devolver respuesta de éxito
     wp_send_json_success(['message' => 'Vehículo '.$accion2.' exitosamente']);
 }
@@ -87,10 +117,47 @@ function handle_delete_vehiculo() {
         wp_send_json_error( array( 'message' => 'El post no existe o no es un Vehículo.' ) );
     }
 
+    // Obtener los datos meta del post
+    $placa_vehiculo = get_post_meta( $post_id, 'placa_vehiculo', true );
+    $cantidad_pasajeros_vehiculo = get_post_meta( $post_id, 'cantidad_pasajeros_vehiculo', true );
+    $fecha_vencimiento_soat = get_post_meta( $post_id, 'fecha_vencimiento_soat', true );
+    $fecha_vencimiento_tecno_mecanica = get_post_meta( $post_id, 'fecha_vencimiento_tecno_mecanica', true );
+
     // Eliminar el post
     $deleted = wp_delete_post( $post_id, true );
 
     if ( $deleted ) {
+
+        // Definir el asunto y cuerpo del mensaje
+        $subject = 'Vehículo '.$accion2.' en AdoniGo';
+        $message = [
+            '<h2>Vehículo '.$accion2.'.</h2>',
+            '<p>Un Vehículo ha sido eliminado en AdoniGo. Los datos del Vehículo son:</p>',
+            sprintf('<p>Placa vehículo: <strong>%s</strong></p>', esc_html($placa_vehiculo)),
+            sprintf('<p>Cantidad pasajeros vehiculo: <strong>%s</strong></p>', esc_html($cantidad_pasajeros_vehiculo)),
+            sprintf('<p>Fecha vencimiento soat: <strong>%s</strong></p>', esc_html($fecha_vencimiento_soat)),
+            sprintf('<p>Fecha vencimiento tecno mecanica: <strong>%s</strong></p>', esc_html($fecha_vencimiento_tecno_mecanica)),
+        ];
+
+        // Obtener el correo del usuario actual
+        $current_user_email = wp_get_current_user()->user_email;
+
+        $recipient_email = sanitize_email($current_user_email);
+        $roles = ['operaciones_1', 'administrator'];
+        $users = get_users([
+            'role__in' => $roles,
+            'fields'   => ['user_email']
+        ]);
+        $cc_emails = wp_list_pluck($users, 'user_email');    
+
+        // Eliminar el correo del usuario actual si existe en el array $cc_emails
+        if (($key = array_search($current_user_email, $cc_emails)) !== false) {
+            unset($cc_emails[$key]);
+        }
+
+        // Llamar a la función de notificación con los nuevos parámetros
+        send_email_notification($subject, $message, $recipient_email, $cc_emails);
+
         wp_send_json_success( array( 'message' => 'Vehículo eliminado exitosamente.', 'post_id' => $post_id ) );
     } else {
         wp_send_json_error( array( 'message' => 'Error al eliminar el vehículo.' ) );

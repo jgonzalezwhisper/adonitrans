@@ -247,3 +247,75 @@ function send_email_token($to, $subject, $message_content) {
     }
     return true;
 }
+
+function send_email_notification($subject, $message_content, $recipient_email = null, $cc_emails = []) {
+    // Si no se proporciona un destinatario, usar el del usuario actual autenticado
+    if (!$recipient_email) {
+        if (!is_user_logged_in()) {
+            error_log("Error: Intento de enviar correo sin usuario autenticado y sin destinatario proporcionado.");
+            return false; // No hay destinatario válido
+        }
+        $current_user = wp_get_current_user();
+        $recipient_email = $current_user->user_email;
+    }
+
+    // Sanitizar y validar el correo del destinatario
+    $to = sanitize_email($recipient_email);
+    if (!is_email($to)) {
+        error_log("Error: El correo del destinatario '{$recipient_email}' no es válido.");
+        return false; // No enviar si el destinatario no es válido
+    }
+
+    // Obtener el remitente desde ACF o usar el del admin si no está configurado
+    $sender_email = sanitize_email(get_field('email_notifications_sender_email', 'option')) ?: get_option('admin_email');
+    if (!is_email($sender_email)) {
+        error_log("Error: El correo del remitente '{$sender_email}' no es válido.");
+        return false; // No enviar si el remitente no es válido
+    }
+
+    // Manejo de correos en CC
+    if (!is_array($cc_emails)) {
+        $cc_emails = [$cc_emails]; // Convertir en array si es un solo correo
+    }
+
+    $cc_emails = array_filter(array_map('sanitize_email', $cc_emails), 'is_email'); // Sanitizar y filtrar
+    $cc_header = !empty($cc_emails) ? 'CC: ' . implode(', ', $cc_emails) : '';
+
+    // Obtener y procesar la plantilla de correo
+    ob_start();
+    include PATH_ADONITRANSPLUG . 'includes/mail/operacion.html';
+    $html_content = ob_get_clean();
+
+    if (!$html_content) {
+        error_log("Error: No se pudo cargar la plantilla de correo desde " . PATH_ADONITRANSPLUG . 'includes/mail/operacion.html');
+        return false;
+    }
+
+    // Validar `$message_content` y construir el contenido personalizado
+    $custom_content = is_array($message_content) ? implode('', array_map('wp_kses_post', $message_content)) : '';
+
+    // Reemplazar el marcador en la plantilla
+    $html_content = str_replace('<div id="cust-mensaje"></div>', 
+                                '<div id="cust-mensaje">' . $custom_content . '</div>', 
+                                $html_content);
+
+    // Encabezados del correo
+    $headers = [
+        "From: {$sender_email}",
+        "Content-Type: text/html; charset=UTF-8"
+    ];
+
+    // Agregar CC si hay correos válidos
+    if (!empty($cc_header)) {
+        $headers[] = $cc_header;
+    }
+
+    // Enviar el correo
+    $sent = wp_mail($to, sanitize_text_field($subject), $html_content, $headers);
+
+    if (!$sent) {
+        error_log("Error al enviar el correo a '{$to}' con asunto: '{$subject}'");
+    }
+
+    return $sent;
+}

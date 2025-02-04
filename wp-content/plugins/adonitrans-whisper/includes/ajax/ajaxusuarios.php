@@ -54,8 +54,7 @@ function create_user_function() {
         if (is_wp_error($user_id)) {
             wp_send_json_error(['message' => 'Error al '.$accion1.' el usuario']);
         }
-    }
-    
+    }    
 
     // Actualizar el nombre y apellidos
     wp_update_user([
@@ -127,6 +126,47 @@ function create_user_function() {
         ], 'user_' . $user_id);
     }
 
+    $subject = 'Usuario '.$accion2.' AdoniGo';
+
+    $message = [
+        sprintf('<h2>Hola <strong>%s</strong>!</h2>', esc_html($first_name)),
+        '<p>Tu perfil ha sido '.$accion2.' en AdoniGo exitosamente. Los datos de tu cuenta son:</p>',
+        sprintf('<p>Nombres: <strong>%s</strong></p>',
+            esc_html($first_name)
+        ),
+        sprintf('<p>Apellidos: <strong>%s</strong></p>',
+            esc_html($last_name)
+        ),
+        sprintf('<p>Empresa: <strong>%s</strong></p>',
+            esc_html(get_the_title( $_POST['sel_empresa_asociada'] ))
+        ),        
+        sprintf('<p>Correo: <strong>%s</strong></p>',
+            esc_html($email)
+        ),
+        sprintf('<p>Contraseña: <strong>%s</strong></p>',
+            esc_html($password)
+        ),
+        sprintf('<p>No Identificación: <strong>%s</strong></p>',
+            esc_html($_POST['user-cedula'])
+        ),
+        sprintf('<p>Teléfono: <strong>%s</strong></p>',
+            esc_html($_POST['user-telefono'])
+        )
+    ];
+    $recipient_email = sanitize_email($email); 
+
+    $roles = ['operaciones_1', 'administrator'];
+
+    $users = get_users([
+        'role__in' => $roles,
+        'fields'   => ['user_email']
+    ]);
+    $cc_emails = wp_list_pluck($users, 'user_email');
+
+    // Llamar a la función de notificación con los nuevos parámetros
+    send_email_notification($subject, $message, $recipient_email, $cc_emails);
+
+
     // Devolver respuesta de éxito
     wp_send_json_success(['message' => 'Usuario '.$accion2.' exitosamente']);
 }
@@ -144,14 +184,45 @@ function delete_user_ajax_handler() {
         wp_send_json_error(['message' => 'Usuario no válido.']);
     }
 
+    // Obtener los datos del usuario
+    $user = get_userdata($user_id);
+    $first_name = $user->first_name;
+    $last_name = $user->last_name;
+    $email = $user->user_email;
+
     // Obtener el ID de la imagen asociada al campo foto_de_usuario y eliminarla
     $foto = get_field('foto_de_usuario', 'user_' . $user_id);
     if (!empty($foto['ID'])) {
         wp_delete_attachment($foto['ID'], true); // Eliminar la imagen permanentemente
     }
+
     $result = wp_delete_user($user_id);
 
     if ($result) {
+        // Definir el asunto y cuerpo del mensaje
+        $subject = 'Usuario Eliminado en AdoniGo';
+
+        $message = [
+            sprintf('<h2>Hola <strong>%s</strong>!</h2>', esc_html($first_name)),
+            '<p>Tu perfil ha sido eliminado en AdoniGo. Los datos de tu cuenta son:</p>',
+            sprintf('<p>Nombres: <strong>%s</strong></p>', esc_html($first_name)),
+            sprintf('<p>Apellidos: <strong>%s</strong></p>', esc_html($last_name)),
+            sprintf('<p>Empresa: <strong>%s</strong></p>', esc_html(get_the_title( $_POST['sel_empresa_asociada'] ))
+            ),
+            sprintf('<p>Correo: <strong>%s</strong></p>', esc_html($email)),            
+        ];
+
+        $recipient_email = sanitize_email($email); 
+        $roles = ['operaciones_1', 'administrator'];
+        $users = get_users([
+            'role__in' => $roles,
+            'fields'   => ['user_email']
+        ]);
+        $cc_emails = wp_list_pluck($users, 'user_email');
+
+        // Llamar a la función de notificación con los nuevos parámetros
+        send_email_notification($subject, $message, $recipient_email, $cc_emails);
+
         wp_send_json_success(['message' => 'Usuario eliminado exitosamente.']);
     } else {
         wp_send_json_error(['message' => 'No se pudo eliminar al usuario.']);

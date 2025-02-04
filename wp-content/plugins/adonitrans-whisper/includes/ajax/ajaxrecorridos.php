@@ -198,6 +198,81 @@ function create_recorrido_function() {
     update_field('id_solicitante_recorrido', $id_solicitante_recorrido, $post_id);
     if (!empty($id_conductor_recorrido)) {
         update_field('id_conductor_recorrido', $id_conductor_recorrido, $post_id);
+
+        $first_name = get_user_meta($id_solicitante_recorrido, 'first_name', true);
+        $last_name = get_user_meta($id_solicitante_recorrido, 'last_name', true);
+
+        $nombre_soli = "$first_name $last_name";
+
+        $first_name = get_user_meta($id_conductor_recorrido, 'first_name', true);
+        $last_name = get_user_meta($id_conductor_recorrido, 'last_name', true);
+
+        $nombre_cond = "$first_name $last_name";
+
+        // Definir el asunto y cuerpo del mensaje
+        $subject = 'Recorrido Asignado en AdoniGo';
+        $message = [
+            '<h2>Recorrido Asignado.</h2>',
+            '<p>Un Recorrido ha sido Asignado en AdoniGo. Los datos del Recorrido son:</p>',
+            sprintf('<p>ID Servicio: <strong>%s</strong></p>', esc_html($post_id)),
+            sprintf('<p>Fecha Inicio: <strong>%s</strong></p>', esc_html($fecha_inicio_recorrido)),
+            sprintf('<p>Hora Inicio: <strong>%s</strong></p>', esc_html($hora_inicio_recorrido)),
+            sprintf('<p>Ciudad Inicio: <strong>%s</strong></p>', esc_html($nombre_inicio)),
+            sprintf('<p>Barrio Inicio: <strong>%s</strong></p>', esc_html($barrio_inicio)),
+            sprintf('<p>Ciudad Fin: <strong>%s</strong></p>', esc_html($nombre_fin)),
+            sprintf('<p>Solicitante: <strong>%s</strong></p>', esc_html($nombre_solicitante)),
+            sprintf('<p>Empresa Solicitante: <strong>%s</strong></p>', esc_html(get_the_title( $empresa_solicitante_recorrido ))),        
+        ];
+
+        // Obtener el correo del usuario actual
+        $current_user_email = wp_get_current_user()->user_email;
+
+        // Asignar el correo del usuario a la variable $recipient_email
+        $recipient_email = sanitize_email($current_user_email);
+
+        // Obtener los roles del usuario actual
+        $current_user_roles = wp_get_current_user()->roles;
+
+        $allowed_roles = ['colaborador', 'empresa', 'administrator', 'operaciones_1'];
+
+        // Comprobar si el usuario NO tiene el rol 'colaborador'
+        if (!in_array('colaborador', $current_user_roles)) {
+            // Si no es colaborador, añadir su correo a $combined_emails
+            $user_solicitante = get_userdata($id_solicitante_recorrido);
+            $combined_emails[] = $user_solicitante->user_email;
+        }
+
+        // Obtener usuarios con los roles 'operaciones_1' y 'administrator'
+        $roles = ['operaciones_1', 'administrator'];
+        $users = get_users([
+            'role__in' => $roles,
+            'fields'   => ['user_email']
+        ]);
+
+        // Obtener correos de los usuarios con los roles mencionados
+        $cc_emails = wp_list_pluck($users, 'user_email'); 
+
+        // Argumentos para la consulta de usuarios relacionados con el rol 'empresa'
+        $args_emp = [
+            'role'         => 'empresa',
+            'meta_key'     => 'empresa_asociada_usuario',
+            'meta_value'   => $empresa_solicitante_recorrido,
+            'fields'       => 'user_email'
+        ];
+
+        // Realiza la consulta de usuarios relacionados con 'empresa'
+        $users_emp = get_users($args_emp);
+
+        // Combina los correos de ambos arrays
+        $combined_emails = array_merge($cc_emails, wp_list_pluck($users_emp, 'user_email'));
+
+        // Eliminar el correo del usuario actual si existe en el array combinado
+        $cc_emails = array_diff($combined_emails, [$current_user_email]);
+
+
+        // Llamar a la función de notificación con los nuevos parámetros
+        send_email_notification($subject, $message, $recipient_email, $cc_emails);
+
         if (empty($estado_actual) || $estado_actual=='Por Asignar') {
             update_field('estado_del_recorrido', 'Pendiente', $post_id);
         }
@@ -247,6 +322,75 @@ function create_recorrido_function() {
         update_field('centro_de_costo', $centro_de_costo, $post_id);
     }
 
+    $first_name = get_user_meta($id_solicitante_recorrido, 'first_name', true);
+    $last_name = get_user_meta($id_solicitante_recorrido, 'last_name', true);
+
+    $nombre_solicitante = "$first_name $last_name";
+
+    // Definir el asunto y cuerpo del mensaje
+    $subject = 'Recorrido '.$accion2.' en AdoniGo';
+    $message = [
+        '<h2>Recorrido '.$accion2.'.</h2>',
+        '<p>Un Recorrido ha sido '.$accion2.' en AdoniGo. Los datos del Recorrido son:</p>',
+        sprintf('<p>ID Servicio: <strong>%s</strong></p>', esc_html($post_id)),
+        sprintf('<p>Fecha Inicio: <strong>%s</strong></p>', esc_html($fecha_inicio_recorrido)),
+        sprintf('<p>Hora Inicio: <strong>%s</strong></p>', esc_html($hora_inicio_recorrido)),
+        sprintf('<p>Ciudad Inicio: <strong>%s</strong></p>', esc_html($nombre_inicio)),
+        sprintf('<p>Barrio Inicio: <strong>%s</strong></p>', esc_html($barrio_inicio)),
+        sprintf('<p>Ciudad Fin: <strong>%s</strong></p>', esc_html($nombre_fin)),
+        sprintf('<p>Solicitante: <strong>%s</strong></p>', esc_html($nombre_solicitante)),
+        sprintf('<p>Empresa Solicitante: <strong>%s</strong></p>', esc_html(get_the_title( $empresa_solicitante_recorrido ))),        
+    ];
+
+    // Obtener el correo del usuario actual
+    $current_user_email = wp_get_current_user()->user_email;
+
+    // Asignar el correo del usuario a la variable $recipient_email
+    $recipient_email = sanitize_email($current_user_email);
+
+    // Obtener los roles del usuario actual
+    $current_user_roles = wp_get_current_user()->roles;
+
+    $allowed_roles = ['colaborador', 'empresa', 'administrator', 'operaciones_1'];
+
+    // Comprobar si el usuario NO tiene el rol 'colaborador'
+    if (!in_array('colaborador', $current_user_roles)) {
+        // Si no es colaborador, añadir su correo a $combined_emails
+        $user_solicitante = get_userdata($id_solicitante_recorrido);
+        $combined_emails[] = $user_solicitante->user_email;
+    }
+
+    // Obtener usuarios con los roles 'operaciones_1' y 'administrator'
+    $roles = ['operaciones_1', 'administrator'];
+    $users = get_users([
+        'role__in' => $roles,
+        'fields'   => ['user_email']
+    ]);
+
+    // Obtener correos de los usuarios con los roles mencionados
+    $cc_emails = wp_list_pluck($users, 'user_email'); 
+
+    // Argumentos para la consulta de usuarios relacionados con el rol 'empresa'
+    $args_emp = [
+        'role'         => 'empresa',
+        'meta_key'     => 'empresa_asociada_usuario',
+        'meta_value'   => $empresa_solicitante_recorrido,
+        'fields'       => 'user_email'
+    ];
+
+    // Realiza la consulta de usuarios relacionados con 'empresa'
+    $users_emp = get_users($args_emp);
+
+    // Combina los correos de ambos arrays
+    $combined_emails = array_merge($cc_emails, wp_list_pluck($users_emp, 'user_email'));
+
+    // Eliminar el correo del usuario actual si existe en el array combinado
+    $cc_emails = array_diff($combined_emails, [$current_user_email]);
+
+
+    // Llamar a la función de notificación con los nuevos parámetros
+    send_email_notification($subject, $message, $recipient_email, $cc_emails);
+
     // Devolver respuesta de éxito
     wp_send_json_success(['message' => 'Recorrido ' . $accion2 . ' exitosamente']);
 }
@@ -272,10 +416,92 @@ function handle_delete_recorrido() {
         wp_send_json_error( array( 'message' => 'El post no existe o no es un Recorrido.' ) );
     }
 
+    // Obtener datos del post usando ACF
+    $fecha_inicio_recorrido = get_field('fecha_inicio_recorrido', $post_id);
+    $fecha_inicio_recorrido = format_date_for_input($fecha_inicio_recorrido); // Si tienes esta función para formatear
+    $hora_inicio_recorrido = format_time_input(get_field('hora_inicio_recorrido', $post_id));
+    $ciudad_inicio = get_field('ciudad_inicial_recorrido', $post_id)->ID;
+    $ciudad_inicio = get_the_title( $ciudad_inicio );
+    $barrio_inicio = get_field('barrio_inicial_recorrido', $post_id);
+    $ciudad_fin = get_field('ciudad_final_recorrido', $post_id)->ID;
+    $ciudad_fin = get_the_title( $ciudad_fin );
+    $id_solicitante_recorrido = get_the_title( $id_solicitante_recorrido );
+    $empresa_solicitante_recorrido = get_field('empresa_asociada_usuario', 'user_' . $id_solicitante_recorrido);
+
+    $first_name = get_user_meta($id_solicitante_recorrido, 'first_name', true);
+    $last_name = get_user_meta($id_solicitante_recorrido, 'last_name', true);
+
+    $nombre_soli = "$first_name $last_name";
+
     // Eliminar el post
     $deleted = wp_delete_post( $post_id, true );
 
     if ( $deleted ) {
+
+        // Definir el asunto y cuerpo del mensaje
+        $subject = 'Recorrido Eliminado en AdoniGo';
+
+        $message = [
+            '<h2>Recorrido Asignado.</h2>',
+            '<p>Un Recorrido ha sido Asignado en AdoniGo. Los datos del Recorrido son:</p>',
+            sprintf('<p>Fecha Inicio: <strong>%s</strong></p>', esc_html($fecha_inicio_recorrido)),
+            sprintf('<p>Hora Inicio: <strong>%s</strong></p>', esc_html($hora_inicio_recorrido)),
+            sprintf('<p>Ciudad Inicio: <strong>%s</strong></p>', esc_html($ciudad_inicio)),
+            sprintf('<p>Barrio Inicio: <strong>%s</strong></p>', esc_html($barrio_inicio)),
+            sprintf('<p>Ciudad Fin: <strong>%s</strong></p>', esc_html($ciudad_fin)),
+            sprintf('<p>Solicitante: <strong>%s</strong></p>', esc_html($nombre_solicitante)),
+            sprintf('<p>Empresa Solicitante: <strong>%s</strong></p>', esc_html(get_the_title( $empresa_solicitante_recorrido ))),        
+        ];
+
+        // Obtener el correo del usuario actual
+        $current_user_email = wp_get_current_user()->user_email;
+
+        // Asignar el correo del usuario a la variable $recipient_email
+        $recipient_email = sanitize_email($current_user_email);
+
+        // Obtener los roles del usuario actual
+        $current_user_roles = wp_get_current_user()->roles;
+
+        $allowed_roles = ['colaborador', 'empresa', 'administrator', 'operaciones_1'];
+
+        // Comprobar si el usuario NO tiene el rol 'colaborador'
+        if (!in_array('colaborador', $current_user_roles)) {
+            // Si no es colaborador, añadir su correo a $combined_emails
+            $user_solicitante = get_userdata($id_solicitante_recorrido);
+            $combined_emails[] = $user_solicitante->user_email;
+        }
+
+        // Obtener usuarios con los roles 'operaciones_1' y 'administrator'
+        $roles = ['operaciones_1', 'administrator'];
+        $users = get_users([
+            'role__in' => $roles,
+            'fields'   => ['user_email']
+        ]);
+
+        // Obtener correos de los usuarios con los roles mencionados
+        $cc_emails = wp_list_pluck($users, 'user_email'); 
+
+        // Argumentos para la consulta de usuarios relacionados con el rol 'empresa'
+        $args_emp = [
+            'role'         => 'empresa',
+            'meta_key'     => 'empresa_asociada_usuario',
+            'meta_value'   => $empresa_solicitante_recorrido,
+            'fields'       => 'user_email'
+        ];
+
+        // Realiza la consulta de usuarios relacionados con 'empresa'
+        $users_emp = get_users($args_emp);
+
+        // Combina los correos de ambos arrays
+        $combined_emails = array_merge($cc_emails, wp_list_pluck($users_emp, 'user_email'));
+
+        // Eliminar el correo del usuario actual si existe en el array combinado
+        $cc_emails = array_diff($combined_emails, [$current_user_email]);
+
+
+        // Llamar a la función de notificación con los nuevos parámetros
+        send_email_notification($subject, $message, $recipient_email, $cc_emails);
+
         wp_send_json_success( array( 'message' => 'Recorrido eliminado exitosamente.', 'post_id' => $post_id ) );
     } else {
         wp_send_json_error( array( 'message' => 'Error al eliminar el recorrido.' ) );
