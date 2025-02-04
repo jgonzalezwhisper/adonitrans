@@ -264,6 +264,34 @@ exit('Acceso no autorizado');
                         <option value="">Selecciona un Barrio</option>
                     </select>
                 </div>
+                <?php if ($user_role === 'administrator' || $user_role === 'operaciones_1'): ?>
+                    <?php
+                        $args = [
+                            'post_type'      => 'tarifa',
+                            'post_status'    => 'publish',
+                            'fields'         => 'ids',
+                            'posts_per_page' => 1,
+                            'meta_query'     => [
+                                [
+                                    'key'     => 'empresa_aplicar_tarifa',
+                                    'value'   => '227',
+                                    'compare' => '=LIKE'
+                                ]
+                            ]
+                        ];
+
+                        $tarifa_ids = get_posts($args);
+                    ?>
+                    <?php if (!empty($tarifa_ids)): ?>                    
+                        <div class="wrap wrap-2">
+                            <label for="tarifaxempresa">Seleccionar Ruta</label>
+
+                            <select id="tarifaxempresa" name="tarifaxempresa" required>
+                                <option value="">Selecciona una Ruta</option>
+                            </select>
+                        </div>
+                    <?php endif ?>
+                <?php endif ?>
                 <div id="wrap-puntos-recorrido" class="wrap wrap-fanjas">
                     <h5>Añadir Punto Recorrido</h5>
                     <!-- Plantilla oculta -->

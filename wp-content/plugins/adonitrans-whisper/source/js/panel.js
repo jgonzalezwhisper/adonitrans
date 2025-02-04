@@ -197,7 +197,7 @@ window.initRecorridos = function initRecorridos() {
         ]
     });
 
-    jQuery('#ciudad_inicio, #barrio_inicio, #ciudad_fin, #barrio_fin, .ciudad_adicional_recorrido, .barrio_adicional_recorrido').select2({
+    jQuery('#tarifaxempresa, #ciudad_inicio, #barrio_inicio, #ciudad_fin, #barrio_fin, .ciudad_adicional_recorrido, .barrio_adicional_recorrido').select2({
         placeholder: "Selecciona un Valor",
         width: '100%'
     });

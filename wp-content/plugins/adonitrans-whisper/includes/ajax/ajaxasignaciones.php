@@ -42,8 +42,6 @@ function obtener_conductores_asignados() {
         'fields' => 'ID'
     );
 
-    error_log(print_r($argscon,true));
-
     $user_query = new WP_User_Query($argscon);
     $conductores = $user_query->get_results();
 
@@ -712,8 +710,6 @@ function func_gen_reporte_excel() {
                     get_field('centro_de_costo', $post_id),
                 ];
             }
-
-            error_log(print_r($data,true));
 
             wp_reset_postdata();
         } else {

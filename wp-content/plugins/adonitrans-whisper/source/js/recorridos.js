@@ -9,8 +9,47 @@ jQuery(document).ready(function($) {
         let selectCiudadFin = $('#ciudad_fin');
         let ciudadAdicionalRecorrido = $('.ciudad_adicional_recorrido');
         let plantillarecorridociudad = $('#plantilla-recorrido .ciudad');
+        let selectrutas = $("#tarifaxempresa");
 
         if (idSolicitante !== '0') {
+
+            $.ajax({
+                url: recorridoAjax.ajaxurl,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'get_rutas',
+                    id_solicitante: idSolicitante,
+                },
+                success: function(response) {
+                    if (response.success && response.data.length > 0) {
+                        // Limpiar el select antes de agregar nuevas opciones
+                        selectrutas.empty().append('<option value="0">Selecciona un centro de costo</option>');
+
+                        // Añadir las opciones dinámicamente
+                        $.each(response.data, function(index, centro) {
+                            selectrutas.append('<option data-valor="' + centro.valor + '" data-nombre="' + centro.nombre_de_ruta + '" value="' + centro.codigo + '"> (' + centro.codigo + ') ' + centro.nombre_de_ruta + '</option>');
+                        });
+
+                        selectrutas.prop('disabled', false).trigger('change');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.data.message || 'No se encontraron centros de costo.'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar los centros de costo. Intenta nuevamente.'
+                    });
+                }
+            });
+
+
             $.ajax({
                 url: recorridoAjax.ajaxurl,
                 type: 'POST',
@@ -437,6 +476,9 @@ jQuery(document).ready(function($) {
                     setTimeout(() => {
                         $('#barrio_inicio').val(response.data.barrio_inicio).trigger('change');
                         $('#barrio_fin').val(response.data.barrio_fin).trigger('change');
+                        if ($('#tarifaxempresa').length) {
+                            $('#tarifaxempresa').val(response.data.codigo_de_ruta_recorrido).trigger('change');
+                        }
                     }, 1600);
 
                     setTimeout(() => {
@@ -659,7 +701,7 @@ jQuery(document).ready(function($) {
                     $("#mod-desfinrec").text(response.data.destino_final);
                     $("#mod-nombrec").text(response.data.nomb_usuario);
                     $("#mod-emprec").text(empresa);
-                    
+
                     $('body').removeClass('actloader');
 
                 } else {
@@ -746,6 +788,21 @@ jQuery(document).ready(function($) {
                 // Recoger los datos del formulario
                 var formData = new FormData(form);
                 formData.append('action', 'create_recorrido');
+
+                // Verificar si el select existe
+                if ($('#tarifaxempresa').length) {
+                    var selectedOption = $('#tarifaxempresa').find(':selected');
+
+                    if (selectedOption.length) {
+                        var selectedValue = selectedOption.val();
+                        var dataValor = selectedOption.data('valor');
+                        var nombre = selectedOption.data('nombre');
+
+                        formData.append('tarifa_codigo', selectedValue);
+                        formData.append('tarifa_ruta', nombre);
+                        formData.append('tarifa_valor', dataValor);
+                    }
+                }
 
                 // Realizar la petición AJAX
                 $.ajax({

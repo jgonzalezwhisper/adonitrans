@@ -1,4 +1,59 @@
 <?php
+
+add_action('wp_ajax_get_rutas', 'func_get_rutas');
+add_action('wp_ajax_nopriv_get_rutas', 'func_get_rutas');
+function func_get_rutas() {
+    if (!isset($_POST['id_solicitante']) || empty($_POST['id_solicitante'])) {
+        wp_send_json_error(['message' => 'ID de ciudad no enviado.']);
+    }
+
+    $id_solicitante = intval($_POST['id_solicitante']);
+    // Obtener la empresa asociada al usuario
+    $empresa_asociada = get_field('empresa_asociada_usuario', 'user_' . $id_solicitante);   
+    
+    $rutas = [];
+
+    $args = [
+        'post_type'      => 'tarifa',
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'posts_per_page' => 1,
+        'meta_query'     => [
+            [
+                'key'     => 'empresa_aplicar_tarifa',
+                'value'   => $empresa_asociada->ID,
+                'compare' => '=LIKE'
+            ]
+        ]
+    ];
+    
+    $tarifa_ids = get_posts($args);
+
+    if (empty($tarifa_ids)) 
+        wp_send_json_error(['message' => 'No se encontraron rutas para la empresa asociada.']);
+
+    $tarifa_id = $tarifa_ids[0]; // Obtener el primer ID
+    $repetidor = get_field('repetidor_de_tarifas', $tarifa_id);
+
+    error_log( count($repetidor) );
+
+    
+    if ($repetidor) {
+        foreach ($repetidor as $item) {
+            $response[] = [
+                'codigo' => $item['codigo'],
+                'nombre_de_ruta' => $item['nombre_de_ruta'],
+                'valor' => $item['valor'],
+            ];
+        }
+    }
+
+    error_log( print_r($response,true) );
+    wp_send_json_success($response);
+
+    wp_die();
+}
+
 function consultar_ciudades_por_empresa() {
     // Verificar si se recibió el user_id por POST
     if (!isset($_POST['id_solicitante'])) {
@@ -322,6 +377,16 @@ function create_recorrido_function() {
         update_field('centro_de_costo', $centro_de_costo, $post_id);
     }
 
+    if (!empty($_POST['tarifa_codigo'])) {
+        update_field('codigo_de_ruta_recorrido', $_POST['tarifa_codigo'], $post_id);
+    }
+    if (!empty($_POST['tarifa_ruta'])) {
+        update_field('nombre_ruta_recorrido', $_POST['tarifa_ruta'], $post_id);
+    }
+    if (!empty($_POST['tarifa_valor'])) {
+        update_field('valor_ruta_recorrido',$_POST['tarifa_valor'], $post_id);
+    }
+
     $first_name = get_user_meta($id_solicitante_recorrido, 'first_name', true);
     $last_name = get_user_meta($id_solicitante_recorrido, 'last_name', true);
 
@@ -562,6 +627,7 @@ function load_recorrido_data_function() {
         $response['id_solicitante_recorrido'] = get_field('id_solicitante_recorrido', $post_id)['ID'];
         $response['id_conductor_recorrido']   = get_field('id_conductor_recorrido', $post_id);
         $response['centro_de_costo']          = get_field('centro_de_costo', $post_id);
+        $response['codigo_de_ruta_recorrido'] = get_field('codigo_de_ruta_recorrido', $post_id);
     }
 
     // Si el usuario es colaborador, solo incluir centro_de_costo

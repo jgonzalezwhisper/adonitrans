@@ -459,6 +459,69 @@
             "step": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_67a27d2a81da0",
+            "label": "Codigo de Ruta Recorrido",
+            "name": "codigo_de_ruta_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_67a27d5181da1",
+            "label": "Nombre Ruta Recorrido",
+            "name": "nombre_ruta_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_67a27d5c81da2",
+            "label": "Valor Ruta Recorrido",
+            "name": "valor_ruta_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         }
     ],
     "location": [
@@ -479,5 +542,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1738617161
+    "modified": 1738703027
 }
