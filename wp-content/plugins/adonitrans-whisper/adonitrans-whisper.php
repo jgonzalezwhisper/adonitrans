@@ -193,3 +193,57 @@ function format_time_input($hora12) {
     $hora24 = date("H:i", strtotime($hora12));
     return $hora24;
 }
+
+
+function send_email_token($to, $subject, $message_content) {
+    
+    $to = $to;
+
+    // Validar el correo del destinatario
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+        error_log("Correo del destinatario no válido");
+        return false; // Correo del destinatario no válido
+    }
+
+    // Obtener el correo del administrador para CC
+    $cc = get_option('admin_email');
+
+    // Obtener el remitente desde la página de opciones
+    $sender_email = get_field('email_notifications_sender_email', 'option'); // ACF group
+    if (!$sender_email || !filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
+        error_log("Usar el correo del admin si no se configura o no es válido");
+        $sender_email = $cc; // Usar el correo del admin si no se configura o no es válido
+    }
+
+    // Leer el contenido del template de correo
+    $html_content = file_get_contents(PATH_ADONITRANSPLUG . 'includes/mail/token.html');
+    if (!$html_content) {
+        error_log("No se pudo leer el template");
+        return false; // No se pudo leer el template
+    }
+
+    // Concatenar las partes del mensaje
+    $custom_content = $message_content;
+
+    // Reemplazar el marcador en el template
+    $html_content = preg_replace(
+        '/<span id="token-generado"><\/span>/',
+        '<span id="token-generado">' . $custom_content . '</span>',
+        $html_content
+    );
+
+    // Encabezados del correo
+    $headers = [
+        "From: {$sender_email}",
+        "Content-Type: text/html; charset=UTF-8",
+        "CC: {$cc}"
+    ];
+    $headers = implode("\r\n", $headers);
+
+    // Enviar correo
+    if (!wp_mail($to, $subject, $html_content, $headers)) {
+        error_log('Error al enviar el correo a ' . $to);
+        return false;
+    }
+    return true;
+}

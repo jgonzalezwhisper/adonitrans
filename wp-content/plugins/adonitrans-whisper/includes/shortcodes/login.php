@@ -23,7 +23,7 @@ function custom_login_form_shortcode() {
             <br>            
             <!-- Campo de token, inicialmente oculto -->
             <div id="token-section" style="display: none;">
-                <label for="user_token"><p class="title_form_login" style="text-align: center;">Ingresa el token recibido</p>
+                <label for="user_token"><p class="title_form_login" style="text-align: center;">Ingresa el token recibido por Email</p>
                     <input type="text" name="user_token" id="user_token" placeholder="Token" autocomplete="off">
                 </label>           
                 <button class="button" type="submit" id="submit-token">Verificar Token</button>

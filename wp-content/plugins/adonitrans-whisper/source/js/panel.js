@@ -105,6 +105,54 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    $("#wrap-panel .wrap-acciones .boton[data-action]").on("click", function() {
+
+        $("#wrap-panel .wrap-acciones .boton").removeClass('active');
+        $(this).addClass('active');
+
+        $("#franja .nombsecc").text($(this).text());
+
+        var data_action = $(this).data("action");
+        if (data_action === "logout") {
+            return;
+        }
+        $('body').addClass('actloader');
+        var fileUrl = panelAjax.plugin_url + "includes/parts/panel/" + data_action + ".php";
+
+        $.ajax({
+            url: fileUrl,
+            method: "POST",
+            data: {
+                action: 'render_html_panel',
+            },
+            cache: false,
+            success: function(response) {
+                $('body').removeClass('actloader');
+                $("#informacion").html(response);
+
+                if (data_action == 'empresa') {
+                    initEmpresas();
+                }
+                if (data_action == 'recorrido') {
+                    initRecorridos();
+                }
+                if (data_action == 'vehiculo') {
+                    initVehiculos();
+                }
+                if (data_action == 'usuario') {
+                    initUsuarios();
+                }
+                if (data_action == 'asignacion') {
+                    initAsignacion()
+                }
+            },
+            error: function() {
+                $('body').removeClass('actloader');
+                $("#informacion").html("<p>Error al cargar el contenido. Intenta nuevamente.</p>");
+            }
+        });
+    });
 });
 
 function checkPassword(value) {

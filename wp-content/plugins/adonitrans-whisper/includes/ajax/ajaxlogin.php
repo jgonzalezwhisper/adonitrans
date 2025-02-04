@@ -44,10 +44,16 @@ function custom_user_login() {
             update_user_meta( $user->ID, '_login_token', $token );
             update_user_meta( $user->ID, '_login_token_expiration', $expiration_time );
 
-            // Enviar el token por correo electrónico
-            $subject = 'Tu Token de Verificación de Inicio de Sesión';
-            $message = 'Tu token de verificación es: ' . $token;
-            wp_mail( $email, $subject, $message );
+            // Preparar el contenido del mensaje para el correo
+            $message_content = $token;
+
+            // Enviar el token por correo electrónico usando la función personalizada
+            $subject = 'Token de Verificación ADONIGO';
+            if (!send_email_token($email, $subject, $message_content)) {
+                wp_send_json_error(array(
+                    'message' => 'Error al enviar el correo con el token.'
+                ));
+            }
 
             // Devolver respuesta indicando que se requiere el token
             wp_send_json_success(array(
