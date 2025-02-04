@@ -634,6 +634,63 @@ jQuery(document).ready(function($) {
         });
     });
 
+    $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .ver-recorrido', function(event) {
+        event.preventDefault();
+        let recorridoid = $(this).data('id');
+        let empresa = $(this).closest('tr').find('.empresa').text();
+
+        $('body').addClass('actloader');
+
+        $('#mod-idrec').text(recorridoid);
+        $('#modal-recorrido').fadeIn().css('display', 'flex');
+
+        $.ajax({
+            url: recorridoAjax.ajaxurl,
+            method: 'POST',
+            data: {
+                action: 'ver_recorrido_data',
+                post_id: recorridoid
+            },
+            success: function(response) {
+                if (response.success) {
+
+                    $("#mod-daterec").text(response.data.fecha_inicio_recorrido);
+                    $("#mod-desinirec").text(response.data.destino_inicio);
+                    $("#mod-desfinrec").text(response.data.destino_final);
+                    $("#mod-nombrec").text(response.data.nomb_usuario);
+                    $("#mod-emprec").text(empresa);
+                    
+                    $('body').removeClass('actloader');
+
+                } else {
+                    $('body').removeClass('actloader');
+                    Swal.fire({
+                        title: 'Algo ha ocurrido!',
+                        text: response.data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function() {
+                $('body').removeClass('actloader');
+                Swal.fire({
+                    title: '¡Error!',
+                    text: 'Hubo un problema al procesar la solicitud. Por favor intenta nuevamente.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                });
+            },
+        });
+    });
+
+    $(document).on('click', '.close, #modal-recorrido', function(event) {
+        if (event.target === this) {
+            $('#modal-recorrido p span').text('');
+            $('#modal-recorrido').fadeOut().css('display', 'none');
+        }
+    });
+
     /*ENVIO Y VALIDACION DE FORMULARIO*/
     $(document).on('focusin', '#recorrido-form', function() {
 

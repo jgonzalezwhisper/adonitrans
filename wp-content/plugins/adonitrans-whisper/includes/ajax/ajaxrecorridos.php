@@ -346,3 +346,56 @@ function load_recorrido_data_function() {
     // Devolver la respuesta en formato JSON
     wp_send_json_success($response);
 }
+
+add_action('wp_ajax_ver_recorrido_data', 'ver_recorrido_data_function');
+add_action('wp_ajax_nopriv_ver_recorrido_data', 'ver_recorrido_data_function');
+function ver_recorrido_data_function() {
+
+    // Verificar que la solicitud sea válida
+    $post_id = intval($_POST['post_id']);
+
+    if (!$post_id || get_post_type($post_id) !== 'recorrido') {
+        wp_send_json_error(['message' => 'Post no válido o no es un tipo de post recorrido.']);
+    }
+
+    $fecha = get_field('fecha_inicio_recorrido', $post_id); // Formato: d/m/Y
+    $hora = get_field('hora_inicio_recorrido', $post_id);  // Formato: g:i a
+    $fecha_final = "";
+
+    if ($fecha && $hora) {
+        $fecha_obj = DateTime::createFromFormat('d/m/Y', $fecha);
+        if ($fecha_obj) {
+            $dias = ['Sunday' => 'Domingo', 'Monday' => 'Lunes', 'Tuesday' => 'Martes', 'Wednesday' => 'Miércoles', 'Thursday' => 'Jueves', 'Friday' => 'Viernes', 'Saturday' => 'Sábado'];
+            $meses = ['January' => 'Enero', 'February' => 'Febrero', 'March' => 'Marzo', 'April' => 'Abril', 'May' => 'Mayo', 'June' => 'Junio', 'July' => 'Julio', 'August' => 'Agosto', 'September' => 'Septiembre', 'October' => 'Octubre', 'November' => 'Noviembre', 'December' => 'Diciembre'];
+
+            $dia = $dias[$fecha_obj->format('l')];
+            $numero_dia = $fecha_obj->format('j');
+            $mes = $meses[$fecha_obj->format('F')];
+            $anio = $fecha_obj->format('Y');
+
+            $fecha_final = "$dia, $numero_dia de $mes, $anio " . strtoupper($hora);
+        }
+    }
+
+    $ciudad_inicio = get_field('ciudad_inicial_recorrido',$post_id);
+    $nomciu_inicio = get_field('ciudad_para_empresa', $ciudad_inicio->ID);
+    $barrio_inicio = get_field('barrio_inicial_recorrido',$post_id);
+    $ciudad_fin = get_field('ciudad_final_recorrido',$post_id);
+    $nomciu_fin = get_field('ciudad_para_empresa', $ciudad_fin->ID);
+    $barrio_fin = get_field('barrio_final_recorrido',$post_id);
+
+    $id_solicitante = get_field('id_solicitante_recorrido',$post_id)['ID'];
+
+    $first_name = get_user_meta($id_solicitante, 'first_name', true);
+    $last_name = get_user_meta($id_solicitante, 'last_name', true);
+
+    $response = [
+        'fecha_inicio_recorrido' => $fecha_final,
+        'destino_inicio'         => "$nomciu_inicio - $barrio_inicio",
+        'destino_final'          => "$nomciu_fin - $barrio_fin",
+        'nomb_usuario'           => "$first_name $last_name",
+    ];
+
+    // Devolver la respuesta en formato JSON
+    wp_send_json_success($response);
+}

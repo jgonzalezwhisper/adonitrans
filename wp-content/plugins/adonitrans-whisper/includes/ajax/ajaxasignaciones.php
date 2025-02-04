@@ -595,6 +595,19 @@ function func_gen_reporte_excel() {
                 $ciudad_fin = get_field('ciudad_para_empresa',get_field('ciudad_final_recorrido', $post_id));;
                 $barrio_fin = get_field('barrio_final_recorrido', $post_id);
 
+                $id_colaborador = get_field('id_solicitante_recorrido', $post_id)['ID'];
+
+                $nombre_usuario = get_user_meta($id_colaborador, 'first_name', true)." ".get_user_meta($id_colaborador, 'last_name', true);
+
+                $nombre_conductor = "Sin Asignar";
+
+                if (get_field('id_conductor_recorrido', $post_id)) {
+                    $id_conductor_recorrido = get_field('id_conductor_recorrido', $post_id)['ID'];
+                    $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
+                }
+
+
+
                 $data[] = [
                     "$ciudad_inicio ($barrio_inicio) - $ciudad_fin ($barrio_fin)",
                     '100000',
@@ -607,9 +620,9 @@ function func_gen_reporte_excel() {
                     "N/A",
                     $barrio_inicio,
                     "LKI28B",
-                    "Jose",
+                    $nombre_conductor,
                     "N/A",
-                    "N/A"
+                    $nombre_usuario
                 ];
 
                 if ($adicionales_recorrido) {
@@ -626,9 +639,9 @@ function func_gen_reporte_excel() {
                             "N/A",
                             $barrio_inicio,
                             "LKI28B",
-                            "Jose",
+                            $nombre_conductor,
                             "N/A",
-                            "N/A"
+                            $nombre_usuario
                         ];
                     }
                 }
