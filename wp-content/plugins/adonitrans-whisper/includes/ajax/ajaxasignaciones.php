@@ -661,13 +661,14 @@ function func_gen_reporte_excel() {
 
         $query = new WP_Query([
             'post_type'      => 'recorrido', // Cambia esto al tipo de post que corresponda
+            'post_status'    => 'publish',
             'posts_per_page' => -1,    // Sin límite, para obtener todos los resultados
             'meta_query'     => [
                 'relation' => 'AND',
                 [
                     'key'     => 'empresa_solicitante_recorrido',
-                    'value'   => $id_empresa,
-                    'compare' => '='
+                    'value'   => 'i:' . $id_empresa . ';',
+                    'compare' => 'LIKE'
                 ],
                 [
                     'key'     => 'fecha_inicio_recorrido',
@@ -678,9 +679,6 @@ function func_gen_reporte_excel() {
             ],
             'fields'         => 'ids', // Solo obtener IDs
         ]);
-        error_log(print_r($id_empresa,true));
-
-        error_log(print_r($query,true));
 
         if ($query->have_posts()) {
             $headers = ['Solicitante', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
@@ -700,17 +698,22 @@ function func_gen_reporte_excel() {
                     $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
                 }
 
+                $nombciu_inicio = get_field('ciudad_inicial_recorrido', $post_id)->ID;
+                $nombciu_inicio = get_field('ciudad_para_empresa', $nombciu_inicio);
+
                 $data[] = [
                     $nombre_solicitante,
                     $nombre_conductor,
                     get_field('estado_del_recorrido', $post_id),
                     get_field('fecha_inicio_recorrido', $post_id),
                     get_field('hora_inicio_recorrido', $post_id),
-                    get_field('ciudad_inicial_recorrido', $post_id),
+                    $nombciu_inicio,
                     get_field('barrio_inicial_recorrido', $post_id),
                     get_field('centro_de_costo', $post_id),
                 ];
             }
+
+            error_log(print_r($data,true));
 
             wp_reset_postdata();
         } else {
@@ -763,13 +766,16 @@ function func_gen_reporte_excel() {
                     $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
                 }
 
+                $nombciu_inicio = get_field('ciudad_inicial_recorrido', $post_id)->ID;
+                $nombciu_inicio = get_field('ciudad_para_empresa', $nombciu_inicio);
+
                 $data[] = [
                     $nombre_empresa,
                     $nombre_conductor,
                     get_field('estado_del_recorrido', $post_id),
                     get_field('fecha_inicio_recorrido', $post_id),
                     get_field('hora_inicio_recorrido', $post_id),
-                    get_field('ciudad_inicial_recorrido', $post_id),
+                    $nombciu_inicio,
                     get_field('barrio_inicial_recorrido', $post_id),
                     get_field('centro_de_costo', $post_id),
                 ];
@@ -795,8 +801,8 @@ function func_gen_reporte_excel() {
         if (!empty($_POST['selexc_empresa'])) {
             $meta_query[] = [
                 'key'     => 'empresa_solicitante_recorrido',
-                'value'   => $_POST['selexc_empresa'],
-                'compare' => '='
+                'value'   => 'i:' . $_POST['selexc_empresa'] . ';',
+                'compare' => 'LIKE'
             ];
         }
 
@@ -838,13 +844,16 @@ function func_gen_reporte_excel() {
                     $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
                 }
 
+                $nombciu_inicio = get_field('ciudad_inicial_recorrido', $post_id)->ID;
+                $nombciu_inicio = get_field('ciudad_para_empresa', $nombciu_inicio);
+
                 $data[] = [
                     $nombre_colaborador,
                     $nombre_conductor,
                     get_field('estado_del_recorrido', $post_id),
                     get_field('fecha_inicio_recorrido', $post_id),
                     get_field('hora_inicio_recorrido', $post_id),
-                    get_field('ciudad_inicial_recorrido', $post_id),
+                    $nombciu_inicio,
                     get_field('barrio_inicial_recorrido', $post_id),
                     get_field('centro_de_costo', $post_id),
                 ];
@@ -854,7 +863,6 @@ function func_gen_reporte_excel() {
         } else {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
-
     }
 
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
