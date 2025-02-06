@@ -357,6 +357,69 @@ exit('Acceso no autorizado');
                     </div>
                     <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir Punto</a>
                 </div>
+
+                <?php
+                    $roles_pasadicionales = array('colaborador', 'operaciones_1', 'operaciones_2', 'empresa');
+                ?>
+                <?php if (in_array($user_role, $roles_pasadicionales)): ?>
+
+                    <div id="wrap-usuarios-adicionales" class="wrap wrap-fanjas">
+                        <h5>Añadir Pasajero Adicional</h5>
+
+                        <div id="clonar-pas-adicional" style="display:none">
+
+                            <?php
+                                if ($user_role == 'colaborador') {
+                                    $usuarios = obtener_usuarios_colaborador($empresa_asociada->ID, $user_id);
+                                }    
+                            ?>
+
+                            <div class="franja show">
+                                <div class="franja_item">
+                                    <label for="">Usuario</label>
+                                    <select class="select sel_adicional_usuario" name="sel_id_usuario_adicional[]"  >
+                                        <option value="">Seleccione un Usuario</option>
+                                        <?php if (!empty($usuarios)): ?>
+                                            <?php foreach ($usuarios as $key => $usuario): ?>
+                                                <option value="<?php echo esc_attr($usuario['id']); ?>">
+                                                    <?php echo esc_html($usuario['name']); ?>
+                                                </option>
+                                            <?php endforeach ?>
+                                        <?php endif ?>
+                                    </select>
+                                </div>
+                                <div class="franja_item">
+                                    <label for="">Barrio Origen</label>
+                                    <select class="select barrio sel_adicional_brrorigen" name="origen_adicional[]"  >
+                                        <option value="">Seleccione un Barrio</option>
+                                    </select>
+                                </div>
+                                <div class="franja_item">
+                                    <label for="">Dirección Origen</label>
+                                    <input type="text" name="direccion_origen_adicional[]" value="">
+                                </div>
+                                <div class="franja_item">
+                                    <label for="">Destino</label>
+                                    <select class="select barrio sel_adicional_brrdestino" name="destino_adicional[]"  >
+                                        <option value="">Seleccione un Barrio</option>
+                                    </select>
+                                </div>
+                                <div class="franja_item">
+                                    <label for="">Dirección Destino</label>
+                                    <input type="text" name="direccion_destino_adicional[]" value="">
+                                </div>
+                                <button type="button" class="button remove">Eliminar Pasajero</button>
+                            </div>         
+                        </div>
+
+                        <div id="wrap-usuario-adicional" class="wrap-franja">                            
+                        </div>
+
+                        <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir</a>
+                    </div>
+                    
+                <?php endif ?>
+
                 <div class="wrap wrap-2">
                     <label for="fecha_inicio_recorrido">Fecha Inicio (DD/MM/YYYY)</label>
                     <input type="date" id="fecha_inicio_recorrido" name="fecha_inicio_recorrido" value="" placeholder="dd/mm/yyyy">

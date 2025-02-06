@@ -644,7 +644,7 @@
 
 			}
 
-			&:first-child {
+			&:first-child:not(.show) {
 				.button.remove {
 					display: none;
 				}

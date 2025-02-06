@@ -208,10 +208,10 @@ window.initRecorridos = function initRecorridos() {
         });
     }
 
-    validarUltimaFranja();
+    /*validarUltimaFranja();*/
 }
 
-window.validarUltimaFranja = function validarUltimaFranja() {
+/*window.validarUltimaFranja = function validarUltimaFranja() {
     var ultimaFranja = jQuery('#wrap-punto-recorrido .franja').last();
 
     if (ultimaFranja.length === 0) {
@@ -222,7 +222,7 @@ window.validarUltimaFranja = function validarUltimaFranja() {
     var ciudad = ultimaFranja.find('.ciudad_adicional_recorrido').val();
     var barrio = ultimaFranja.find('.barrio_adicional_recorrido').val();
     jQuery('.button-add').prop('disabled', !(ciudad && barrio));
-}
+}*/
 
 
 window.initVehiculos = function initVehiculos() {

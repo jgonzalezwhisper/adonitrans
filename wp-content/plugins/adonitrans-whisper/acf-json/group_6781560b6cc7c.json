@@ -420,9 +420,53 @@
                     "parent_repeater": "field_67a4f19f870f3"
                 },
                 {
+                    "key": "field_67a522de3f460",
+                    "label": "Direccion Origen",
+                    "name": "direccion_origen",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67a4f19f870f3"
+                },
+                {
                     "key": "field_67a4f20d870f6",
                     "label": "Destino",
                     "name": "destino",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67a4f19f870f3"
+                },
+                {
+                    "key": "field_67a522eb3f461",
+                    "label": "Direccion Destino",
+                    "name": "direccion_destino",
                     "aria-label": "",
                     "type": "text",
                     "instructions": "",
@@ -703,5 +747,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1738863168
+    "modified": 1738875738
 }
