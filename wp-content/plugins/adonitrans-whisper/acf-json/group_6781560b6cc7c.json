@@ -354,6 +354,96 @@
             "append": ""
         },
         {
+            "key": "field_67a4f19f870f3",
+            "label": "Usuarios Adicionales Recorrido",
+            "name": "usuarios_adicionales_recorrido",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Agregar Fila",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_67a4f1d1870f4",
+                    "label": "ID Usuario Adicional",
+                    "name": "id_usuario_adicional",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67a4f19f870f3"
+                },
+                {
+                    "key": "field_67a4f1e4870f5",
+                    "label": "Origen",
+                    "name": "origen",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67a4f19f870f3"
+                },
+                {
+                    "key": "field_67a4f20d870f6",
+                    "label": "Destino",
+                    "name": "destino",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67a4f19f870f3"
+                }
+            ]
+        },
+        {
             "key": "field_67815ab63f19f",
             "label": "Adicionales Realizados Recorrido",
             "name": "adicionales_realizados_recorrido",
@@ -613,5 +703,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1738860515
+    "modified": 1738863168
 }

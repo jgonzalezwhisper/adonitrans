@@ -568,7 +568,7 @@ function func_gen_reporte_excel() {
         ]);
 
         if ($query->have_posts()) {
-            $headers = ['Fecha Inicio', 'Fecha Final', 'Franja Horaria', 'Placa Vehículo'];
+            $headers = ['ID Asignación', 'Fecha Inicio', 'Fecha Final', 'Franja Horaria', 'Placa Vehículo'];
             $filtpor = "Conductor: $first_name $last_name";
             $data = [];
 
@@ -579,6 +579,7 @@ function func_gen_reporte_excel() {
                 if ($repetidor) {
                     foreach ($repetidor as $fila) {
                         $data[] = [
+                            $post_id,
                             $fila['dia_inicio_de_asignacion'],
                             $fila['dia_fin_de_asignacion'],
                             $fila['franja_horaria_asignacion'],
