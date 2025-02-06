@@ -1,5 +1,10 @@
 # Elementor Pro - by Elementor.com
 
+#### 3.27.2 - 2025-02-03
+
+* Fix: Value type configuration issue causing errors when using ACF
+* Fix: Hide content on responsive breakpoint option is not working on WordPress Menu widget when Optimized Markup experiment is activated
+
 #### 3.27.1 - 2025-01-27
 
 * Tweak: Increased the number of items allowed in Dynamic Tags options in Display Conditions for Elements

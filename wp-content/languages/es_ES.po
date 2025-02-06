@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.7.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-12-21 17:23:07+0000\n"
+"PO-Revision-Date: 2025-01-30 07:43:09+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -286,6 +286,36 @@ msgstr "enero"
 msgid "Uncategorized"
 msgstr "Sin categoría"
 
+#. translators: %s: list of allowed collection roots
+#: wp-includes/class-wp-block-metadata-registry.php:127
+msgid "Block metadata collections cannot be registered as one of the following directories or their parent directories: %s"
+msgstr "No se pueden registrar colecciones de metadatos de bloque como uno de los siguientes directorios o de sus directorios padre: %s"
+
+#: wp-includes/theme.json
+msgctxt "Shadow name"
+msgid "Crisp"
+msgstr "Crujiente"
+
+#: wp-includes/theme.json
+msgctxt "Shadow name"
+msgid "Outlined"
+msgstr "Contorneada"
+
+#: wp-includes/theme.json
+msgctxt "Shadow name"
+msgid "Sharp"
+msgstr "Nítida"
+
+#: wp-includes/theme.json
+msgctxt "Shadow name"
+msgid "Deep"
+msgstr "Profunda"
+
+#: wp-includes/theme.json
+msgctxt "Shadow name"
+msgid "Natural"
+msgstr "Natural"
+
 #: wp-includes/theme.json
 msgctxt "Aspect ratio name"
 msgid "Tall - 9:16"
@@ -438,14 +468,9 @@ msgstr "Los nombres de las plantillas no deben contener caracteres en mayúscula
 msgid "Template names must be strings."
 msgstr "Los nombres de las plantillas deben ser cadenas."
 
-#: wp-includes/class-wp-block-metadata-registry.php:125
+#: wp-includes/class-wp-block-metadata-registry.php:138
 msgid "The specified manifest file does not exist."
 msgstr "El archivo de manifiesto especificado no existe."
-
-#: wp-includes/class-wp-block-metadata-registry.php:107
-#: wp-includes/class-wp-block-metadata-registry.php:116
-msgid "Block metadata collections can only be registered for a specific plugin. The provided path is neither a core path nor a valid plugin path."
-msgstr "Las colecciones de metadatos de bloque solo pueden registrarse para un plugin específico. La ruta proporcionada no es ni una ruta de núcleo ni una ruta de plugin válida."
 
 #: wp-includes/blocks/widget-group/block.json
 msgctxt "block title"
