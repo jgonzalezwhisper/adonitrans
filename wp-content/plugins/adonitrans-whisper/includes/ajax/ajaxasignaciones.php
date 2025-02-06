@@ -539,6 +539,10 @@ function func_gen_reporte_excel() {
         $first_name = get_user_meta($id_conductor, 'first_name', true);
         $last_name = get_user_meta($id_conductor, 'last_name', true);
 
+        // Asegúrate de que las fechas de $desde_formexcel y $hasta_formexcel estén en formato Ymd
+        $fecha_desde = DateTime::createFromFormat('Y-m-d', $desde_formexcel)->format('Ymd');
+        $fecha_hasta = DateTime::createFromFormat('Y-m-d', $hasta_formexcel)->format('Ymd');
+
         $query = new WP_Query([
             'post_type'  => 'asignacion',
             'posts_per_page' => -1,
@@ -551,21 +555,17 @@ function func_gen_reporte_excel() {
                 ],
                 [
                     'key'     => 'inicio_semana_asignacion',
-                    'value'   => $desde_formexcel,
+                    'value'   => $fecha_desde,
                     'compare' => '>='
                 ],
                 [
                     'key'     => 'fin_semana_asignacion',
-                    'value'   => $hasta_formexcel,
+                    'value'   => $fecha_hasta,
                     'compare' => '<='
                 ],
             ],
             'fields'         => 'ids',
         ]);
-
-        error_log(print_r($desde_formexcel,true));
-        error_log(print_r($hasta_formexcel,true));
-        error_log(print_r($query,true));
 
         if ($query->have_posts()) {
             $headers = ['Fecha Inicio', 'Fecha Final', 'Franja Horaria', 'Placa Vehículo'];
@@ -731,7 +731,7 @@ function func_gen_reporte_excel() {
                 'relation' => 'AND',
                 [
                     'key'     => 'empresa_solicitante_recorrido',
-                    'value'   => 'i:' . $id_empresa . ';',
+                    'value'   => $id_empresa,
                     'compare' => 'LIKE'
                 ],
                 [
@@ -745,7 +745,7 @@ function func_gen_reporte_excel() {
         ]);
 
         if ($query->have_posts()) {
-            $headers = ['Solicitante', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $headers = ['ID Servicio', 'Solicitante', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
             $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
             $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
 
@@ -766,6 +766,7 @@ function func_gen_reporte_excel() {
                 $nombciu_inicio = get_field('ciudad_para_empresa', $nombciu_inicio);
 
                 $data[] = [
+                    $post_id,
                     $nombre_solicitante,
                     $nombre_conductor,
                     get_field('placa_vehiculo_recorrido', $post_id),
@@ -782,7 +783,8 @@ function func_gen_reporte_excel() {
         } else {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
-    } else if ($tipo_consulta == 'colaborador') {
+    } 
+    else if ($tipo_consulta == 'colaborador') {
         if ( !isset($_POST['selexc_colaborador']) || empty($_POST['selexc_colaborador']) ) {
             wp_send_json_error('Es necesario seleccionar un Colaborador.');
         }
@@ -849,26 +851,37 @@ function func_gen_reporte_excel() {
         } else {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
-    } else if ($tipo_consulta == 'recorrido') {
+    } 
+    else if ($tipo_consulta == 'recorrido') {
+        if ( !isset($_POST['selexc_empresa']) || empty($_POST['selexc_empresa']) ) {
+            wp_send_json_error('Es necesario seleccionar una Empresa.');
+        }
 
+        $id_empresa = intval($_POST['selexc_empresa']); 
+
+        // Definir los argumentos principales de la consulta
+        $args = [
+            'post_type'      => 'recorrido', // Cambia esto al tipo de post que corresponda
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,          // Sin límite, para obtener todos los resultados
+            'fields'         => 'ids',       // Solo obtener IDs
+        ];
+
+        // Definir el meta_query por separado
         $meta_query = [
             'relation' => 'AND',
+            [
+                'key'     => 'empresa_solicitante_recorrido',
+                'value'   => $id_empresa,
+                'compare' => 'LIKE',
+            ],
             [
                 'key'     => 'fecha_inicio_recorrido',
                 'value'   => [$desde_formexcel, $hasta_formexcel],
                 'compare' => 'BETWEEN',
-                'type'    => 'DATE' // Especifica que las fechas son de tipo "DATE"
-            ]
+                'type'    => 'DATE', // Especifica que las fechas son de tipo "DATE"
+            ],
         ];
-
-        // Agregar filtro por empresa si se recibe un valor en selexc_empresa
-        if (!empty($_POST['selexc_empresa'])) {
-            $meta_query[] = [
-                'key'     => 'empresa_solicitante_recorrido',
-                'value'   => 'i:' . $_POST['selexc_empresa'] . ';',
-                'compare' => 'LIKE'
-            ];
-        }
 
         // Agregar filtro por colaborador si se recibe un valor en selexc_colaboradorxempresa
         if (!empty($_POST['selexc_colaboradorxempresa'])) {
@@ -879,27 +892,22 @@ function func_gen_reporte_excel() {
             ];
         }
 
-        $query = new WP_Query([
-            'post_type'      => 'recorrido', 
-            'posts_per_page' => -1,    
-            'meta_query'     => $meta_query,
-            'fields'         => 'ids', 
-        ]);
+        // Combinar el meta_query con los argumentos principales
+        $args['meta_query'] = $meta_query;
 
-        $id_empresa = (isset($_POST['selexc_empresa']) && !empty($_POST['selexc_empresa'])) ? intval($_POST['selexc_empresa']) : 0;
-        $post_empresa = get_post($id_empresa); 
-        $nomb_empresa = ($post_empresa) ? esc_html(get_the_title($id_empresa)) : "Todas";
+        // Ejecutar la consulta
+        $query = new WP_Query($args);
 
         if ($query->have_posts()) {
-            $headers = ['Colaborador', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
-            $filtpor = 'Empresa: ' . $nomb_empresa;
-            $data = []; 
+            $headers = ['ID Servicio', 'Solicitante', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
+            $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
 
             // Recorrer los posts
             foreach ($query->posts as $post_id) {
 
                 $id_solicitante_recorrido = get_field('id_solicitante_recorrido', $post_id)['ID'];
-                $nombre_colaborador = get_user_meta($id_solicitante_recorrido, 'first_name', true)." ".get_user_meta($id_solicitante_recorrido, 'last_name', true);
+                $nombre_solicitante = get_user_meta($id_solicitante_recorrido, 'first_name', true)." ".get_user_meta($id_solicitante_recorrido, 'last_name', true);
 
                 $nombre_conductor = "Sin Asignar";
 
@@ -912,7 +920,8 @@ function func_gen_reporte_excel() {
                 $nombciu_inicio = get_field('ciudad_para_empresa', $nombciu_inicio);
 
                 $data[] = [
-                    $nombre_colaborador,
+                    $post_id,
+                    $nombre_solicitante,
                     $nombre_conductor,
                     get_field('placa_vehiculo_recorrido', $post_id),
                     get_field('estado_del_recorrido', $post_id),
@@ -928,7 +937,7 @@ function func_gen_reporte_excel() {
         } else {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
-    }
+    } 
 
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
