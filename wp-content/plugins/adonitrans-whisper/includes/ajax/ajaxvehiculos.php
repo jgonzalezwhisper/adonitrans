@@ -22,7 +22,7 @@ function create_vehiculo_function() {
     $fecha_vencimiento_soat = sanitize_text_field($_POST['fecha_vencimiento_soat']);
     $fecha_vencimiento_tecno_mecanica = sanitize_text_field($_POST['fecha_vencimiento_tecno_mecanica']);
     $propietario_de_vehiculo = sanitize_text_field($_POST['propietario_de_vehiculo']);
-    $conductor_del_vehiculo = sanitize_text_field($_POST['conductor_del_vehiculo']);
+    /*$conductor_del_vehiculo = sanitize_text_field($_POST['conductor_del_vehiculo']);*/
 
     $accion1 = "Crear";   
     $accion2 = "Creado";   
@@ -60,7 +60,7 @@ function create_vehiculo_function() {
     update_post_meta( $post_id, 'fecha_vencimiento_soat', $fecha_vencimiento_soat );
     update_post_meta( $post_id, 'fecha_vencimiento_tecno_mecanica', $fecha_vencimiento_tecno_mecanica );
     update_post_meta( $post_id, 'propietario_de_vehiculo', $propietario_de_vehiculo );
-    update_post_meta( $post_id, 'conductor_del_vehiculo', $conductor_del_vehiculo );
+    /*update_post_meta( $post_id, 'conductor_del_vehiculo', $conductor_del_vehiculo );*/
 
     // Definir el asunto y cuerpo del mensaje
     $subject = 'Vehículo '.$accion2.' en AdoniGo';
@@ -76,12 +76,9 @@ function create_vehiculo_function() {
     $current_user_email = wp_get_current_user()->user_email;
 
     $recipient_email = sanitize_email($current_user_email);
+    
     $roles = ['operaciones_1', 'administrator'];
-    $users = get_users([
-        'role__in' => $roles,
-        'fields'   => ['user_email']
-    ]);
-    $cc_emails = wp_list_pluck($users, 'user_email');    
+    $cc_emails = get_mails_role($roles); 
 
     // Eliminar el correo del usuario actual si existe en el array $cc_emails
     if (($key = array_search($current_user_email, $cc_emails)) !== false) {

@@ -1,34 +1,39 @@
 @use "global/variables" as *;
 
 .dataTables_wrapper {
-	.dataTables_info{
-	  font-size: 16px;
-	  font-weight: 400;
-	  color: #6c6868;
-	}
-	.dataTables_paginate{
+	.dataTables_info {
 		font-size: 16px;
-	  font-weight: 400;
-	  color: #6c6868;
-	  a.paginate_button.current{
-	  	background: #086acf;
-		  color: #fff !important;
-		  font-weight: 700;
-		  border: 1px solid #626262;
-		  padding: 2px 15px;
-		  border-radius: 7px;
-		  cursor: pointer;
-	  }
+		font-weight: 400;
+		color: #6c6868;
 	}
-	.dataTables_length, .dataTables_filter {
+
+	.dataTables_paginate {
+		font-size: 16px;
+		font-weight: 400;
+		color: #6c6868;
+
+		a.paginate_button.current {
+			background: #086acf;
+			color: #fff !important;
+			font-weight: 700;
+			border: 1px solid #626262;
+			padding: 2px 15px;
+			border-radius: 7px;
+			cursor: pointer;
+		}
+
+	}
+
+	.dataTables_length,
+	.dataTables_filter {
 		label {
 			display: flex;
 			align-items: center;
 			column-gap: 4px;
 			font-size: 16px;
-			  font-weight: 400;
-			  color: #6c6868;
-			  margin-bottom: 20px;
+			font-weight: 400;
+			color: #6c6868;
+			margin-bottom: 20px;
 		}
 
 	}
@@ -77,104 +82,134 @@
 		}
 
 		tbody {
-			td{
+			td {
 				vertical-align: middle;
-				&.colaborador{
+
+				&.colaborador {
 					font-size: 14px;
 				}
+
 			}
-			.activo, .activa{
+
+			.activo,
+			.activa {
 				color: #30bf30;
-    			font-weight: 700;
+				font-weight: 700;
 			}
-			.inactivo, .inactiva{
+
+			.inactivo,
+			.inactiva {
 				color: red;
-    			font-weight: 700;
+				font-weight: 700;
 			}
-			.pendiente{
+
+			.pendiente {
 				color: #ff8100;
-    			font-weight: 700;
+				font-weight: 700;
 			}
-			.por-asignar{
+
+			.por-asignar {
 				color: red;
-    			font-weight: 700;
+				font-weight: 700;
 			}
+
 			.en-curso {
-			    color: #007bff;
-			    font-weight: 700;
+				color: #007bff;
+				font-weight: 700;
 			}
 
 			.finalizado {
-			    color: #28a745; 
-			    font-weight: 700;
+				color: #28a745;
+				font-weight: 700;
 			}
 
 			.cancelado {
-			    color: #6c757d;
-			    font-weight: 700;
+				color: #6c757d;
+				font-weight: 700;
 			}
+
 			.acciones {
+				display: flex;
+				gap: 10px;
 				.accion {
-					background-color: $color3;
-					color: #fff;
+					background-color: #FDE261;
+					color: #4d4d4d;
 					font-size: 13px;
-					text-transform: uppercase;
+					text-transform: capitalize;
 					padding: 8px 18px;
 					line-height: 1;
 					font-weight: 600;
 					border: none;
+					border-radius: 6px;
 					transition: all .5s;
-					&:hover{
-						background-color: $color5;
-						color: #2d2d2d;
+
+					&:hover {
+						background-color: #0095e8;
+						color: #fff;
 					}
 
 					&.button-add {
-			          background: #0054ae;
-			          color: #fff;
+						background: #0054ae;
+						color: #fff;
 
-			          &:hover {
-			            background: #086ACF;
-			            margin-left: 10px;
-			          }
+						&:hover {
+							background: #086ACF;
+							margin-left: 10px;
+						}
 
-			          i {
-			            margin-right: 10px;
+						i {
+							margin-right: 10px;
 
-			            &:hover {
-			              font-size: 16px;
-			            }
-			          }
-			        }
+							&:hover {
+								font-size: 16px;
+							}
 
-			        &.button-save {
-			          background: #ffed93;
-			          color: #000;
+						}
 
-			          &:hover {
-			            background: $secondary-color;
-			            margin-top: -5px;
-			            color: #000;
-			          }
-			        }
-			        &.button-remove {
-			          background: #e18d8d;
-			          color: #fff;
+					}
 
-			          &:hover {
-			            background: #f95959;
-			            margin-left: 10px;
-			          }
+					&.button-save {
+						background: #ffed93;
+						color: #000;
 
-			          i {
-			            margin-right: 10px;
-			            transition: transform 0.3s ease;
+						&:hover {
+							background: $secondary-color;
+							margin-top: -5px;
+							color: #000;
+						}
 
-			            &:hover {
-			              font-size: 16px;
-			            }
-			          }
-			        }
+					}
+
+					&.button-remove {
+						background: #e18d8d;
+						color: #fff;
+
+						&:hover {
+							background: #f95959;
+							margin-left: 10px;
+						}
+
+						i {
+							margin-right: 10px;
+							transition: transform 0.3s ease;
+
+							&:hover {
+								font-size: 16px;
+							}
+
+						}
+
+					}
+
+					&.delete-user {
+						background-color: #e18d8d;
+						color: #fff;
+
+						&:hover {
+							background-color: #f95959;
+						}
+
+					}
 
 				}
 

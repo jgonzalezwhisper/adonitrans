@@ -98,30 +98,6 @@
           font-weight: 600;
         }
       }
-
-      .acciones {
-        .accion {
-          background-color: #FDE261;
-          color: #4d4d4d;
-          font-size: 14px;
-          text-transform: capitalize;
-          border-radius: 6px;
-
-          &:hover {
-            background-color: #FCD722;
-          }
-
-          &.delete-user {
-            background-color: #e18d8d;
-            color: #fff;
-
-            &:hover {
-              background-color: #f95959;
-            }
-          }
-          
-        }
-      }
     }
   }
 }

@@ -101,10 +101,21 @@ exit('Acceso no autorizado');
                         <td class="<?= str_replace(' ', '-', strtolower($estado_recorrido)); ?>"><?= $estado_recorrido; ?></td>
                         <td>
                             <div class="acciones">
-                                <?php if ($user_role !== 'colaborador'): ?>
-                                <button class="accion edit-recorrido" data-id="<?= get_the_ID(); ?>">Editar</button>
+                                <?php if ($user_role !== 'colaborador' && $user_role !== 'conductor'): ?>
+                                    <button class="accion edit-recorrido" data-id="<?= get_the_ID(); ?>">Editar</button>
                                 <?php endif ?>
-                                <button class="accion delete-recorrido" data-id="<?= get_the_ID(); ?>">Eliminar</button>
+                                <?php if ($user_role !== 'conductor'): ?>
+                                    <button class="accion delete-recorrido" data-id="<?= get_the_ID(); ?>">Eliminar</button>
+                                <?php endif ?>
+
+                                <?php if ($user_role === 'conductor' && $estado_recorrido === 'Pendiente'): ?>
+                                    <button class="accion iniciar-recorrido" data-id="<?= get_the_ID(); ?>">Iniciar</button>
+                                <?php endif ?>
+
+                                <?php if ($user_role === 'conductor' && $estado_recorrido === 'En curso'): ?>
+                                    <button class="accion panel-recorrido" data-id="<?= get_the_ID(); ?>">Continuar Servicio</button>
+                                <?php endif ?>
+                                
                                 <?php if ($estado_recorrido !== 'Por Asignar' && $estado_recorrido !== 'Cancelado'): ?>
                                 <button class="accion ver-recorrido" data-id="<?= get_the_ID(); ?>">Ver</button>
                                 <?php endif; ?>

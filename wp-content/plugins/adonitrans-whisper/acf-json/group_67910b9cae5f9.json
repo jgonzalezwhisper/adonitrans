@@ -157,6 +157,34 @@
                     "parent_repeater": "field_67911173e8d71"
                 },
                 {
+                    "key": "field_67911234vehiculo",
+                    "label": "ID Post Vehiculo",
+                    "name": "id_post_vehiculo",
+                    "type": "text",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "parent_repeater": "field_67911173e8d71"
+                },
+                {
+                    "key": "field_67911235vehiculo",
+                    "label": "Placa Vehiculo",
+                    "name": "placa_vehiculo",
+                    "type": "text",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "parent_repeater": "field_67911173e8d71"
+                },
+                {
                     "key": "field_67911247ba180",
                     "label": "Asignaciones por Día",
                     "name": "asignaciones_por_dia",

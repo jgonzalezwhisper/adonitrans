@@ -342,7 +342,6 @@ jQuery(document).ready(function($) {
         validarUltimaFranja();
     });
 
-
     $(document).on('click', '#wrap-puntos-recorrido .remove', function(e) {
         e.preventDefault();
 
@@ -724,6 +723,128 @@ jQuery(document).ready(function($) {
                 });
             },
         });
+    });
+
+    $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .iniciar-recorrido', function(event) {
+        event.preventDefault();
+
+        // Obtener el ID del usuario desde el botón
+        let recorridoid = $(this).data('id');
+
+        // Mostrar la confirmación con SweetAlert
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción no se puede reversar.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, Iniciar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('body').addClass('actloader');
+                $.ajax({
+                    url: recorridoAjax.ajaxurl, // La URL de admin-ajax.php en WordPress
+                    method: 'POST',
+                    data: {
+                        action: 'iniciar_recorrido', // Acción personalizada en WordPress
+                        post_id: recorridoid
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Mostrar mensaje de éxito
+                            Swal.fire(
+                                '¡Recorrido Iniciado!',
+                                'Has comenzado tu recorrido con éxito. ¡Disfruta del viaje y mantente seguro!',
+                                'success'
+                            ).then(() => {
+                                var fileUrl = recorridoAjax.plugin_url + "includes/parts/panel/conductor.php";
+
+                                $.ajax({
+                                    url: fileUrl,
+                                    method: "POST",
+                                    data: {
+                                        action: 'render_html_panel',
+                                        post_id: recorridoid
+                                    },
+                                    success: function(response) {
+                                        $("#informacion").html(response);
+                                        initRecorridos();
+                                    },
+                                    error: function() {
+                                        $("#informacion").html("<p>Error al cargar el contenido. Intenta nuevamente.</p>");
+                                    }
+                                });
+                            });
+                            $('body').removeClass('actloader');
+
+                        } else {
+                            $('body').removeClass('actloader');
+                            // Mostrar mensaje de error
+                            Swal.fire(
+                                'Error',
+                                response.data.message || 'No se pudo eliminar el vehículo.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function() {
+                        $('body').removeClass('actloader');
+                        // Mostrar mensaje de error si AJAX falla
+                        Swal.fire(
+                            'Error',
+                            'Hubo un problema al intentar eliminar el vehículo.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .panel-recorrido', function(event) {
+        event.preventDefault();
+
+        // Obtener el ID del usuario desde el botón
+        let recorridoid = $(this).data('id');
+
+        // Mostrar la confirmación con SweetAlert
+        Swal.fire({
+            title: '¿Desea Continuar?',
+            text: 'Esta seguro de retomar el servicio?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, Continuar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('body').addClass('actloader');
+
+                var fileUrl = recorridoAjax.plugin_url + "includes/parts/panel/conductor.php";
+
+                $.ajax({
+                    url: fileUrl,
+                    method: "POST",
+                    data: {
+                        action: 'render_html_panel',
+                        post_id: recorridoid
+                    },
+                    success: function(response) {
+                        $("#informacion").html(response);
+                        $('body').removeClass('actloader');
+                    },
+                    error: function() {
+                        $("#informacion").html("<p>Error al cargar el contenido. Intenta nuevamente.</p>");
+                    }
+                });
+
+            }
+        });
+
+
     });
 
     $(document).on('click', '.close, #modal-recorrido', function(event) {

@@ -3,7 +3,15 @@
     if (!isset($_POST['action']) || empty($_POST['action'])) {
         exit('Acceso no autorizado');
     }
+
+    $post_id = false;
+
+    // Verificar si el ID del post está en la solicitud
+    if (isset($_POST['post_id']) && !empty($_POST['post_id'])) {
+        $post_id = intval($_POST['post_id']);  // Asegurarse de que es un número entero
+    }
 ?>
+<?php if ($post_id): ?>  
 <div id="wrap-conductor">
     <div class="tarjeta">
         <div class="wrap-titulo">
@@ -11,57 +19,6 @@
             <h4 class="subtitulo">Gestiona tus RECORRIDOS asignados desde este panel.</h4>
         </div>
         <p>Administra y gestiona los vehículos registrados en ADONITRANS desde este panel. Mantén toda la información organizada y actualizada.</p>
-
-        <!--<div class="wrap-listado-vehiculos">
-            <a href="#" class="button" id="crear-vehiculo"><i class="icofont-plus-circle"></i> Crear Vehículo</a>
-            <table id="table-vehiculos" class="display table-adoni">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Placa</th>
-                        <th>Tipo</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-
-                        $argsveh = [
-                            'post_type' => 'vehiculo',
-                            'post_status' => 'publish',
-                            'posts_per_page' => -1,
-                        ];
-
-                        $query = new WP_Query($argsveh);
-                    ?>
-                    <?php if ($query->have_posts()): ?>
-                        <?php while($query->have_posts()): $query->the_post();?>
-                            <?php
-                                $placa_vehiculo = get_field('placa_vehiculo', get_the_ID());
-                                $tipo_vehiculo = get_field('tipo_de_vehiculo', get_the_ID());
-                                $estado_vehiculo = get_field('estado_del_vehiculo', get_the_ID());
-                            ?>
-                            <tr>
-                                <td><?= get_the_ID(); ?></td>
-                                <td><?= $placa_vehiculo ?></td>
-                                <td><?= $tipo_vehiculo; ?></td>
-                                <td class="<?= str_replace(' ', '-', strtolower($estado_vehiculo)); ?>"><?= $estado_vehiculo; ?></td>
-                                <td>
-                                    <div class="acciones">
-                                        <button class="accion edit-vehiculo" data-id="<?= get_the_ID(); ?>"><i class="icofont-pencil"></i>Editar</button>
-                                        <button class="accion delete-vehiculo delete-user" data-id="<?= get_the_ID(); ?>"><i class="icofont-info-circle"></i>Eliminar</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endwhile;wp_reset_postdata(); ?>     
-                    <?php else: ?>
-                        <p>No hay vehiculos creados.</p>                 
-                    <?php endif ?>
-                        
-                </tbody>
-            </table>
-        </div>-->
 
         <div class="wrap-gestion-conductor">
             <div class="wrap wrap-title">
@@ -101,14 +58,13 @@
                     <div class="column-2">
                         <div class="wrap trayecto">
                             <div class="trayecto_user">
-                                <label for="user-destinoi"><i class="icofont-save"></i> Destino Inicio:</label>
+                                <label for="user-destinoi"><i class="icofont-save"></i> Origen:</label>
                                 <input type="text" id="user-destinoi" name="user-destinoi" value="<?= $direccion; ?>">
                                 <input class="time_user" type="text" id="user-horainicio" name="user-horainicio" value="8:30am">
                             </div>
                             <div class="trayecto_user">
-                                <label for="user-destinoi"><i class="icofont-save"></i> Destino Final:</label>
+                                <label for="user-destinoi"><i class="icofont-save"></i> Destino:</label>
                                 <input type="text" id="user-destinof" name="user-destinof" value="<?= $direccion; ?>">
-                                <input class="time_user" type="text" id="user-horafinal" name="user-horafinal" value="9:45am">
                             </div>
                         </div>
                     </div>
@@ -167,3 +123,6 @@
         </div> 
     </div>
 </div>
+<?php else:
+    exit('Recorrido no encontrado'); 
+endif ?>

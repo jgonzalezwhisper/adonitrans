@@ -234,23 +234,28 @@ function create_asignacion_function() {
     update_field('inicio_semana_asignacion', $inicio_semana_asignacion, $post_id);
     update_field('fin_semana_asignacion', $fin_semana_asignacion, $post_id);
 
-    if (isset($_POST['dia_inicio_de_asignacion'], $_POST['dia_fin_de_asignacion'], $_POST['franja_horaria_asignacion'])) {
+    if (isset($_POST['dia_inicio_de_asignacion'], $_POST['dia_fin_de_asignacion'], $_POST['franja_horaria_asignacion'], $_POST['vehiculo_asignado'])) {
         $dias_inicio = $_POST['dia_inicio_de_asignacion'];
         $dias_fin = $_POST['dia_fin_de_asignacion'];
         $franjas_horarias = $_POST['franja_horaria_asignacion'];
+        $vehiculo_asignado = $_POST['vehiculo_asignado'];
 
-        if (count($dias_inicio) === count($dias_fin) && count($dias_inicio) === count($franjas_horarias)) {
+        if (count($dias_inicio) === count($dias_fin) && count($dias_inicio) === count($franjas_horarias) && count($dias_inicio) === count($vehiculo_asignado)) {
             $asignaciones = [];
 
             foreach ($dias_inicio as $key => $dia_inicio) {
                 $dia_fin = $dias_fin[$key] ?? '';
                 $franja_horaria = $franjas_horarias[$key] ?? '';
+                $id_post_vehiculo = $vehiculo_asignado[$key] ?? '';
+                $placa_vehiculo = get_field('placa_vehiculo', $id_post_vehiculo);
 
-                if (!empty($dia_inicio) && !empty($dia_fin) && !empty($franja_horaria)) {
+                if (!empty($dia_inicio) && !empty($dia_fin) && !empty($franja_horaria) && !empty($vehiculo_asignado)) {
                     $asignaciones[] = [
                         'dia_inicio_de_asignacion' => sanitize_text_field($dia_inicio),
                         'dia_fin_de_asignacion' => sanitize_text_field($dia_fin),
                         'franja_horaria_asignacion' => sanitize_text_field($franja_horaria),
+                        'id_post_vehiculo' => sanitize_text_field($id_post_vehiculo),
+                        'placa_vehiculo' => sanitize_text_field($placa_vehiculo),
                     ];
                 }
             }
@@ -322,11 +327,15 @@ function load_asignacion_data_function() {
             $dia_inicio_de_asignacion = get_sub_field('dia_inicio_de_asignacion');
             $dia_fin_de_asignacion = get_sub_field('dia_fin_de_asignacion');
             $franja_horaria_asignacion = get_sub_field('franja_horaria_asignacion');
+            $id_post_vehiculo = get_sub_field('id_post_vehiculo');
+            $placa_vehiculo = get_sub_field('placa_vehiculo');
 
             $asignaciones_de_la_semana[] = [
                 'dia_inicio_de_asignacion' => format_date_for_input($dia_inicio_de_asignacion),
                 'dia_fin_de_asignacion' => format_date_for_input($dia_fin_de_asignacion),
                 'franja_horaria_asignacion' => $franja_horaria_asignacion,
+                'id_post_vehiculo' => $id_post_vehiculo,
+                'placa_vehiculo' => $placa_vehiculo,
             ];
         }
     }
@@ -336,7 +345,7 @@ function load_asignacion_data_function() {
         'id_conductor_asignado' => get_post_meta($post_id, 'id_conductor_asignado', true),
         'inicio_semana_asignacion' => $inicio_semana_asignacion,
         'fin_semana_asignacion' => $fin_semana_asignacion,
-        'asignaciones_de_la_semana' => $asignaciones_de_la_semana,
+        'asignaciones_de_la_semana' => $asignaciones_de_la_semana,        
     ]);
 }
 

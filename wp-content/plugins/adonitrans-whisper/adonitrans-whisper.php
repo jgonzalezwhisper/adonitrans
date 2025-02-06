@@ -11,7 +11,7 @@
 
 define('PATH_ADONITRANSPLUG',plugin_dir_path(__FILE__));
 define('URL_ADONITRANSPLUG',plugin_dir_url(__FILE__));
-define('PLUG_VERSION', '0.0.12');
+define('PLUG_VERSION', '0.0.13');
 
 include 'includes/roles.php';
 include 'includes/redirecciones.php';
@@ -194,6 +194,18 @@ function format_time_input($hora12) {
     return $hora24;
 }
 
+function get_mails_role($roles = []) {
+    if (empty($roles)) {
+        return [];
+    }
+
+    $usuarios = get_users([
+        'role__in' => $roles,
+        'fields'   => ['user_email']
+    ]);
+
+    return wp_list_pluck($usuarios, 'user_email');
+}
 
 function send_email_token($to, $subject, $message_content) {
     

@@ -146,7 +146,7 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="wrap wrap-2">
+                <!-- <div class="wrap wrap-2">
                     <label for="conductor_del_vehiculo">Conductor del Vehiculo</label>
                     <select id="conductor_del_vehiculo" name="conductor_del_vehiculo">
                         <option value=""></option>
@@ -166,7 +166,7 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
-                </div>
+                </div> -->
                 <div class="wrap">
                     <button class="button button-add" type="submit" name="submit-user">Crear Vehículo</button>
                     <button class="button button-remove" type="button" id="cancelar-vehiculo-btn">Cancelar</button>

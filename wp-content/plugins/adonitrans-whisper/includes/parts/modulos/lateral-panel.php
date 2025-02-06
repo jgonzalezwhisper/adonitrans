@@ -5,7 +5,7 @@
     $user_role = $current_user->roles[0];
 
     // Array de roles permitidos
-    $roles_admins = ['administrator', 'empresa'];
+    $roles_admins = ['administrator', 'operaciones_1', 'operaciones_2'];
 ?>
 <aside id="lateral">
     <ul>
@@ -25,10 +25,7 @@
             </li>
             <li data-action="usuario">
                 <i class="icofont-users-social"></i> Usuarios
-            </li> 
-            <li data-action="conductor">
-                <i class="icofont-user"></i> Conductor
-            </li>        
+            </li>   
             <li data-action="empresa">
                 <i class="icofont-building-alt"></i> Empresas
             </li>

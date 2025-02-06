@@ -575,6 +575,74 @@ function handle_delete_recorrido() {
 add_action( 'wp_ajax_delete_recorrido', 'handle_delete_recorrido' );
 add_action( 'wp_ajax_nopriv_delete_recorrido', 'handle_delete_recorrido' );
 
+/*ACCION AJAX PARA INICIAR RECORRIDO*/
+function handle_iniciar_recorrido() {
+
+    // Verificar el ID del post
+    if ( empty( $_POST['post_id'] ) ) {
+        wp_send_json_error( array( 'message' => 'ID de post inválido o no proporcionado.' ) );
+    }
+
+    $post_id = intval( $_POST['post_id'] );    
+
+    // Verificar que el post existe y que es del tipo 'recorrido'
+    $post = get_post( $post_id );
+    if ( ! $post || $post->post_type !== 'recorrido' ) {
+        wp_send_json_error( array( 'message' => 'El post no existe o no es un Recorrido.' ) );
+    }
+    $estado_actual = get_field('estado_del_recorrido', $post_id);
+
+    if ( $estado_actual=='Finalizado' || $estado_actual=='Cancelado' || $estado_actual=='En curso') {
+        wp_send_json_error( array( 'message' => 'El Recorrido no se puede iniciar.' ) );
+    }
+
+    if (empty($estado_actual) || $estado_actual=='Pendiente') {
+        update_field('estado_del_recorrido', 'En curso', $post_id);
+    }
+
+    /*MENSAJE A CONDUCTOR CC OPERADORES*/
+    $usuario        = get_field('id_solicitante_recorrido', $post_id);
+    $nomb_usuario   = $usuario['user_firstname']." ".$usuario['user_lastname'];
+    $mail_usuario   = $usuario['user_email'];
+
+    $conductor      = get_field('id_conductor_recorrido', $post_id);
+    $nomb_conductor = $conductor['user_firstname']." ".$conductor['user_lastname'];
+    $mail_conductor = $conductor['user_email'];
+
+    $empresa     = get_field('empresa_solicitante_recorrido', $post_id);
+    $nomb_empresa   = $empresa->post_title;
+    $usuarios_administradores = get_field('usuarios_administradores_empresa', $empresa) ?: [];
+    $ids_usuarios = array_column($usuarios_administradores, 'ID');
+
+    $mailemprcc = array_filter(array_map(function($user_id) {
+        $user_data = get_userdata($user_id);
+        return $user_data ? $user_data->user_email : null;
+    }, $ids_usuarios));
+
+    // Definir el asunto y cuerpo del mensaje
+    $subject = 'Recorrido Iniciado en AdoniGo';
+    $message = [
+        '<h2>El conductor ha llegado</h2>',
+        '<p>El conductor ha llegado al punto de inicio:</p>',
+        sprintf('<p>ID Servicio: <strong>%s</strong></p>', esc_html($post_id)),
+        sprintf('<p>Nombre Conductor: <strong>%s</strong></p>', esc_html($nomb_conductor)),
+        sprintf('<p>Solicitante: <strong>%s</strong></p>', esc_html($nomb_usuario)),
+        sprintf('<p>Empresa Solicitante: <strong>%s</strong></p>', esc_html($nomb_empresa)),
+    ];
+
+    /*Correo al usuario y administradores de la empresa el usuario*/
+    send_email_notification($subject, $message, $mail_usuario, $mailemprcc);
+
+    /*Correo al conductores y operadores de la empresa adonigo*/
+    $roles = ['operaciones_1', 'operaciones_2'];
+    $adonicc = get_mails_role($roles);
+    send_email_notification($subject, $message, $mail_conductor, $adonicc);
+
+    wp_send_json_success( array( 'message' => 'Recorrido Iniciado.', 'post_id' => $post_id ) );      
+}
+add_action( 'wp_ajax_iniciar_recorrido', 'handle_iniciar_recorrido' );
+add_action( 'wp_ajax_nopriv_iniciar_recorrido', 'handle_iniciar_recorrido' );
+
 /*ACCION AJAX PARA OBTENER DATOS DE UN RECORRIDO*/
 add_action('wp_ajax_load_recorrido_data', 'load_recorrido_data_function');
 add_action('wp_ajax_nopriv_load_recorrido_data', 'load_recorrido_data_function');

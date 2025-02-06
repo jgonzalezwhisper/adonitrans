@@ -95,6 +95,71 @@
 
                 <div id="wrap-asignacion-dias" class="wrap wrap-fanjas wrap-franjas-repetidor">
 
+                    <div id="clonar-asignacion" style="display:none">
+                       <div class="franja">
+                            <div class="franja_item">
+                                <label for="dia_inicio_de_asignacion">Día Inicio</label>
+                                <input type="date" id="dia_inicio_de_asignacion" name="dia_inicio_de_asignacion[]" min="<?= date('Y-m-d') ?>" value="" placeholder="dd/mm/yyyy">
+                            </div>
+                            <div class="franja_item">
+                                <label for="dia_fin_de_asignacion">Día Fin</label>
+                                <input type="date" id="dia_fin_de_asignacion" name="dia_fin_de_asignacion[]" min="<?= date('Y-m-d') ?>" value="" placeholder="dd/mm/yyyy" >
+                            </div>
+                            <div class="franja_item">
+                                <label for="">Franja Horaria</label>
+                                <select id="" class="select_franja_asignacion" name="franja_horaria_asignacion[]"  >
+                                    <option value="">Selecciona una Franja</option>
+                                    <?php
+                                        $franjas = get_field('franjas_horas_trabajo', 'option');
+                                        error_log(print_r($franjas,true));
+                                        $nombres_franjas = [];
+
+                                        if (!empty($franjas) && is_array($franjas)) {
+                                            foreach ($franjas as $franja) {
+                                                if (!empty($franja['nombre'])) {
+                                                    $nombres_franjas[] = $franja['nombre'];
+                                                }
+                                            }
+                                        }
+                                    ?>
+                                    <?php foreach ($nombres_franjas as $key => $nombre_franja): ?>
+                                        <option value="<?= $nombre_franja ?>"><?= $nombre_franja ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                            <div class="franja_item">
+                                <label for="">Vehículo</label>
+                                <select class="select" name="vehiculo_asignado[]"  >
+                                    <option value="">Seleccione un Vehículo</option>
+                                    <?php
+                                        $vehiculos = get_posts([
+                                            'post_type'      => 'vehiculo',
+                                            'posts_per_page' => -1,
+                                            'fields'         => 'ids',
+                                            'meta_query'     => [
+                                                [
+                                                    'key'   => 'estado_del_vehiculo',
+                                                    'value' => 'Activo'
+                                                ]
+                                            ]
+                                        ]);
+
+                                        $vehiculos_arr = array_map(function($id) {
+                                            return [
+                                                'ID'    => $id,
+                                                'placa' => get_field('placa_vehiculo', $id)
+                                            ];
+                                        }, $vehiculos);
+                                    ?>
+                                    <?php foreach ($vehiculos_arr as $key => $vehiculo): ?>
+                                        <option value="<?= $vehiculo['ID'] ?>"><?= $vehiculo['placa'] ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                            <button type="button" class="button remove">Eliminar Día(s)</button>
+                        </div>         
+                    </div>
+
                     <div id="wrap-asignacion-dia" class="wrap-franja">
 
                         <div class="franja">
@@ -110,10 +175,51 @@
                                 <label for="">Franja Horaria</label>
                                 <select id="" class="select_franja_asignacion" name="franja_horaria_asignacion[]"  >
                                     <option value="">Selecciona una Franja</option>
-                                    <option value="Diurna">Diurna</option>
-                                    <option value="Partido">Partido</option>
-                                    <option value="Trasnocho">Trasnocho</option>
-                                    <option value="Descanso">Descanso</option>
+                                    <?php
+                                        $franjas = get_field('franjas_horas_trabajo', 'option');
+                                        error_log(print_r($franjas,true));
+                                        $nombres_franjas = [];
+
+                                        if (!empty($franjas) && is_array($franjas)) {
+                                            foreach ($franjas as $franja) {
+                                                if (!empty($franja['nombre'])) {
+                                                    $nombres_franjas[] = $franja['nombre'];
+                                                }
+                                            }
+                                        }
+                                    ?>
+                                    <?php foreach ($nombres_franjas as $key => $nombre_franja): ?>
+                                        <option value="<?= $nombre_franja ?>"><?= $nombre_franja ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                            </div>
+                            <div class="franja_item">
+                                <label for="">Vehículo</label>
+                                <select class="select_vehiculo" name="vehiculo_asignado[]"  >
+                                    <option value="">Seleccione un Vehículo</option>
+                                    <?php
+                                        $vehiculos = get_posts([
+                                            'post_type'      => 'vehiculo',
+                                            'posts_per_page' => -1,
+                                            'fields'         => 'ids',
+                                            'meta_query'     => [
+                                                [
+                                                    'key'   => 'estado_del_vehiculo',
+                                                    'value' => 'Activo'
+                                                ]
+                                            ]
+                                        ]);
+
+                                        $vehiculos_arr = array_map(function($id) {
+                                            return [
+                                                'ID'    => $id,
+                                                'placa' => get_field('placa_vehiculo', $id)
+                                            ];
+                                        }, $vehiculos);
+                                    ?>
+                                    <?php foreach ($vehiculos_arr as $key => $vehiculo): ?>
+                                        <option value="<?= $vehiculo['ID'] ?>"><?= $vehiculo['placa'] ?></option>
+                                    <?php endforeach ?>
                                 </select>
                             </div>
                             <button type="button" class="button remove">Eliminar Día(s)</button>

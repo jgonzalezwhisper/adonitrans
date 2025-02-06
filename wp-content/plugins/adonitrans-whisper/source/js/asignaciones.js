@@ -130,13 +130,23 @@ jQuery(document).ready(function($) {
         e.preventDefault();
 
         var franjaCount = $('#wrap-asignacion-dias .franja').length;
-
-        var newRow = $('.franja').last().clone();
+        var newRow = $('#clonar-asignacion .franja').clone();
 
         newRow.find('label').attr('for', 'franja-' + franjaCount);
         newRow.find('input').val('').attr('id', 'franja-' + franjaCount);
 
+        // Obtener el select clonado y restablecer su estado
+        var newSelect = newRow.find('.select');
+        newSelect.addClass('select_vehiculo');
+
+        // Agregar la nueva fila al DOM
         $('#wrap-asignacion-dia').append(newRow);
+
+        newSelect.select2({
+            placeholder: "Selecciona un Valor",
+            allowClear: true,
+            width: '100%'
+        });
     });
 
     $(document).on('click', '#wrap-asignacion-dias .remove', function(e) {
@@ -273,15 +283,31 @@ jQuery(document).ready(function($) {
                                 // Usar la primera franja para la primera asignación
                                 $currentFranja = $baseFranja;
                             } else {
-                                // Clonar la franja base para asignaciones adicionales
-                                $currentFranja = $baseFranja.clone();
+                                var franjaCount = $('#wrap-asignacion-dias .franja').length;
+                                $currentFranja = $('#clonar-asignacion .franja').clone();
+
+                                $currentFranja.find('label').attr('for', 'franja-' + franjaCount);
+                                $currentFranja.find('input').val('').attr('id', 'franja-' + franjaCount);
+
+                                // Obtener el select clonado y restablecer su estado
+                                var newSelect = $currentFranja.find('.select');
+                                newSelect.addClass('select_vehiculo');
+
+                                // Agregar la nueva fila al DOM
                                 $('#wrap-asignacion-dia').append($currentFranja);
+
+                                newSelect.select2({
+                                    placeholder: "Selecciona un Valor",
+                                    allowClear: true,
+                                    width: '100%'
+                                });
                             }
 
                             // Rellenar los datos en la franja actual
                             $currentFranja.find('input[name="dia_inicio_de_asignacion[]"]').val(asignacion.dia_inicio_de_asignacion);
                             $currentFranja.find('input[name="dia_fin_de_asignacion[]"]').val(asignacion.dia_fin_de_asignacion);
                             $currentFranja.find('select[name="franja_horaria_asignacion[]"]').val(asignacion.franja_horaria_asignacion);
+                            $currentFranja.find('select[name="vehiculo_asignado[]"]').val(asignacion.id_post_vehiculo).trigger('change');
                         });
                     }
 

@@ -171,9 +171,6 @@ jQuery(document).ready(function($) {
                 propietario_de_vehiculo: {
                     required: true,
                 },
-                conductor_del_vehiculo: {
-                    required: true,
-                },
             },
             messages: {
                 placa_vehiculo: "Ingresa la placa del Vehículo",
@@ -193,7 +190,6 @@ jQuery(document).ready(function($) {
                     required: 'Este campo es obligatorio',
                 },
                 propietario_de_vehiculo: "Ingresa el Propietario del Vehículo",
-                conductor_del_vehiculo: "Ingresa el Conductor del Vehículo",
             },
             submitHandler: function(form) {
 
