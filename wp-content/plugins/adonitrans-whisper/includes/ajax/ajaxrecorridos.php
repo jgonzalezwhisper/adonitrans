@@ -35,8 +35,6 @@ function func_get_rutas() {
     $tarifa_id = $tarifa_ids[0]; // Obtener el primer ID
     $repetidor = get_field('repetidor_de_tarifas', $tarifa_id);
 
-    error_log( count($repetidor) );
-
     
     if ($repetidor) {
         foreach ($repetidor as $item) {
@@ -47,8 +45,6 @@ function func_get_rutas() {
             ];
         }
     }
-
-    error_log( print_r($response,true) );
     wp_send_json_success($response);
 
     wp_die();
@@ -254,79 +250,57 @@ function create_recorrido_function() {
     if (!empty($id_conductor_recorrido)) {
         update_field('id_conductor_recorrido', $id_conductor_recorrido, $post_id);
 
-        $first_name = get_user_meta($id_solicitante_recorrido, 'first_name', true);
-        $last_name = get_user_meta($id_solicitante_recorrido, 'last_name', true);
+        $dato_vehiculo = obtener_vehiculo_asignado($fecha_inicio_recorrido, $id_conductor_recorrido);
 
-        $nombre_soli = "$first_name $last_name";
+        if ($dato_vehiculo) {
+            update_field('id_vehiculo_recorrido', $dato_vehiculo['id_post_vehiculo'], $post_id);
+            update_field('placa_vehiculo_recorrido', $dato_vehiculo['placa_vehiculo'], $post_id);
+        }
 
-        $first_name = get_user_meta($id_conductor_recorrido, 'first_name', true);
-        $last_name = get_user_meta($id_conductor_recorrido, 'last_name', true);
+         /*MENSAJE A CONDUCTOR CC OPERADORES*/
+        $usuario        = get_field('id_solicitante_recorrido', $post_id);
+        $nomb_usuario   = $usuario['user_firstname']." ".$usuario['user_lastname'];
+        $mail_usuario   = $usuario['user_email'];
 
-        $nombre_cond = "$first_name $last_name";
+        $conductor      = get_field('id_conductor_recorrido', $post_id);
+        $nomb_conductor = $conductor['user_firstname']." ".$conductor['user_lastname'];
+        $mail_conductor = $conductor['user_email'];
+
+        $empresa     = get_field('empresa_solicitante_recorrido', $post_id);
+        $nomb_empresa   = $empresa->post_title;
+        $usuarios_administradores = get_field('usuarios_administradores_empresa', $empresa) ?: [];
+        $ids_usuarios = array_column($usuarios_administradores, 'ID');
+
+        $mailemprcc = array_filter(array_map(function($user_id) {
+            $user_data = get_userdata($user_id);
+            return $user_data ? $user_data->user_email : null;
+        }, $ids_usuarios));
 
         // Definir el asunto y cuerpo del mensaje
         $subject = 'Recorrido Asignado en AdoniGo';
         $message = [
-            '<h2>Recorrido Asignado.</h2>',
-            '<p>Un Recorrido ha sido Asignado en AdoniGo. Los datos del Recorrido son:</p>',
+            '<h2>Conductor Asignado</h2>',
+            '<p>Un Conductor ha sido asignado al recorrido:</p>',
             sprintf('<p>ID Servicio: <strong>%s</strong></p>', esc_html($post_id)),
             sprintf('<p>Fecha Inicio: <strong>%s</strong></p>', esc_html($fecha_inicio_recorrido)),
             sprintf('<p>Hora Inicio: <strong>%s</strong></p>', esc_html($hora_inicio_recorrido)),
             sprintf('<p>Ciudad Inicio: <strong>%s</strong></p>', esc_html($nombre_inicio)),
             sprintf('<p>Barrio Inicio: <strong>%s</strong></p>', esc_html($barrio_inicio)),
-            sprintf('<p>Ciudad Fin: <strong>%s</strong></p>', esc_html($nombre_fin)),
-            sprintf('<p>Solicitante: <strong>%s</strong></p>', esc_html($nombre_solicitante)),
-            sprintf('<p>Empresa Solicitante: <strong>%s</strong></p>', esc_html(get_the_title( $empresa_solicitante_recorrido ))),        
+            sprintf('<p>Nombre Conductor: <strong>%s</strong></p>', esc_html($nomb_conductor)),
+            sprintf('<p>Placa Vehículo: <strong>%s</strong></p>', esc_html($dato_vehiculo['placa_vehiculo'])),
+            sprintf('<p>Solicitante: <strong>%s</strong></p>', esc_html($nomb_usuario)),
+            sprintf('<p>Empresa Solicitante: <strong>%s</strong></p>', esc_html($nomb_empresa)),
+            
         ];
 
-        // Obtener el correo del usuario actual
-        $current_user_email = wp_get_current_user()->user_email;
+        /*Correo al usuario y administradores de la empresa el usuario*/
+        send_email_notification($subject, $message, $mail_usuario, $mailemprcc);
 
-        // Asignar el correo del usuario a la variable $recipient_email
-        $recipient_email = sanitize_email($current_user_email);
+        /*Correo al conductor y operadores de la empresa adonigo*/
+        $roles = ['operaciones_1', 'operaciones_2'];
+        $adonicc = get_mails_role($roles);
+        send_email_notification($subject, $message, $mail_conductor, $adonicc);
 
-        // Obtener los roles del usuario actual
-        $current_user_roles = wp_get_current_user()->roles;
-
-        $allowed_roles = ['colaborador', 'empresa', 'administrator', 'operaciones_1'];
-
-        // Comprobar si el usuario NO tiene el rol 'colaborador'
-        if (!in_array('colaborador', $current_user_roles)) {
-            // Si no es colaborador, añadir su correo a $combined_emails
-            $user_solicitante = get_userdata($id_solicitante_recorrido);
-            $combined_emails[] = $user_solicitante->user_email;
-        }
-
-        // Obtener usuarios con los roles 'operaciones_1' y 'administrator'
-        $roles = ['operaciones_1', 'administrator'];
-        $users = get_users([
-            'role__in' => $roles,
-            'fields'   => ['user_email']
-        ]);
-
-        // Obtener correos de los usuarios con los roles mencionados
-        $cc_emails = wp_list_pluck($users, 'user_email'); 
-
-        // Argumentos para la consulta de usuarios relacionados con el rol 'empresa'
-        $args_emp = [
-            'role'         => 'empresa',
-            'meta_key'     => 'empresa_asociada_usuario',
-            'meta_value'   => $empresa_solicitante_recorrido,
-            'fields'       => 'user_email'
-        ];
-
-        // Realiza la consulta de usuarios relacionados con 'empresa'
-        $users_emp = get_users($args_emp);
-
-        // Combina los correos de ambos arrays
-        $combined_emails = array_merge($cc_emails, wp_list_pluck($users_emp, 'user_email'));
-
-        // Eliminar el correo del usuario actual si existe en el array combinado
-        $cc_emails = array_diff($combined_emails, [$current_user_email]);
-
-
-        // Llamar a la función de notificación con los nuevos parámetros
-        send_email_notification($subject, $message, $recipient_email, $cc_emails);
 
         if (empty($estado_actual) || $estado_actual=='Por Asignar') {
             update_field('estado_del_recorrido', 'Pendiente', $post_id);

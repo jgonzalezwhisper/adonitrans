@@ -111,7 +111,6 @@
                                     <option value="">Selecciona una Franja</option>
                                     <?php
                                         $franjas = get_field('franjas_horas_trabajo', 'option');
-                                        error_log(print_r($franjas,true));
                                         $nombres_franjas = [];
 
                                         if (!empty($franjas) && is_array($franjas)) {
@@ -177,7 +176,6 @@
                                     <option value="">Selecciona una Franja</option>
                                     <?php
                                         $franjas = get_field('franjas_horas_trabajo', 'option');
-                                        error_log(print_r($franjas,true));
                                         $nombres_franjas = [];
 
                                         if (!empty($franjas) && is_array($franjas)) {

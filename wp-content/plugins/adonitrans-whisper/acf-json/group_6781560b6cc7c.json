@@ -80,6 +80,48 @@
             "bidirectional_target": []
         },
         {
+            "key": "field_67a4b7ffc5e8a",
+            "label": "ID Vehiculo Recorrido",
+            "name": "id_vehiculo_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_67a4b988c5e8b",
+            "label": "Placa Vehiculo Recorrido",
+            "name": "placa_vehiculo_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_678156fa5d2a9",
             "label": "ID Asignador Recorrido",
             "name": "id_asignador_recorrido",
@@ -571,5 +613,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1738775164
+    "modified": 1738848682
 }

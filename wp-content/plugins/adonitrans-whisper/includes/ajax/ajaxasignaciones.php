@@ -4,6 +4,58 @@ function convertir_a_24h($hora) {
     return date("H:i:s", strtotime($hora));
 }
 
+function obtener_vehiculo_asignado($fecha_consulta, $id_conductor_asignado) {
+
+    $fecha_consulta_format = date('Y-m-d', strtotime($fecha_consulta));    
+    $args = [
+        'post_type'      => 'asignacion',
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'meta_query' => [
+        'relation' => 'AND',
+            [
+                'key' => 'id_conductor_asignado',
+                'value' => $id_conductor_asignado,
+                'compare' => '='
+            ],
+            [
+                'key' => 'inicio_semana_asignacion',
+                'value' => $fecha_consulta_format,
+                'compare' => '<=', // La fecha de inicio debe ser menor o igual a la fecha de solicitud
+                'type'    => 'DATE'
+            ],
+            [
+                'key' => 'fin_semana_asignacion',
+                'value' => $fecha_consulta_format,
+                'compare' => '>=', // La fecha de fin debe ser mayor o igual a la fecha de solicitud
+                'type'    => 'DATE'
+            ]
+        ]
+    ];
+    
+    $query = new WP_Query($args);
+    $ids_asig = $query->posts;
+    wp_reset_postdata();
+
+    $asignaciones = get_field('asignaciones_de_la_semana', $ids_asig[0]);
+
+    if ($asignaciones) {
+        foreach ($asignaciones as $asignacion) {
+            $inicio_asignacion = DateTime::createFromFormat('d/m/Y', $asignacion['dia_inicio_de_asignacion'])->format('Y-m-d');
+            $fin_asignacion = DateTime::createFromFormat('d/m/Y', $asignacion['dia_fin_de_asignacion'])->format('Y-m-d');
+
+            if ($fecha_consulta_format >= $inicio_asignacion && $fecha_consulta_format <= $fin_asignacion) {
+                return [
+                    'id_post_vehiculo' => $asignacion['id_post_vehiculo'],
+                    'placa_vehiculo'   => $asignacion['placa_vehiculo']
+                ];
+            }
+        }
+    }     
+    
+    return null;
+}
+
 function obtener_conductores_asignados() {
     // Verificar si se ha enviado la fecha de solicitud por AJAX
     if (!isset($_POST['id_recorrido'])) {
@@ -511,8 +563,12 @@ function func_gen_reporte_excel() {
             'fields'         => 'ids',
         ]);
 
+        error_log(print_r($desde_formexcel,true));
+        error_log(print_r($hasta_formexcel,true));
+        error_log(print_r($query,true));
+
         if ($query->have_posts()) {
-            $headers = ['Fecha Inicio', 'Fecha Final', 'Franja Horaria'];
+            $headers = ['Fecha Inicio', 'Fecha Final', 'Franja Horaria', 'Placa Vehículo'];
             $filtpor = "Conductor: $first_name $last_name";
             $data = [];
 
@@ -525,13 +581,14 @@ function func_gen_reporte_excel() {
                         $data[] = [
                             $fila['dia_inicio_de_asignacion'],
                             $fila['dia_fin_de_asignacion'],
-                            $fila['franja_horaria_asignacion']
+                            $fila['franja_horaria_asignacion'],
+                            $fila['placa_vehiculo']
                         ];
                     }
                 }
             }
 
-            wp_reset_postdata(); // Restablecer la consulta
+            wp_reset_postdata();
         } else {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
@@ -626,7 +683,7 @@ function func_gen_reporte_excel() {
                     get_field('hora_final_recorrido', $post_id),
                     "N/A",
                     $barrio_inicio,
-                    "LKI28B",
+                    get_field('placa_vehiculo_recorrido', $post_id),
                     $nombre_conductor,
                     "N/A",
                     $nombre_usuario
@@ -645,7 +702,7 @@ function func_gen_reporte_excel() {
                             get_field('hora_final_recorrido', $post_id),
                             "N/A",
                             $barrio_inicio,
-                            "LKI28B",
+                            get_field('placa_vehiculo_recorrido', $post_id),
                             $nombre_conductor,
                             "N/A",
                             $nombre_usuario
@@ -688,7 +745,7 @@ function func_gen_reporte_excel() {
         ]);
 
         if ($query->have_posts()) {
-            $headers = ['Solicitante', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $headers = ['Solicitante', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
             $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
             $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
 
@@ -711,6 +768,7 @@ function func_gen_reporte_excel() {
                 $data[] = [
                     $nombre_solicitante,
                     $nombre_conductor,
+                    get_field('placa_vehiculo_recorrido', $post_id),
                     get_field('estado_del_recorrido', $post_id),
                     get_field('fecha_inicio_recorrido', $post_id),
                     get_field('hora_inicio_recorrido', $post_id),
@@ -754,7 +812,7 @@ function func_gen_reporte_excel() {
         ]);
 
         if ($query->have_posts()) {
-            $headers = ['Empresa', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $headers = ['Empresa', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
             $filtpor = "Colaborador: $first_name $last_name";
             $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
 
@@ -777,6 +835,7 @@ function func_gen_reporte_excel() {
                 $data[] = [
                     $nombre_empresa,
                     $nombre_conductor,
+                    get_field('placa_vehiculo_recorrido', $post_id),
                     get_field('estado_del_recorrido', $post_id),
                     get_field('fecha_inicio_recorrido', $post_id),
                     get_field('hora_inicio_recorrido', $post_id),
@@ -832,7 +891,7 @@ function func_gen_reporte_excel() {
         $nomb_empresa = ($post_empresa) ? esc_html(get_the_title($id_empresa)) : "Todas";
 
         if ($query->have_posts()) {
-            $headers = ['Colaborador', 'Conductor', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $headers = ['Colaborador', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
             $filtpor = 'Empresa: ' . $nomb_empresa;
             $data = []; 
 
@@ -855,6 +914,7 @@ function func_gen_reporte_excel() {
                 $data[] = [
                     $nombre_colaborador,
                     $nombre_conductor,
+                    get_field('placa_vehiculo_recorrido', $post_id),
                     get_field('estado_del_recorrido', $post_id),
                     get_field('fecha_inicio_recorrido', $post_id),
                     get_field('hora_inicio_recorrido', $post_id),

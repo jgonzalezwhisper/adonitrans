@@ -160,7 +160,9 @@
                     "key": "field_67911234vehiculo",
                     "label": "ID Post Vehiculo",
                     "name": "id_post_vehiculo",
+                    "aria-label": "",
                     "type": "text",
+                    "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -168,13 +170,20 @@
                         "class": "",
                         "id": ""
                     },
-                    "parent_repeater": "field_67911173e8d71"
+                    "parent_repeater": "field_67911173e8d71",
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
                 },
                 {
                     "key": "field_67911235vehiculo",
                     "label": "Placa Vehiculo",
                     "name": "placa_vehiculo",
+                    "aria-label": "",
                     "type": "text",
+                    "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -182,7 +191,12 @@
                         "class": "",
                         "id": ""
                     },
-                    "parent_repeater": "field_67911173e8d71"
+                    "parent_repeater": "field_67911173e8d71",
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
                 },
                 {
                     "key": "field_67911247ba180",
@@ -204,6 +218,7 @@
                     "collapsed": "",
                     "button_label": "Agregar Día",
                     "rows_per_page": 20,
+                    "parent_repeater": "field_67911173e8d71",
                     "sub_fields": [
                         {
                             "key": "field_67911259ba181",
@@ -254,8 +269,7 @@
                             "bidirectional_target": [],
                             "parent_repeater": "field_67911247ba180"
                         }
-                    ],
-                    "parent_repeater": "field_67911173e8d71"
+                    ]
                 }
             ]
         }
@@ -278,5 +292,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1737647837
+    "modified": 1738856680
 }
