@@ -58,7 +58,7 @@ jQuery(document).ready(function($) {
         });
     });
 
-    $("#lateral ul li[data-action]").on("click", function() {
+    $(document).on('click', '#lateral ul li[data-action]', function(event) {
 
         $("#lateral ul li").removeClass('active');
         $(this).addClass('active');
@@ -106,7 +106,7 @@ jQuery(document).ready(function($) {
         });
     });
 
-    $("#wrap-panel .wrap-acciones .boton[data-action]").on("click", function() {
+    $(document).on('click', '#wrap-panel .wrap-acciones .boton[data-action]', function(event) {
 
         $("#wrap-panel .wrap-acciones .boton").removeClass('active');
         $(this).addClass('active');

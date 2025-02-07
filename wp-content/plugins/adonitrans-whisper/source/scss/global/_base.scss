@@ -348,6 +348,10 @@
 
 		}
 
+		.wrap-acciones{
+			width: 100%;
+		}
+
 		.wrap-gestion-vehiculos,
 		.wrap-gestion-empresas,
 		.wrap-listado-recorridos,
@@ -800,6 +804,10 @@
 				font-weight: 700;
 				letter-spacing: .3px;
 				font-family: 'Poppins';
+			}
+
+			a {
+				color: inherit;
 			}
 
 			&:hover {

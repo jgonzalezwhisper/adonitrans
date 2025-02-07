@@ -114,6 +114,12 @@ function enqueue_custom_login_scripts() {
                 'plugin_url' => URL_ADONITRANSPLUG,
             ));
 
+            wp_enqueue_script('adoni-conductor-js', URL_ADONITRANSPLUG . '/assets/js/conductor.js', array('jquery'), null, true);
+            wp_localize_script('adoni-conductor-js', 'conductorAjax', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'plugin_url' => URL_ADONITRANSPLUG,
+            ));
+
             wp_enqueue_script('adoni-usuarios-js', URL_ADONITRANSPLUG . '/assets/js/usuarios.js', array('jquery'), null, true);
             wp_localize_script('adoni-usuarios-js', 'usuarioAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),

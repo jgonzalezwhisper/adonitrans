@@ -101,7 +101,7 @@ exit('Acceso no autorizado');
                         <td class="<?= str_replace(' ', '-', strtolower($estado_recorrido)); ?>"><?= $estado_recorrido; ?></td>
                         <td>
                             <div class="acciones">
-                                <?php if ($user_role !== 'colaborador' && $user_role !== 'conductor'): ?>
+                                <?php if ( $user_role !== 'conductor' ): ?>
                                     <button class="accion edit-recorrido" data-id="<?= get_the_ID(); ?>">Editar</button>
                                 <?php endif ?>
                                 <?php if ($user_role !== 'conductor'): ?>
@@ -359,7 +359,7 @@ exit('Acceso no autorizado');
                 </div>
 
                 <?php
-                    $roles_pasadicionales = array('colaborador', 'operaciones_1', 'operaciones_2', 'empresa');
+                    $roles_pasadicionales = array('administrator', 'colaborador', 'operaciones_1', 'operaciones_2', 'empresa');
                 ?>
                 <?php if (in_array($user_role, $roles_pasadicionales)): ?>
 

@@ -497,6 +497,7 @@ jQuery(document).ready(function($) {
         $("#recorrido-id").text('').val('');
         $('#select-rolesusuario').val(null).trigger('change');
         $('#wrap-recorridos #wrap-titform-recorrido').removeClass().addClass('wrap wrap-title');
+        $('#wrap-usuarios-adicionales #wrap-usuario-adicional').empty();
         $("#wrap-recorridos .wrap-gestion-recorridos").hide();
         $("#wrap-recorridos .wrap-listado-recorridos").show();
     });
@@ -589,6 +590,61 @@ jQuery(document).ready(function($) {
                                 // })(newRow.find('.barrio_adicional_recorrido'), punto.nombre_del_barrio), 2500);
                             }
                         }
+
+                        if ($("#wrap-usuarios-adicionales").length && response.data.usuarios_adicionales_recorrido) {
+
+                            $.ajax({
+                                url: recorridoAjax.ajaxurl,
+                                type: 'POST',
+                                data: {
+                                    action: 'get_colegas_empresa',
+                                    colaborador_id: response.data.id_solicitante_recorrido
+                                },
+                                success: function(resdatacol) {
+                                    if (resdatacol.success) {
+                                        let colaboradores = resdatacol.data;
+                                        let options = '<option value="">Selecciona un Colaborador</option>';
+
+                                        colaboradores.forEach(function(colaborador) {
+                                            options += '<option value="' + colaborador.ID + '">' + colaborador.display_name + ' (' + colaborador.user_email + ')</option>';
+                                        });
+
+                                        $('#clonar-pas-adicional .sel_adicional_usuario').html(options).trigger('change');
+                                    }
+                                }
+                            });
+
+                            $.each(response.data.usuarios_adicionales_recorrido, function(index, usua_adicional) {
+
+                                let $currentFranja;
+
+                                $currentFranja = $('#clonar-pas-adicional .franja').clone();
+
+                                $currentFranja.find('label').attr('for', 'franja-' + index);
+                                $currentFranja.find('input').val('').attr('id', 'franja-' + index);
+
+                                // Obtener el select clonado y restablecer su estado
+                                var newSelect = $currentFranja.find('.select');
+                                newSelect.addClass('select_vehiculo');
+
+                                // Agregar la nueva fila al DOM
+                                $('#wrap-usuario-adicional').append($currentFranja);
+
+                                newSelect.select2({
+                                    placeholder: "Selecciona un Valor",
+                                    allowClear: true,
+                                    width: '100%'
+                                });
+
+                                // Rellenar los datos en la franja actual
+                                $currentFranja.find('select[name="sel_id_usuario_adicional[]"]').val(usua_adicional.id_usuario_adicional).trigger('change');
+                                $currentFranja.find('select[name="origen_adicional[]"]').val(usua_adicional.origen).trigger('change');
+                                $currentFranja.find('input[name="direccion_origen_adicional[]"]').val(usua_adicional.direccion_origen);
+                                $currentFranja.find('select[name="destino_adicional[]"]').val(usua_adicional.destino).trigger('change');
+                                $currentFranja.find('input[name="direccion_destino_adicional[]"]').val(usua_adicional.direccion_destino);
+                            });
+                        }
+
                     }, 2000);
 
                     // Verificar si el selector de conductores existe
@@ -636,8 +692,6 @@ jQuery(document).ready(function($) {
                             }
                         });
                     }
-
-
 
                     setTimeout(() => {
                         $('body').removeClass('actloader');

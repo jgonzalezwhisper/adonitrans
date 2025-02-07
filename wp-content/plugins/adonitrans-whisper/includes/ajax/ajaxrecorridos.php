@@ -361,6 +361,41 @@ function create_recorrido_function() {
         update_field('valor_ruta_recorrido',$_POST['tarifa_valor'], $post_id);
     }
 
+    $ciudad_fin = sanitize_text_field($_POST['ciudad_fin']);
+
+    if (isset($_POST['sel_id_usuario_adicional'], $_POST['origen_adicional'], $_POST['direccion_origen_adicional'], $_POST['destino_adicional'], $_POST['direccion_destino_adicional'])) {
+        $sel_id_usuario_adicional = $_POST['sel_id_usuario_adicional'];
+        $origen_adicional = $_POST['origen_adicional'];
+        $direccion_origen_adicional = $_POST['direccion_origen_adicional'];
+        $destino_adicional = $_POST['destino_adicional'];
+        $direccion_destino_adicional = $_POST['direccion_destino_adicional'];
+
+        $total = count($sel_id_usuario_adicional);
+
+        if ($total === count($origen_adicional) && $total === count($direccion_origen_adicional) && $total === count($destino_adicional) && $total === count($direccion_destino_adicional)) {
+            $usuarios_adicionales = [];
+
+            foreach ($sel_id_usuario_adicional as $key => $usuario_adicional) {
+                $fila_origen = $origen_adicional[$key] ?? '';
+                $fila_dirori = $direccion_origen_adicional[$key] ?? '';
+                $fila_destin = $destino_adicional[$key] ?? '';
+                $fila_dirdes = $direccion_destino_adicional[$key] ?? '';
+
+                if (!empty($usuario_adicional) && !empty($fila_origen) && !empty($fila_destin)) {
+                    $usuarios_adicionales[] = [
+                        'id_usuario_adicional' => sanitize_text_field($usuario_adicional),
+                        'origen' => sanitize_text_field($fila_origen),
+                        'direccion_origen' => sanitize_text_field($fila_dirori),
+                        'destino' => sanitize_text_field($fila_destin),
+                        'direccion_destino' => sanitize_text_field($fila_dirdes),
+                    ];
+                }
+            }
+            update_field('usuarios_adicionales_recorrido', $usuarios_adicionales, $post_id);
+        }
+    }
+
+    /*ENVIO DE CORREO*/
     $first_name = get_user_meta($id_solicitante_recorrido, 'first_name', true);
     $last_name = get_user_meta($id_solicitante_recorrido, 'last_name', true);
 
@@ -646,6 +681,7 @@ function load_recorrido_data_function() {
         'barrio_fin'             => get_field('barrio_final_recorrido', $post_id),
         'estado_del_recorrido'   => str_replace(' ', '-', strtolower(get_field('estado_del_recorrido', $post_id))),
     ];
+    $response['usuarios_adicionales_recorrido'] = get_field('usuarios_adicionales_recorrido', $post_id);
 
     $puntos_recorrido = array();
 
@@ -731,5 +767,51 @@ function ver_recorrido_data_function() {
     ];
 
     // Devolver la respuesta en formato JSON
+    wp_send_json_success($response);
+}
+
+add_action('wp_ajax_get_colegas_empresa', 'get_colegas_empresa');
+add_action('wp_ajax_nopriv_get_colegas_empresa', 'get_colegas_empresa');
+function get_colegas_empresa() {
+
+    $col_id = intval($_POST['colaborador_id']);
+    $empresa_id = get_field('empresa_asociada_usuario', 'user_' . $col_id)->ID; 
+
+    $argscol = [
+        'role' => 'colaborador',
+        'orderby' => 'display_name',
+        'order'   => 'ASC',
+        'meta_query' => array(
+            array(
+                'key'   => 'estado_usuario',
+                'value' => 'Activo',
+                'compare' => '='
+            ),
+            array(
+                'key'   => 'empresa_asociada_usuario',
+                'value' => $empresa_id,
+                'compare' => '='
+            )
+        ),
+        'exclude'   => [$col_id],
+        'fields' => ['ID', 'user_email'],
+    ];
+
+    $user_query_col = new WP_User_Query($argscol);
+    $colaboradores = $user_query_col->get_results();
+
+    $response = array();
+    foreach ($colaboradores as $colaborador) {
+        $first_name = get_user_meta($colaborador->ID, 'first_name', true);
+        $last_name = get_user_meta($colaborador->ID, 'last_name', true);
+        $user_email = $colaborador->user_email; // El correo electrónico ya está disponible en el objeto
+
+        $response[] = array(
+            'ID' => $colaborador->ID,
+            'display_name' => trim($first_name . ' ' . $last_name) ?: $colaborador->display_name,
+            'user_email' => $user_email
+        );
+    }
+
     wp_send_json_success($response);
 }
