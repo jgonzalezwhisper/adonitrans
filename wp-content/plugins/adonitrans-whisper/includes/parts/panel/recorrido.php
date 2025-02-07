@@ -3,6 +3,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');
 if (!isset($_POST['action']) || empty($_POST['action'])) {
 exit('Acceso no autorizado');
 }
+
+// Obtener el usuario actual
+$current_user = wp_get_current_user();
+$user_id = $current_user->ID;
+$user_role = $current_user->roles[0];
+
+$roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador', 'supervisores', 'flotantes'];
 ?>
 <div id="wrap-recorridos">
     <div class="tarjeta">
@@ -12,7 +19,9 @@ exit('Acceso no autorizado');
         </div>
         <p>Administra y gestiona los recorridos registrados en ADONITRANS desde este panel. Mantén toda la información organizada y actualizada.</p>
         <div class="wrap-listado-recorridos">
-            <a href="#" class="button" id="crear-recorrido"><i class="icofont-plus-circle"></i> Solicitar Recorrido</a>
+            <?php if (in_array($user_role, $roles_solrecorrido)): ?>
+                <a href="#" class="button" id="crear-recorrido"><i class="icofont-plus-circle"></i> Solicitar Recorrido</a>
+            <?php endif ?>
             <table id="table-recorridos" class="display table-adoni">
                 <thead>
                     <tr>
@@ -26,10 +35,7 @@ exit('Acceso no autorizado');
                 </thead>
                 <tbody>
                     <?php
-                    // Obtener el usuario actual
-                    $current_user = wp_get_current_user();
-                    $user_id = $current_user->ID;
-                    $user_role = $current_user->roles[0];
+                    
                     // Base de la consulta
                     $args = [
                     'post_type'      => 'recorrido',

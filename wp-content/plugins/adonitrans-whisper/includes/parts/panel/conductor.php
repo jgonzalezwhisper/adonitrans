@@ -122,7 +122,7 @@
                         <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir</a>
                     </div>
 
-                    <!-- <div class="trayecto_peajes">
+                    <div class="trayecto_peajes">
                         <h4>Ruta con peajes?</h4>
                         <div class="peaje_option">
                             <input type="radio" id="peajesi" name="peajesi" value="SI"><label>SI</label>
@@ -149,7 +149,7 @@
                             <p>Recorrido 100587 CL - PL - CL <span>$35.000</span></p>
                             <p>Recorrido 100587 CL - PL - CL <span>$35.000</span></p>
                         </div>
-                    </div> -->
+                    </div>
                 </div>   
             </form>
         </div> 
