@@ -58,7 +58,7 @@ jQuery(document).ready(function($) {
         });
     });
 
-    $("#lateral ul li[data-action]").on("click", function() {
+    $(document).on('click', '#lateral ul li[data-action]', function(event) {
 
         $("#lateral ul li").removeClass('active');
         $(this).addClass('active');
@@ -106,7 +106,7 @@ jQuery(document).ready(function($) {
         });
     });
 
-    $("#wrap-panel .wrap-acciones .boton[data-action]").on("click", function() {
+    $(document).on('click', '#wrap-panel .wrap-acciones .boton[data-action]', function(event) {
 
         $("#wrap-panel .wrap-acciones .boton").removeClass('active');
         $(this).addClass('active');
@@ -208,10 +208,10 @@ window.initRecorridos = function initRecorridos() {
         });
     }
 
-    validarUltimaFranja();
+    /*validarUltimaFranja();*/
 }
 
-window.validarUltimaFranja = function validarUltimaFranja() {
+/*window.validarUltimaFranja = function validarUltimaFranja() {
     var ultimaFranja = jQuery('#wrap-punto-recorrido .franja').last();
 
     if (ultimaFranja.length === 0) {
@@ -222,7 +222,7 @@ window.validarUltimaFranja = function validarUltimaFranja() {
     var ciudad = ultimaFranja.find('.ciudad_adicional_recorrido').val();
     var barrio = ultimaFranja.find('.barrio_adicional_recorrido').val();
     jQuery('.button-add').prop('disabled', !(ciudad && barrio));
-}
+}*/
 
 
 window.initVehiculos = function initVehiculos() {

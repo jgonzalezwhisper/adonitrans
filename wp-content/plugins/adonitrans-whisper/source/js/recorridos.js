@@ -148,6 +148,30 @@ jQuery(document).ready(function($) {
         }
     });
 
+    function actualizarSelects(selects, datos) {
+        selects.each(function() {
+            let select = $(this);
+
+            let valorSeleccionado = select.val();
+
+            select.empty().append('<option value="">Selecciona un barrio</option>');
+
+            $.each(datos, function(index, barrio) {
+                let dataZona = barrio.zona ? ' data-zona="' + barrio.zona + '"' : '';
+                let option = '<option' + dataZona + ' value="' + barrio.barrio + '">' + barrio.barrio + '</option>';
+                select.append(option);
+            });
+
+            if (valorSeleccionado && select.find('option[value="' + valorSeleccionado + '"]').length) {
+                select.val(valorSeleccionado);
+            }
+
+            if (select.hasClass('select2-hidden-accessible')) {
+                select.trigger('change');
+            }
+        });
+    }
+
     $(document).on('change', '#ciudad_inicio', function() {
         let ciudadId = $(this).val();
         let selectBarrio = $('#barrio_inicio');
@@ -172,6 +196,7 @@ jQuery(document).ready(function($) {
                 },
                 success: function(response) {
                     if (response.success) {
+
                         // Limpiar los selects antes de agregar nuevas opciones
                         selectBarrio.empty().append('<option value="">Selecciona un barrio</option>');
                         selectBarrioFin.empty().append('<option value="">Selecciona un barrio</option>');
@@ -188,6 +213,9 @@ jQuery(document).ready(function($) {
                         // Habilitar los selects y disparar el evento change
                         selectBarrio.prop('disabled', false).trigger('change');
                         selectBarrioFin.prop('disabled', false).trigger('change');
+
+                        actualizarSelects($('#wrap-usuarios-adicionales .franja .barrio'), response.data);
+
                     } else {
                         // Mostrar un mensaje de error si no hay datos
                         Swal.fire({
@@ -285,11 +313,11 @@ jQuery(document).ready(function($) {
 
     /*FRANJAS DE ASIGNACION*/
 
-    window.validarUltimaFranja();
+    /*window.validarUltimaFranja();*/
 
     // Escuchar cambios en los selects dentro de #wrap-punto-recorrido
     $(document).on('change', '.ciudad_adicional_recorrido, .barrio_adicional_recorrido', function() {
-        validarUltimaFranja();
+        /*validarUltimaFranja();*/
     });
 
     $(document).on('change', '.barrio_adicional_recorrido', function() {
@@ -339,7 +367,7 @@ jQuery(document).ready(function($) {
         $('#wrap-punto-recorrido .barrio_adicional_recorrido').last().select2();
 
         // Llamar a la validación para verificar si se debe habilitar el botón nuevamente
-        validarUltimaFranja();
+        /*validarUltimaFranja();*/
     });
 
     $(document).on('click', '#wrap-puntos-recorrido .remove', function(e) {
@@ -416,6 +444,43 @@ jQuery(document).ready(function($) {
 
     /*FIN FRANJAS*/
 
+    /*FRANJAS DE USUARIO ADICIONAL*/
+    $(document).on('click', '#wrap-usuarios-adicionales .button-add', function(e) {
+        e.preventDefault();
+
+        var franjaCount = $('#wrap-usuario-adicional .franja').length;
+
+        if (franjaCount >= 3) {
+            return;
+        }
+
+        var newRow = $('#clonar-pas-adicional .franja').clone();
+
+        newRow.find('label').attr('for', 'franja-' + franjaCount);
+        newRow.find('input').val('').attr('id', 'franja-' + franjaCount);
+
+        // Obtener el select clonado y restablecer su estado
+        var newSelect = newRow.find('.select');
+        newSelect.addClass('select_vehiculo');
+
+        // Agregar la nueva fila al DOM
+        $('#wrap-usuario-adicional').append(newRow);
+
+        newSelect.select2({
+            placeholder: "Selecciona un Valor",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+
+    $(document).on('click', '#wrap-usuarios-adicionales .remove', function(e) {
+        e.preventDefault();
+
+        var franjaCount = $('#wrap-usuario-adicional .franja').length;
+        var $franja = $(this).closest('.franja');
+        $franja.remove();
+    });
+
 
     $(document).on('click', '#crear-recorrido', function(event) {
         event.preventDefault();
@@ -432,6 +497,7 @@ jQuery(document).ready(function($) {
         $("#recorrido-id").text('').val('');
         $('#select-rolesusuario').val(null).trigger('change');
         $('#wrap-recorridos #wrap-titform-recorrido').removeClass().addClass('wrap wrap-title');
+        $('#wrap-usuarios-adicionales #wrap-usuario-adicional').empty();
         $("#wrap-recorridos .wrap-gestion-recorridos").hide();
         $("#wrap-recorridos .wrap-listado-recorridos").show();
     });
@@ -524,6 +590,61 @@ jQuery(document).ready(function($) {
                                 // })(newRow.find('.barrio_adicional_recorrido'), punto.nombre_del_barrio), 2500);
                             }
                         }
+
+                        if ($("#wrap-usuarios-adicionales").length && response.data.usuarios_adicionales_recorrido) {
+
+                            $.ajax({
+                                url: recorridoAjax.ajaxurl,
+                                type: 'POST',
+                                data: {
+                                    action: 'get_colegas_empresa',
+                                    colaborador_id: response.data.id_solicitante_recorrido
+                                },
+                                success: function(resdatacol) {
+                                    if (resdatacol.success) {
+                                        let colaboradores = resdatacol.data;
+                                        let options = '<option value="">Selecciona un Colaborador</option>';
+
+                                        colaboradores.forEach(function(colaborador) {
+                                            options += '<option value="' + colaborador.ID + '">' + colaborador.display_name + ' (' + colaborador.user_email + ')</option>';
+                                        });
+
+                                        $('#clonar-pas-adicional .sel_adicional_usuario').html(options).trigger('change');
+                                    }
+                                }
+                            });
+
+                            $.each(response.data.usuarios_adicionales_recorrido, function(index, usua_adicional) {
+
+                                let $currentFranja;
+
+                                $currentFranja = $('#clonar-pas-adicional .franja').clone();
+
+                                $currentFranja.find('label').attr('for', 'franja-' + index);
+                                $currentFranja.find('input').val('').attr('id', 'franja-' + index);
+
+                                // Obtener el select clonado y restablecer su estado
+                                var newSelect = $currentFranja.find('.select');
+                                newSelect.addClass('select_vehiculo');
+
+                                // Agregar la nueva fila al DOM
+                                $('#wrap-usuario-adicional').append($currentFranja);
+
+                                newSelect.select2({
+                                    placeholder: "Selecciona un Valor",
+                                    allowClear: true,
+                                    width: '100%'
+                                });
+
+                                // Rellenar los datos en la franja actual
+                                $currentFranja.find('select[name="sel_id_usuario_adicional[]"]').val(usua_adicional.id_usuario_adicional).trigger('change');
+                                $currentFranja.find('select[name="origen_adicional[]"]').val(usua_adicional.origen).trigger('change');
+                                $currentFranja.find('input[name="direccion_origen_adicional[]"]').val(usua_adicional.direccion_origen);
+                                $currentFranja.find('select[name="destino_adicional[]"]').val(usua_adicional.destino).trigger('change');
+                                $currentFranja.find('input[name="direccion_destino_adicional[]"]').val(usua_adicional.direccion_destino);
+                            });
+                        }
+
                     }, 2000);
 
                     // Verificar si el selector de conductores existe
@@ -571,8 +692,6 @@ jQuery(document).ready(function($) {
                             }
                         });
                     }
-
-
 
                     setTimeout(() => {
                         $('body').removeClass('actloader');

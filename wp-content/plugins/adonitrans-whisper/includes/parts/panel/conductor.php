@@ -25,33 +25,37 @@
                 <h3 class="title">Información de Recorrido</h3>
             </div>
             <?php
-                $user_id = wp_get_current_user()->ID;
-                $user_key = 'user_' . $user_id;
-                $cedula_usuario = get_field('cedula_usuario', $user_key);
-                $telefono = get_field('telefono', $user_key);
-                $direccion = get_field('direccion', $user_key);
-                $foto_de_usuario = get_field('foto_de_usuario', $user_key);
+                $id_solicitante = get_field('id_solicitante_recorrido', $post_id);
+                $foto_de_usuario = get_field('foto_de_usuario', 'user_' . $id_solicitante['ID']);
+                $empresa_solicitante_recorrido = get_field('empresa_solicitante_recorrido', $post_id);
+                $fecha_inicio_recorrido = get_field('fecha_inicio_recorrido', $post_id);
+                $hora_inicio_recorrido = get_field('hora_inicio_recorrido', $post_id);
+                $ciudad_inicial_recorrido = get_field('ciudad_inicial_recorrido', $post_id)->ID;
+                $ciudad_inicial_recorrido = get_field('ciudad_para_empresa', $ciudad_inicial_recorrido);
+                $barrio_inicial_recorrido = get_field('barrio_inicial_recorrido', $post_id);
+                $ciudad_final_recorrido = get_field('ciudad_final_recorrido', $post_id)->ID;
+                $ciudad_final_recorrido = get_field('ciudad_para_empresa', $ciudad_final_recorrido);
+                $barrio_final_recorrido = get_field('barrio_final_recorrido', $post_id);
+                
                 $foto_de_usuario = $foto_de_usuario? $foto_de_usuario['url']: URL_ADONITRANSPLUG."assets/images/profile.jpg";
-                $user_roles = $current_user->roles;
-                $user_role = !empty($user_roles) ? $user_roles[0] : '';
             ?>
             <form id="conductor-form" method="post" class="formplug" autocomplete="off">
+
+                <input type="hidden" name="post_id" value="<?= $post_id ?>">
                 <div class="trayecto_info">
                     <div class="column-1">
                         <div class="wrap profile_photo">
-                            <img id="profile-photo-preview" data-original="<?= $foto_de_usuario; ?>" src="<?= $foto_de_usuario; ?>" alt="<?= esc_attr(get_user_meta($user_id, 'first_name', true)); ?>">
+                            <img id="profile-photo-preview" data-original="<?= $foto_de_usuario; ?>" src="<?= $foto_de_usuario; ?>" >
                         </div>
                         <div class="wrap profile_info_user">
-                            <input type="hidden" id="user-id" name="user-id" value="<?= esc_attr($user_id); ?>">
-                            <input type="hidden" name="select_rolesusuario" value="<?= esc_attr($user_role); ?>">
                             <?php wp_nonce_field('create_user_action', 'create_user_nonce'); ?>
                             <div class="wrap">
                                 <label for="user_name">Usuario</label>
-                                <h4>Yuli Espinosa</h4>
+                                <h4><?= $id_solicitante['user_firstname']." ".$id_solicitante['user_lastname'] ?></h4>
                             </div>
                             <div class="wrap">
                                 <label for="user_company">Empresa</label>
-                                <h4>Cartón Colombia</h4>
+                                <h4><?= $empresa_solicitante_recorrido->post_title ?></h4>
                             </div>
                         </div>
                     </div>
@@ -59,12 +63,12 @@
                         <div class="wrap trayecto">
                             <div class="trayecto_user">
                                 <label for="user-destinoi"><i class="icofont-save"></i> Origen:</label>
-                                <input type="text" id="user-destinoi" name="user-destinoi" value="<?= $direccion; ?>">
-                                <input class="time_user" type="text" id="user-horainicio" name="user-horainicio" value="8:30am">
+                                <input type="text" id="user-destinoi" name="user-destinoi" value="<?= $ciudad_inicial_recorrido." - ".$barrio_inicial_recorrido; ?>">
+                                <input class="time_user" type="text" id="user-horainicio" name="user-horainicio" value="<?= $hora_inicio_recorrido ?>">
                             </div>
                             <div class="trayecto_user">
                                 <label for="user-destinoi"><i class="icofont-save"></i> Destino:</label>
-                                <input type="text" id="user-destinof" name="user-destinof" value="<?= $direccion; ?>">
+                                <input type="text" id="user-destinof" name="user-destinof" value="<?= $ciudad_final_recorrido." - ".$barrio_final_recorrido; ?>">
                             </div>
                         </div>
                     </div>
@@ -72,22 +76,52 @@
                     <div class="column-2">
                         <div class="wrap trayecto_acciones">
                             <div class="trayecto_bottons binicio">
-                                <button>Punto de inicio</button>
-                                <p>8:30 a.m</p>
+                                <a href="#" class="btn button save-info">Guardar Informacion</a>
+                                <p>Hora de Inicio: 8:30 a.m</p>
                             </div>
                             <div class="trayecto_bottons bmedio">
-                                <button>Inicia el recorrido</button>
-                                <p>8:40 a.m</p>
+                                <!-- <button>Inicia el recorrido</button>
+                                <p>8:40 a.m</p> -->
                             </div>
                             <div class="trayecto_bottons bfinal">
-                                <button>Finaliza el recorrido</button>
-                                <p>9:55 a.m</p>
+                                <a href="#" class="btn button end-recorrido">Finalizar Recorrido</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="trayecto_finalizar">
+
+                <div class="wrap trayecto_finalizar">
                     <h3 class="titulo">Finaliza el Servicio</h3>
+
+                    <div id="wrap-peajes" class="wrap wrap-fanjas">
+                        <h5>Añadir Pasajero Adicional</h5>
+
+                        <div id="clonar-peaje" style="display:none">
+
+                            <div class="franja show">
+                                <div class="franja_item">
+                                    <label for="">Nombre del Peaje</label>
+                                    <input type="text" name="nomb_peaje[]" placeholder="Nombre Peaje">
+                                </div>
+                                <div class="franja_item">
+                                    <label for="">Valor del Peaje</label>
+                                    <input type="text" name="valor_peaje[]" placeholder="Valor del peaje Peaje">
+                                </div>
+                                <div class="franja_item">
+                                    <label for="">Comprobante de pago</label>
+                                    <input type="file" name="comprobante_pago_peaje[]" accept="image/*">
+                                </div>
+
+                                <button type="button" class="button remove">Eliminar Peaje</button>
+                            </div>         
+                        </div>
+
+                        <div id="wrap-peaje" class="wrap-franja">                            
+                        </div>
+
+                        <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir</a>
+                    </div>
+
                     <div class="trayecto_peajes">
                         <h4>Ruta con peajes?</h4>
                         <div class="peaje_option">
@@ -116,9 +150,7 @@
                             <p>Recorrido 100587 CL - PL - CL <span>$35.000</span></p>
                         </div>
                     </div>
-                </div>
-            
-                
+                </div>   
             </form>
         </div> 
     </div>

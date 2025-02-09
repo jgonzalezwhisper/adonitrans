@@ -8,7 +8,7 @@
             <h4 class="subtitulo">¡Bienvenido a la forma más fácil y cómoda de moverte! 🚗💨 ¡Sube a bordo y disfruta del camino! 🚀</h4>
         </div>
 
-        <!-- <div class="wrap wrap-acciones ">
+        <div class="wrap wrap-acciones ">
             <div class="botones">
 
                 <?php
@@ -57,5 +57,5 @@
                     <a href="<?= wp_logout_url($redirect_url); ?>"><i class="icofont-logout"></i> <span>Cerrar sesión</span> </a>
                 </li>
             </div>
-        </div> -->
+        </div>
 </div>

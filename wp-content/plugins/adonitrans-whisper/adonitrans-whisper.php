@@ -114,6 +114,12 @@ function enqueue_custom_login_scripts() {
                 'plugin_url' => URL_ADONITRANSPLUG,
             ));
 
+            wp_enqueue_script('adoni-conductor-js', URL_ADONITRANSPLUG . '/assets/js/conductor.js', array('jquery'), null, true);
+            wp_localize_script('adoni-conductor-js', 'conductorAjax', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'plugin_url' => URL_ADONITRANSPLUG,
+            ));
+
             wp_enqueue_script('adoni-usuarios-js', URL_ADONITRANSPLUG . '/assets/js/usuarios.js', array('jquery'), null, true);
             wp_localize_script('adoni-usuarios-js', 'usuarioAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
@@ -205,6 +211,39 @@ function get_mails_role($roles = []) {
     ]);
 
     return wp_list_pluck($usuarios, 'user_email');
+}
+
+function obtener_usuarios_colaborador($empresa_id, $usuario_actual_id = null) {
+    if (!is_numeric($empresa_id)) {
+        return []; // Validación para evitar consultas incorrectas
+    }
+
+    $args = [
+        'role'       => 'colaborador',
+        'meta_key'   => 'empresa_asociada_usuario',
+        'meta_value' => $empresa_id,
+        'fields'     => ['ID'] // Solo obtenemos el ID para optimizar la consulta
+    ];
+
+    if (!empty($usuario_actual_id) && is_numeric($usuario_actual_id)) {
+        $args['exclude'] = [$usuario_actual_id]; // Excluir al usuario actual si está definido
+    }
+
+    $usuarios = get_users($args);
+    $usuarios_array = [];
+
+    foreach ($usuarios as $usuario) {
+        $first_name = get_user_meta($usuario->ID, 'first_name', true);
+        $last_name  = get_user_meta($usuario->ID, 'last_name', true);
+        $nombre_completo = trim($first_name . ' ' . $last_name);
+
+        $usuarios_array[] = [
+            'id'   => $usuario->ID,
+            'name' => $nombre_completo ?: 'Sin Nombre'
+        ];
+    }
+
+    return $usuarios_array;
 }
 
 function send_email_token($to, $subject, $message_content) {
