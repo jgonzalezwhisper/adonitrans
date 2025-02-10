@@ -107,14 +107,14 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                         <td class="<?= str_replace(' ', '-', strtolower($estado_recorrido)); ?>"><?= $estado_recorrido; ?></td>
                         <td>
                             <div class="acciones">
-                                <?php if ( $user_role !== 'conductor' ): ?>
+                                <?php if ( $user_role !== 'conductor' && $user_role !== 'colaborador' ): ?>
                                     <button class="accion edit-recorrido" data-id="<?= get_the_ID(); ?>">Editar</button>
                                 <?php endif ?>
-                                <?php if ($user_role !== 'conductor'): ?>
+                                <?php if ($user_role !== 'conductor' && $user_role !== 'colaborador'): ?>
                                     <button class="accion delete-recorrido" data-id="<?= get_the_ID(); ?>">Eliminar</button>
                                 <?php endif ?>
 
-                                <?php if ($user_role === 'conductor' && $estado_recorrido === 'Pendiente'): ?>
+                                <?php if ($user_role === 'conductor' && $estado_recorrido === 'Conductor Asignado'): ?>
                                     <button class="accion iniciar-recorrido" data-id="<?= get_the_ID(); ?>">Iniciar</button>
                                 <?php endif ?>
 
@@ -310,7 +310,7 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                     <?php endif ?>
                 <?php endif ?>
                 <div id="wrap-puntos-recorrido" class="wrap wrap-fanjas">
-                    <h5>Añadir Punto Recorrido</h5>
+                    <h5>Añadir Parada</h5>
                     <!-- Plantilla oculta -->
                     <div id="plantilla-recorrido" style="display: none;">
                         <div class="franja">
@@ -361,7 +361,7 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                             </div>
                         </div>
                     </div>
-                    <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir Punto</a>
+                    <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir Parada</a>
                 </div>
 
                 <?php

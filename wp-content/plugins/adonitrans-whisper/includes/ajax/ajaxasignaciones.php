@@ -279,7 +279,7 @@ function create_asignacion_function() {
         if (is_wp_error($post_id)) {
             wp_send_json_error(['message' => 'Error al crear la asignación.']);
         }
-    }
+    }    
 
     // Guardar campos personalizados usando ACF
     update_field('id_conductor_asignado', $id_conductor_asignado, $post_id);
@@ -316,6 +316,35 @@ function create_asignacion_function() {
             } 
         }
     }
+
+    /*MENSAJE A CONDUCTOR CC OPERADORES*/
+    $conductor      = get_field('id_conductor_recorrido', $post_id);
+    $nomb_conductor = $first_name;
+    $mail_conductor = $email;
+
+    // Definir el asunto y cuerpo del mensaje
+    $subject = 'Nueva Asignación de Recorrido en AdoniGo';
+    $message = [
+        sprintf('<h2>Hola <strong>%s</strong>,</h2>', esc_html($first_name)),
+        '<p style="text-align:left;">Los datos de tu asignación son:</p>',
+        sprintf('<p style="text-align:left;">ID Asignación: <strong>%s</strong></p>', esc_html($post_id)),
+        sprintf('<p style="text-align:left;">Fecha Inicio: <strong>%s</strong></p>', esc_html($inicio_semana_asignacion)),
+        sprintf('<p style="text-align:left;">Fecha Fin: <strong>%s</strong></p>', esc_html($fin_semana_asignacion)),
+        '<br><br>'
+    ];
+    foreach ($asignaciones as $asignacion) {
+        $message[] = '<h3 style="text-align:left;">Asignación</h3>';
+        $message[] = sprintf('<p style="text-align:left;">Día Inicio: <strong>%s</strong></p>', esc_html($asignacion['dia_inicio_de_asignacion']));
+        $message[] = sprintf('<p style="text-align:left;">Día Fin: <strong>%s</strong></p>', esc_html($asignacion['dia_fin_de_asignacion']));
+        $message[] = sprintf('<p style="text-align:left;">Franja Horaria: <strong>%s</strong></p>', esc_html($asignacion['franja_horaria_asignacion']));
+        $message[] = sprintf('<p style="text-align:left;">Placa Vehículo: <strong>%s</strong></p>', esc_html($asignacion['placa_vehiculo']));
+        $message[] = '<br><br>'; 
+    }
+
+    /*Correo al conductor y operadores de la empresa adonigo*/
+    $roles = ['operaciones_1', 'operaciones_2'];
+    $adonicc = get_mails_role($roles);
+    send_email_notification($subject, $message, $mail_conductor, $adonicc);
 
     // Devolver respuesta de éxito
     wp_send_json_success(['message' => 'Asignación ' . $accion2 . ' exitosamente']);

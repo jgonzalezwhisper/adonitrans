@@ -257,7 +257,7 @@ function create_recorrido_function() {
             update_field('placa_vehiculo_recorrido', $dato_vehiculo['placa_vehiculo'], $post_id);
         }
 
-         /*MENSAJE A CONDUCTOR CC OPERADORES*/
+        /*MENSAJE A CONDUCTOR CC OPERADORES*/
         $usuario        = get_field('id_solicitante_recorrido', $post_id);
         $nomb_usuario   = $usuario['user_firstname']." ".$usuario['user_lastname'];
         $mail_usuario   = $usuario['user_email'];
