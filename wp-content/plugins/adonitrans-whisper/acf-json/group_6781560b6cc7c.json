@@ -163,7 +163,8 @@
                 "id": ""
             },
             "choices": {
-                "Pendiente": "Pendiente",
+                "Por Asignar": "Por Asignar",
+                "Conductor Asignado": "Conductor Asignado",
                 "En curso": "En curso",
                 "Finalizado": "Finalizado",
                 "Cancelado": "Cancelado"
@@ -842,5 +843,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1738895421
+    "modified": 1739193780
 }
