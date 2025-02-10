@@ -56,3 +56,5 @@ docker-compose.yml
 php.ini
 /.htaccess
 my.cnf
+db_data
+apache82
