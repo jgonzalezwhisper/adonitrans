@@ -238,35 +238,36 @@ function create_asignacion_function() {
 
         // Verificar si ya existe un post con el mismo conductor y rango de fechas
         $args = [
-            'post_type'  => 'asignacion',
-            'post_status' => 'publish',
-            'meta_query' => [
+            'post_type'      => 'asignacion',
+            'post_status'    => 'publish',
+            'fields'         => 'ids',
+            'meta_query'     => [
                 'relation' => 'AND',
                 [
-                    'key' => 'id_conductor_asignado',
+                    'key'   => 'id_conductor_asignado',
                     'value' => $id_conductor_asignado,
                     'compare' => '='
                 ],
                 [
-                    'key' => 'inicio_semana_asignacion',
+                    'key'   => 'inicio_semana_asignacion',
                     'value' => $inicio_semana_asignacion,
                     'compare' => '='
                 ],
                 [
-                    'key' => 'fin_semana_asignacion',
+                    'key'   => 'fin_semana_asignacion',
                     'value' => $fin_semana_asignacion,
                     'compare' => '='
                 ]
             ]
         ];
-        
-        $query = new WP_Query($args);
 
-        if ($query->have_posts()) {
-            wp_send_json_error(['message' => 'Ya existe una asignación con este conductor y rango de fechas.']);
+        $existing_posts = get_posts($args);
+
+        if (!empty($existing_posts)) {
+            $existing_post_id = $existing_posts[0]; // Tomar el ID del primer post que coincide
+            wp_send_json_error(['message' => 'Ya existe una asignación con este conductor y rango de fechas. ID Asignación: ' . $existing_post_id]);
             wp_die();
         }
-
 
         $post_data = array(
             'post_type'   => 'asignacion',

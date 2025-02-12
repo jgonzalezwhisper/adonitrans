@@ -1,5 +1,4 @@
 <?php
-
 add_action('wp_ajax_get_rutas', 'func_get_rutas');
 add_action('wp_ajax_nopriv_get_rutas', 'func_get_rutas');
 function func_get_rutas() {
@@ -202,6 +201,9 @@ function create_recorrido_function() {
     $ciudad_inicio = sanitize_text_field($_POST['ciudad_inicio']);
     $nombre_inicio = get_the_title( $ciudad_inicio );
     $barrio_inicio = sanitize_text_field($_POST['barrio_inicio']);
+    $dir_inicial_recorrido = sanitize_text_field($_POST['dir_inicial_recorrido']);
+    $dir_final_recorrido = sanitize_text_field($_POST['dir_final_recorrido']);
+    $comentario_colaborador_inicio_recorrido = sanitize_text_field($_POST['comentario_colaborador_inicio_recorrido']);
     if (!empty($_POST['barrio_zona_inicio'])) {
         $barrio_zona_inicio = sanitize_text_field($_POST['barrio_zona_inicio']);
     }
@@ -214,6 +216,38 @@ function create_recorrido_function() {
     $fecha_inicio_recorrido = sanitize_text_field($_POST['fecha_inicio_recorrido']);
     $hora_inicio_recorrido = sanitize_text_field($_POST['hora_inicio_recorrido']);
     $centro_de_costo = sanitize_text_field($_POST['centro_de_costo']);
+
+    // Validar si ya existe un recorrido con la misma fecha y hora de inicio
+    $args = array(
+        'post_type'  => 'recorrido',
+        'fields'     => 'ids', // Solo obtener los IDs de los posts
+        'meta_query' => array(
+            'relation' => 'AND',
+            array(
+                'key'   => 'fecha_inicio_recorrido',
+                'value' => $fecha_inicio_recorrido,
+                'compare' => '=',
+            ),
+            array(
+                'key'   => 'hora_inicio_recorrido',
+                'value' => $hora_inicio_recorrido,
+                'compare' => '=',
+            ),
+            array(
+                'key'   => 'id_solicitante_recorrido',
+                'value' => $id_solicitante_recorrido,
+                'compare' => '=',
+            ),
+        ),
+    );
+
+    $existing_recorridos = get_posts($args);
+
+    if (!empty($existing_recorridos)) {
+        $existing_post_id = $existing_recorridos[0]; // Tomar el ID del primer post que coincide
+        wp_send_json_error(['message' => 'Ya existe un recorrido creado para la misma fecha y hora de inicio. ID Recorrido: ' . $existing_post_id]);
+        wp_die();
+    }
 
     if ($ciudad_inicio === $ciudad_fin) {
 	    $titulo = "Recorrido $nombre_inicio [$barrio_inicio - $barrio_fin]";
@@ -329,6 +363,9 @@ function create_recorrido_function() {
     update_field('barrio_inicial_recorrido', $barrio_inicio, $post_id);
     update_field('ciudad_final_recorrido', $ciudad_fin, $post_id);
     update_field('barrio_final_recorrido', $barrio_fin, $post_id);
+    update_field('direccion_inicial_recorrido', $dir_inicial_recorrido, $post_id);
+    update_field('direccion_final_recorrido', $dir_final_recorrido, $post_id);
+    update_field('comentario_colaborador_inicio_recorrido', $comentario_colaborador_inicio_recorrido, $post_id);
     update_field('fecha_inicio_recorrido', $fecha_inicio_recorrido, $post_id);
     update_field('hora_inicio_recorrido', $hora_inicio_recorrido, $post_id);
     
@@ -687,8 +724,11 @@ function load_recorrido_data_function() {
         'hora_inicio_recorrido'  => format_time_input(get_field('hora_inicio_recorrido', $post_id)),
         'ciudad_inicio'          => get_field('ciudad_inicial_recorrido', $post_id)->ID,
         'barrio_inicio'          => get_field('barrio_inicial_recorrido', $post_id),
+        'dir_inicial_recorrido'  => get_field('direccion_inicial_recorrido', $post_id),
+        'dir_final_recorrido'    => get_field('direccion_final_recorrido', $post_id),
         'ciudad_fin'             => get_field('ciudad_final_recorrido', $post_id)->ID,
         'barrio_fin'             => get_field('barrio_final_recorrido', $post_id),
+        'comentario_colaborador_inicio_recorrido'   => get_field('comentario_colaborador_inicio_recorrido', $post_id),
         'estado_del_recorrido'   => str_replace(' ', '-', strtolower(get_field('estado_del_recorrido', $post_id))),
     ];
     $response['usuarios_adicionales_recorrido'] = get_field('usuarios_adicionales_recorrido', $post_id);
@@ -725,6 +765,71 @@ function load_recorrido_data_function() {
 
     // Devolver la respuesta en formato JSON
     wp_send_json_success($response);
+}
+
+function validar_tiempo_cancelacion($post_id) {
+    // Obtener los valores de ACF para la fecha y hora de inicio del recorrido
+    $fecha_inicio = get_field('fecha_inicio_recorrido', $post_id);
+    $hora_inicio = get_field('hora_inicio_recorrido', $post_id);
+
+    // Validar que ambos valores existan
+    if (!$fecha_inicio || !$hora_inicio) {
+        return false;
+    }
+
+    // Crear un objeto DateTime con la fecha y hora del recorrido en la zona horaria de Bogotá
+    $fecha_hora_inicio = DateTime::createFromFormat('d/m/Y h:i:s a', "$fecha_inicio $hora_inicio", new DateTimeZone('America/Bogota'));
+
+    // Si la conversión falla, retornar falso
+    if (!$fecha_hora_inicio) {
+        return false;
+    }
+
+    // Restar 15 minutos al tiempo de inicio del recorrido
+    $fecha_hora_inicio->modify('-15 minutes');
+
+    // Obtener la fecha y hora actual en la misma zona horaria
+    $fecha_hora_actual = new DateTime('now', new DateTimeZone('America/Bogota'));
+
+    // Retornar verdadero si la cancelación se solicita al menos 15 minutos antes del inicio del recorrido
+    return $fecha_hora_actual < $fecha_hora_inicio;
+}
+
+add_action('wp_ajax_cancelar_recorrido_data', 'cancelar_recorrido_data_function');
+add_action('wp_ajax_nopriv_cancelar_recorrido_data', 'cancelar_recorrido_data_function');
+function cancelar_recorrido_data_function() {
+
+    // Verificar el nonce para evitar ataques CSRF
+    if (!isset($_POST['cancelar_recorrido_nonce']) || !wp_verify_nonce($_POST['cancelar_recorrido_nonce'], 'cancelar_recorrido_action')) {
+        wp_send_json_error(['message' => 'Acceso no autorizado.']);
+    }
+
+    // Verificar que la solicitud sea válida
+    if (!isset($_POST['idServicio'], $_POST['motivoCancelacion'])) {
+        wp_send_json_error(['message' => 'Solicitud inválida.']);
+    }
+
+    $post_id = intval($_POST['idServicio']);
+    $motivo  = sanitize_text_field($_POST['motivoCancelacion']);
+
+    if (!$post_id || get_post_type($post_id) !== 'recorrido') {
+        wp_send_json_error(['message' => 'Post no válido o no es un tipo de post recorrido.']);
+    }
+
+    // Validar el tiempo de cancelación
+    if (validar_tiempo_cancelacion($post_id)) {
+        update_field('estado_del_recorrido', 'Cancelado', $post_id);
+        update_field('motivo_cancelacion_recorrido', $motivo, $post_id);
+        wp_send_json_success([
+            'message' => 'La cancelación se ha procesado correctamente.',
+            'data'    => [
+                'fecha_inicio_recorrido' => get_field('fecha_inicio_recorrido', $post_id),
+                'hora_inicio_recorrido'  => get_field('hora_inicio_recorrido', $post_id),
+            ]
+        ]);
+    } else {
+        wp_send_json_error(['message' => 'Puedes cancelar tu recorrido hasta 15 minutos antes de que Inicie.']);
+    }
 }
 
 add_action('wp_ajax_ver_recorrido_data', 'ver_recorrido_data_function');

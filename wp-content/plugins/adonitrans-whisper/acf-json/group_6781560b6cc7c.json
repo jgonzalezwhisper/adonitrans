@@ -284,6 +284,27 @@
             "append": ""
         },
         {
+            "key": "field_67ab6cb941cd4",
+            "label": "Dirección Inicial Recorrido",
+            "name": "direccion_inicial_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_67815a963f19c",
             "label": "Ciudad Final Recorrido",
             "name": "ciudad_final_recorrido",
@@ -316,6 +337,27 @@
             "key": "field_67815aa23f19d",
             "label": "Barrio Final Recorrido",
             "name": "barrio_final_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_67ab6cd841cd5",
+            "label": "Dirección Final Recorrido",
+            "name": "direccion_final_recorrido",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -580,8 +622,29 @@
         },
         {
             "key": "field_67815acc3f1a0",
-            "label": "Comentarios Conductor Recorrido",
-            "name": "comentarios_conductor_recorrido",
+            "label": "Comentario Conductor Inicio Recorrido",
+            "name": "comentario_conductor_inicio_recorrido",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_67ab80858fcda",
+            "label": "Comentario Conductor Final Recorrido",
+            "name": "comentario_conductor_final_recorrido",
             "aria-label": "",
             "type": "textarea",
             "instructions": "",
@@ -601,8 +664,29 @@
         },
         {
             "key": "field_67815ae03f1a1",
-            "label": "Comentarios Colaborador Empresa Recorrido",
-            "name": "comentarios_colaborador_empresa_recorrido",
+            "label": "Comentario Colaborador Inicio Recorrido",
+            "name": "comentario_colaborador_inicio_recorrido",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_67ab80988fcdb",
+            "label": "Comentario Colaborador Final Recorrido",
+            "name": "comentario_colaborador_final_recorrido",
             "aria-label": "",
             "type": "textarea",
             "instructions": "",
@@ -823,6 +907,27 @@
                     "parent_repeater": "field_67a57015211cc"
                 }
             ]
+        },
+        {
+            "key": "field_67aa98cc26b01",
+            "label": "Motivo Cancelacion Recorrido",
+            "name": "motivo_cancelacion_recorrido",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "allow_in_bindings": 0,
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
         }
     ],
     "location": [
@@ -843,5 +948,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1739193780
+    "modified": 1739292840
 }

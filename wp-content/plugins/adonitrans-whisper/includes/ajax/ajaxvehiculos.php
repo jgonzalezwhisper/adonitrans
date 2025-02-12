@@ -34,6 +34,28 @@ function create_vehiculo_function() {
 
     }else{
 
+        // Validar si ya existe un vehículo con la misma placa o título
+        $existing_post = get_posts(array(
+            'post_type'      => 'vehiculo',
+            'meta_query'     => array(
+                'relation' => 'OR',
+                array(
+                    'key'   => 'placa_vehiculo',
+                    'value' => $placa_vehiculo,
+                ),
+            ),
+            'title'          => $placa_vehiculo, // Buscar por título
+            'fields'         => 'ids', // Solo obtener los IDs
+            'posts_per_page' => 1,
+        ));
+
+        if ($existing_post) {
+            wp_send_json_error([
+                'message' => 'Ya existe un vehículo con esta placa o título. ID Vehículo: '.$existing_post[0],
+            ]);
+            wp_die();
+        }
+
         // Crear el post
         $post_data = array(
             'post_type'   => 'vehiculo',
@@ -194,7 +216,6 @@ function load_vehiculo_data_function() {
         'conductor_del_vehiculo'            => get_post_meta($post_id, 'conductor_del_vehiculo', true),
     ]);
 }
-
 
 // Obtener lista de vehículos
 add_action('wp_ajax_obtener_vehiculos', function () {

@@ -121,10 +121,16 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                                 <?php if ($user_role === 'conductor' && $estado_recorrido === 'En curso'): ?>
                                     <button class="accion panel-recorrido" data-id="<?= get_the_ID(); ?>">Continuar Servicio</button>
                                 <?php endif ?>
-                                
-                                <?php if ($estado_recorrido !== 'Por Asignar' && $estado_recorrido !== 'Cancelado'): ?>
-                                <button class="accion ver-recorrido" data-id="<?= get_the_ID(); ?>">Ver</button>
+
+                                <?php
+                                    $roles_cancelar = ['administrator', 'empresa', 'operaciones_1', 'operaciones_2', 'colaborador'];
+                                    $estad_cancelar = ['Por Asignar', 'Conductor Asignado'];
+                                ?>
+                                <?php if (in_array($user_role,  $roles_cancelar) && in_array($estado_recorrido,  $estad_cancelar)): ?>
+                                    <button class="accion cancelar-recorrido" data-id="<?= get_the_ID(); ?>">Cancelar</button>
                                 <?php endif; ?>
+                                
+                                <button class="accion ver-recorrido" data-id="<?= get_the_ID(); ?>">Ver</button>
                             </div>
                         </td>
                     </tr>
@@ -243,44 +249,66 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                 <input type="hidden" id="id_solicitante_recorrido_col" name="id_solicitante_recorrido" value="<?= $user_id ?>">
                 <?php endif ?>
                 <div class="wrap"></div>
-                <div class="wrap wrap-2">
-                    <label for="ciudad_inicio">Ciudad Inicio</label>
-                    <select id="ciudad_inicio" name="ciudad_inicio" required>
-                        <option value="">Selecciona una ciudad</option>
-                        <?php if (!empty($resultados)): ?>
-                        <?php foreach ($resultados as $ciudad): ?>
-                        <option value="<?php echo esc_attr($ciudad['id']); ?>">
-                            <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
-                        </option>
-                        <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
+
+                <div class="wrap wrap-3">
+
+                    <div class="wrap">
+                        <label for="ciudad_inicio">Ciudad Inicio</label>
+                        <select id="ciudad_inicio" name="ciudad_inicio" required>
+                            <option value="">Selecciona una ciudad</option>
+                            <?php if (!empty($resultados)): ?>
+                            <?php foreach ($resultados as $ciudad): ?>
+                            <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
+                            </option>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                    <div class="wrap">
+                        <label for="barrio_inicio">Barrio Inicio</label>
+                        <select id="barrio_inicio" name="barrio_inicio" disabled required>
+                            <option value="">Selecciona un Barrio</option>
+                        </select>
+                    </div>
+                    <div class="wrap">
+                        <label for="dir_inicial_recorrido">Dirección Inicio</label>
+                        <input type="text" id="dir_inicial_recorrido" name="dir_inicial_recorrido" disabled required>
+                    </div>                    
                 </div>
-                <div class="wrap wrap-2">
-                    <label for="barrio_inicio">Barrio Inicio</label>
-                    <select id="barrio_inicio" name="barrio_inicio" disabled required>
-                        <option value="">Selecciona un Barrio</option>
-                    </select>
+
+                <div class="wrap wrap-3">
+
+                    <div class="wrap">
+                        <label for="ciudad_fin">Ciudad Fin</label>
+                        <select id="ciudad_fin" name="ciudad_fin">
+                            <option value="">Selecciona una ciudad</option>
+                            <?php if (!empty($resultados)): ?>
+                            <?php foreach ($resultados as $ciudad): ?>
+                            <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
+                            </option>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                    <div class="wrap">
+                        <label for="barrio_fin">Barrio Fin</label>
+                        <select id="barrio_fin" name="barrio_fin">
+                            <option value="">Selecciona un Barrio</option>
+                        </select>
+                    </div>
+                    <div class="wrap">
+                        <label for="dir_final_recorrido">Dirección Final</label>
+                        <input type="text" id="dir_final_recorrido" name="dir_final_recorrido">
+                    </div>                    
                 </div>
-                <div class="wrap wrap-2">
-                    <label for="ciudad_fin">Ciudad Fin</label>
-                    <select id="ciudad_fin" name="ciudad_fin" disabled required>
-                        <option value="">Selecciona una ciudad</option>
-                        <?php if (!empty($resultados)): ?>
-                        <?php foreach ($resultados as $ciudad): ?>
-                        <option value="<?php echo esc_attr($ciudad['id']); ?>">
-                            <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
-                        </option>
-                        <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
+
+                <div class="wrap">
+                    <label for="comentario_colaborador_inicio_recorrido">Comentarios sobre el servicio</label>
+                    <textarea id="comentario_colaborador_inicio_recorrido" name="comentario_colaborador_inicio_recorrido"></textarea>
                 </div>
-                <div class="wrap wrap-2">
-                    <label for="barrio_fin">Barrio Fin</label>
-                    <select id="barrio_fin" name="barrio_fin" disabled required>
-                        <option value="">Selecciona un Barrio</option>
-                    </select>
-                </div>
+                
                 <?php if ($user_role === 'administrator' || $user_role === 'operaciones_1'): ?>
                     <?php
                         $args = [
@@ -485,6 +513,28 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                 </div>
             </div>
             <p id="modal-text"></p>
+        </div>
+    </div>
+
+    <div id="modal-cancelar" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="info-cancelarservicio" class="wrap">
+                <h3>Cancelar Servicio de Recorrido</h3>
+                <p>Describe brevemente el motivo de la cancelación. Esto nos ayudará a mejorar y brindarte una mejor experiencia en el futuro.</p>
+
+                <form id="cancelarServicioForm" class="formplug">
+                    <?php wp_nonce_field('cancelar_recorrido_action', 'cancelar_recorrido_nonce'); ?>
+                    <input type="hidden" id="idServicio" name="idServicio" value="">
+                    <div class="wrap">
+                        <label for="motivoCancelacion">Motivo de la cancelación:</label>
+                        <textarea id="motivoCancelacion" name="motivoCancelacion" rows="4" cols="50" placeholder="Por favor, describe el motivo de la cancelación..." required></textarea>
+                    </div>
+                    <div>
+                        <button class="button button-add" type="submit">Confirmar Cancelación</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

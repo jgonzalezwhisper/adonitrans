@@ -214,6 +214,8 @@ jQuery(document).ready(function($) {
                         selectBarrio.prop('disabled', false).trigger('change');
                         selectBarrioFin.prop('disabled', false).trigger('change');
 
+                        $("#dir_inicial_recorrido").prop('disabled', false);
+
                         actualizarSelects($('#wrap-usuarios-adicionales .franja .barrio'), response.data);
 
                     } else {
@@ -269,6 +271,7 @@ jQuery(document).ready(function($) {
                             );
                         });
                         selectBarrioFin.prop('disabled', false).trigger('change');
+                        $("#dir_final_recorrido").prop('disabled', false);
                     } else {
                         // Mostrar un mensaje de error si no hay datos
                         Swal.fire({
@@ -526,6 +529,9 @@ jQuery(document).ready(function($) {
 
                     $("#fecha_inicio_recorrido").val(response.data.fecha_inicio_recorrido);
                     $("#hora_inicio_recorrido").val(response.data.hora_inicio_recorrido);
+                    $("#dir_inicial_recorrido").val(response.data.dir_inicial_recorrido);
+                    $("#dir_final_recorrido").val(response.data.dir_final_recorrido);
+                    $("#comentario_colaborador_inicio_recorrido").val(response.data.comentario_colaborador_inicio_recorrido);
 
                     if ($('#id_solicitante_recorrido').length) {
                         $("#id_solicitante_recorrido").val(response.data.id_solicitante_recorrido).trigger('change');
@@ -794,6 +800,86 @@ jQuery(document).ready(function($) {
         });
     });
 
+    $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .cancelar-recorrido', function(event) {
+        event.preventDefault();
+        let recorridoid = $(this).data('id');
+
+        $("#cancelarServicioForm #idServicio").val(recorridoid);
+        $('#modal-cancelar').fadeIn().css('display', 'flex');
+    });
+
+    $(document).on('submit', '#cancelarServicioForm', function(event) {
+        event.preventDefault(); // Evitar el envío tradicional del formulario
+
+        $('body').addClass('actloader'); // Mostrar un loader (si lo tienes)
+
+        var formData = new FormData(this); // Crear un objeto FormData con los datos del formulario
+        formData.append('action', 'cancelar_recorrido_data');
+
+        $.ajax({
+            url: recorridoAjax.ajaxurl, // URL de la solicitud AJAX
+            method: 'POST',
+            data: formData, // Enviar el objeto FormData
+            processData: false, // No procesar los datos (necesario para FormData)
+            contentType: false, // No establecer el tipo de contenido (necesario para FormData)
+            success: function(response) {
+                $('body').removeClass('actloader'); // Ocultar el loader
+
+                if (response.success) {
+
+                    // Cerrar la modal y limpiar el formulario
+                    $('#modal-cancelar').fadeOut();
+                    $('#cancelarServicioForm')[0].reset();
+
+                    // Mostrar mensaje de éxito
+                    Swal.fire({
+                        title: '¡Cancelación exitosa!',
+                        text: 'El servicio ha sido cancelado correctamente.',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => { 
+                        var fileUrl = recorridoAjax.plugin_url + "includes/parts/panel/recorrido.php";
+
+                        $.ajax({
+                            url: fileUrl,
+                            method: "POST",
+                            data: {
+                                action: 'render_html_panel',
+                            },
+                            success: function(response) {
+                                $("#informacion").html(response);
+                                initRecorridos();
+                            },
+                            error: function() {
+                                $("#informacion").html("<p>Error al cargar el contenido. Intenta nuevamente.</p>");
+                            }
+                        });
+                    });
+
+
+                } else {
+                    // Mostrar mensaje de error desde la respuesta
+                    Swal.fire({
+                        title: 'Algo ha ocurrido!',
+                        text: response.data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function() {
+                $('body').removeClass('actloader'); // Ocultar el loader
+                // Mostrar mensaje de error genérico
+                Swal.fire({
+                    title: '¡Error!',
+                    text: 'Hubo un problema al procesar la solicitud. Por favor intenta nuevamente.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                });
+            }
+        });
+    });
+
     $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .ver-recorrido', function(event) {
         event.preventDefault();
         let recorridoid = $(this).data('id');
@@ -962,14 +1048,13 @@ jQuery(document).ready(function($) {
 
             }
         });
-
-
     });
 
-    $(document).on('click', '.close, #modal-recorrido', function(event) {
+    $(document).on('click', '.close, #modal-recorrido, #modal-cancelar', function(event) {
         if (event.target === this) {
             $('#modal-recorrido p span').text('');
-            $('#modal-recorrido').fadeOut().css('display', 'none');
+            $idmod = $(this).closest('.modal');
+            $idmod.fadeOut().css('display', 'none');
         }
     });
 
@@ -1009,6 +1094,15 @@ jQuery(document).ready(function($) {
                 hora_inicio_recorrido: {
                     required: true,
                 },
+                dir_inicial_recorrido: {
+                    required: true,
+                },
+                dir_final_recorrido: {
+                    required: true,
+                },
+                comentario_colaborador_inicio_recorrido: {
+                    required: true,
+                },
                 centro_de_costo: {
                     select2Required: true,
                 }
@@ -1021,6 +1115,9 @@ jQuery(document).ready(function($) {
                 barrio_fin: "Este dato es obligatorio",
                 fecha_inicio_recorrido: "Este dato es obligatorio",
                 hora_inicio_recorrido: "Este dato es obligatorio",
+                dir_inicial_recorrido: "Este dato es obligatorio",
+                dir_final_recorrido: "Este dato es obligatorio",
+                comentario_colaborador_inicio_recorrido: "Este dato es obligatorio",
                 centro_de_costo: "Este dato es obligatorio",
             },
             submitHandler: function(form) {

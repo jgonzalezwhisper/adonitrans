@@ -226,6 +226,18 @@
 
 			}
 
+			&.wrap.wrap-3 {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+
+				.wrap {
+					flex: 1 1 calc(33.333% - 10px);
+					box-sizing: border-box;
+				}
+
+			}
+
 		}
 
 		.wrap-2 {
@@ -348,7 +360,7 @@
 
 		}
 
-		.wrap-acciones{
+		.wrap-acciones {
 			width: 100%;
 		}
 
@@ -762,6 +774,24 @@
 
 			&:hover {
 				background-color: $color3;
+			}
+
+		}
+
+		&#modal-cancelar {
+			.modal-content {
+				padding: 45px;
+
+				h3 {
+					margin-top: 0;
+					font-weight: 700;
+					text-transform: uppercase;
+				}
+
+				textarea {
+					resize: none;
+				}
+
 			}
 
 		}
