@@ -1,10 +1,9 @@
 jQuery(document).ready(function($) {
 
+
     /*FRANJAS DE ASIGNACION*/
     $(document).on('click', '#wrap-peajes .button-add', function(e) {
         e.preventDefault();
-
-        console.log("Entra");
 
         var franjaCount = $('#wrap-peajes .franja').length;
         var newRow = $('#clonar-peaje .franja').clone();
@@ -32,16 +31,74 @@ jQuery(document).ready(function($) {
         var $wrapFranjas = $('#wrap-peaje');
         var $franja = $(this).closest('.franja');
 
-        if ($wrapFranjas.find('.franja').length > 1) {
-            $franja.remove();
-        } else {
-            Swal.fire({
-                icon: 'warning',
-                title: 'No se puede eliminar',
-                text: 'Debe haber al menos una franja horaria configurada',
-                confirmButtonText: 'Entendido'
-            });
+        $franja.remove();
+    });
+
+    /*ACCIONES BOTONES*/
+    $(document).ready(function() {
+        let tiempoEspera; // Declarar la variable en un ámbito superior
+        let contadorInterval;
+        let startTime;
+        let isWaitingPeriod;
+
+        function startTimer() {
+            startTime = new Date();
+            isWaitingPeriod = true;
+            $('.contador').css('color', 'red');
+            contadorInterval = setInterval(updateTimer, 1000);
         }
+
+        function stopTimer() {
+            clearInterval(contadorInterval);
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = Math.floor((now - startTime) / 1000); // Diferencia en segundos
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+
+            // Formatear el tiempo para mostrarlo en el contador
+            const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            $('.contador').text(formattedTime);
+
+            // Cambiar el color del contador después de que pase el tiempo de espera
+            if (isWaitingPeriod && diff >= tiempoEspera * 60) {
+                $('.contador').css('color', 'green');
+                isWaitingPeriod = false;
+            }
+        }
+
+        function calculateAndSaveTime() {
+            const now = new Date();
+            const diff = Math.floor((now - startTime) / 1000); // Diferencia en segundos
+            const totalMinutes = Math.ceil(diff / 60); // Redondear hacia arriba
+
+            // Guardar el tiempo calculado en el campo hidden
+            $('#tiempo_calculado').val(totalMinutes);
+        }
+
+        $(document).on('click', '#conductor-form .button:not(.save-info)', function(e) {
+            e.preventDefault();
+
+            // Obtener el valor de tiempo_espera desde un campo oculto
+            tiempoEspera = parseInt($('input[name="tiempo_espera"]').val(), 10); // Cambia esto según tu campo oculto
+            if (isNaN(tiempoEspera)) {
+                tiempoEspera = 1; // Valor por defecto para pruebas
+            }
+
+            const action = $(this).data('action');
+
+            if (action === 'llegada') {
+                $("#wrap-contador-espera").show();
+                $("#conductor-form .button[data-action='cancelar']").hide();
+                $(this).hide();
+                startTimer();
+            } else if (action === 'iniciar') {
+                stopTimer();
+                calculateAndSaveTime();
+            }
+        });
     });
 
     $(document).on('click', '#conductor-form .save-info', function(e) {

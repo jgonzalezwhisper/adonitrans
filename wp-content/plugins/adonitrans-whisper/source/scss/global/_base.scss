@@ -268,7 +268,7 @@
 		&:focus {
 			background-color: $secondary-color;
 			color: #000;
-			margin-left: 10px;
+			transform: translateY(-5px);
 		}
 
 		&.button-remove {
@@ -297,8 +297,8 @@
 			color: #fff;
 
 			&:hover {
-				background: #086ACF;
-				margin-left: 10px;
+				background: #FCD722;
+				transform: translateY(-5px);
 			}
 
 			i {
@@ -318,7 +318,7 @@
 
 			&:hover {
 				background: #086ACF;
-				margin-top: -5px;
+				transform: translateY(-5px);
 				color: #fff;
 			}
 
@@ -642,7 +642,7 @@
 				display: block;
 				font-weight: 700;
 				margin-bottom: 5px;
-				font-size: 18px;
+				font-size: 16px;
 			}
 
 			.franja_item {

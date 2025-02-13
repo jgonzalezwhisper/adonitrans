@@ -13,6 +13,7 @@
   .wrap-gestion-usuarios {
     display: none;
   }
+
 }
 
 .adonitrans-plug {
@@ -61,6 +62,7 @@
       border-radius: 7px;
       cursor: pointer;
     }
+
   }
 
   table.table-adoni {
@@ -76,7 +78,9 @@
           font-size: 17px;
           border-right: 1px solid rgba(255, 255, 255, 0.4);
         }
+
       }
+
     }
 
     tbody {
@@ -97,97 +101,158 @@
         td:nth-child(2) {
           font-weight: 600;
         }
+
       }
+
     }
+
   }
+
 }
+
 /***DRIVERS PANEL****/
-.wrap-gestion-conductor{
-  #conductor-form{
+.wrap-gestion-conductor {
+  #conductor-form {
     margin-top: 60px;
-    .trayecto_info{
+
+    #wrap-contador-espera {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 35px;
+      width: 100%;
+      font-size: 26px;
+      font-weight: 600;
+      font-family: 'POPPINS';
+    }
+
+    .trayecto_info {
       width: 100%;
       display: flex;
-    }
-    .column-1{
-      width: 33%;
-      display: flex;
-      align-items: center;
-      border-right: 1px solid rgba(0,0,0,.1);
 
-      .profile_photo{
-        text-align: center;
-        img{
-          width: 150px;
-        border-radius: 50%;
+      .trayecto_user {
+        line-height: 1.3;
+        gap: 5px;
+        display: flex;
+        flex-direction: column;
+
+        p {
+          margin: 0;
         }
+
       }
-    }
-    .column-2{
-      padding-left: 20px;
-      border-right: 1px solid rgba(0,0,0,.1);
-      width: 30%;
-      &:last-child{
-        border: none;
+
+      .column {
+        width: 33%;
+        display: flex;
+        flex: 1;
+        align-items: center;
+        border-right: 1px solid rgba(0, 0, 0, .1);
+
+        &:nth-child(1) {
+          .profile_photo {
+            text-align: center;
+
+            img {
+              width: 150px;
+              height: 150px;
+              border-radius: 50%;
+            }
+
+          }
+
+        }
+
+        &:nth-child(2) {
+          background-color: #fbfbfb;
+        }
+
+        &:nth-child(2),
+        &:nth-child(3) {
+          padding-left: 20px;
+        }
+
       }
+
     }
-    .profile_info_user{
-      .wrap{
-        label{
+
+    .profile_info_user {
+      .wrap {
+        label {
           font-size: 16px;
           font-weight: 800;
           text-decoration: underline;
           color: #086acf;
           margin: 0;
         }
-        h4{
+
+        h4 {
           margin: 5px 0 15px;
           font-weight: 600;
           font-size: 20px;
         }
+
       }
+
     }
-    .trayecto_user{
-      label{
+
+    .trayecto_user {
+      label {
         font-weight: 700;
         letter-spacing: 0;
         color: #0054ae;
         font-size: 19px;
-        i{
+
+        i {
           position: relative;
           top: 5px;
           right: 0;
           font-size: 15px;
           padding-right: 15px;
         }
+
       }
-      input{
+
+      input {
         width: 100%;
         border: none;
         box-shadow: none;
         padding: 5px 20px;
-        &.time_user{
+
+        &.time_user {
           color: #777;
           font-weight: 600;
           font-size: 15px;
         }
+
       }
-      &:last-child{
+
+      &:last-child {
         margin-top: 25px;
       }
+
     }
-    .trayecto_acciones{
-      .trayecto_bottons{
+
+    .trayecto_acciones {
+      .trayecto_bottons {
         display: flex;
-        justify-content: space-between;
-        margin-bottom: 25px;
-        p{
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 0;
+
+        .button {
+          margin: 0;
+        }
+
+        p {
           font-size: 21px;
           padding: 0;
           margin: 0;
           font-weight: 700;
         }
-        button{
+
+        button {
           background: #086acf;
           padding: 10px 20px;
           border: 2px solid #000;
@@ -197,38 +262,80 @@
           font-size: 15px;
           border-radius: 10px;
 
-          &:hover{
-            background: #777!important;
-            color: #fff!important;
+          &:hover {
+            background: #777 !important;
+            color: #fff !important;
           }
+
         }
+
+        &.bmedio {
+          padding-top: 25px;
+          flex-direction: column;
+
+          h5 {
+            margin: 0;
+          }
+
+          ul {
+            list-style: none;
+            padding: 0;
+
+            li {
+              position: relative;
+              padding-left: 26px;
+
+              &:before {
+                content: "\eed9";
+                font-family: Icofont;
+                position: absolute;
+                top: 0;
+                left: 0;
+                color: green;
+              }
+
+            }
+
+          }
+
+        }
+
       }
-      .trayecto_bottons.binicio{
-        button{
+
+      .trayecto_bottons.binicio {
+        button {
           background: #ffe407;
           color: #000;
         }
+
       }
-      .trayecto_bottons.bmedio{
-        button{
+
+      .trayecto_bottons.bmedio {
+        button {
           background: #55a9ff;
           color: #fff;
         }
+
       }
-      .trayecto_bottons.bfinal{
-        button{
+
+      .trayecto_bottons.bfinal {
+        button {
           background: #3e41fb;
           color: #fff;
         }
+
       }
+
     }
-    .trayecto_finalizar{
-      width: 60%;
+
+    .trayecto_finalizar {
+      width: 90%;
       background: #e3e3e3;
       border-radius: 20px;
       padding: 20px 40px;
       margin: 0 auto;
-      .titulo{
+
+      .titulo {
         text-align: center;
         text-transform: uppercase;
         font-size: 22px;
@@ -236,17 +343,20 @@
         font-weight: 700;
         margin-bottom: 50px;
       }
-      .trayecto_peajes{
+
+      .trayecto_peajes {
         display: flex;
         gap: 20px;
         justify-content: initial;
         align-content: center;
         align-items: center;
-        h4{
+
+        h4 {
           font-weight: 600;
           font-size: 17px;
         }
-        .peaje_option{
+
+        .peaje_option {
           display: flex;
           width: fit-content;
           background: #39bd1e;
@@ -254,60 +364,106 @@
           border-radius: 5px;
           color: #fff;
         }
-        .peaje_option_no{
-            background: #a63d14!important;
-          }
-        .peaje_si_aplica{
+
+        .peaje_option_no {
+          background: #a63d14 !important;
+        }
+
+        .peaje_si_aplica {
           display: inline-grid;
-            input{
-              font-size: 15px;
-              padding: 10px 20px;
-              color: #000;
-              border-radius: 10px;
-              border: 2px solid #39bd1e;
-              background: #fff;
-              margin-bottom: 15px;
-            }
-            label{
-              font-size: 15px;
-              margin-top: 15px;
-              font-weight: 600;
-              letter-spacing: 0;
-            }
+
+          input {
+            font-size: 15px;
+            padding: 10px 20px;
+            color: #000;
+            border-radius: 10px;
+            border: 2px solid #39bd1e;
+            background: #fff;
+            margin-bottom: 15px;
           }
+
+          label {
+            font-size: 15px;
+            margin-top: 15px;
+            font-weight: 600;
+            letter-spacing: 0;
+          }
+
+        }
+
       }
-      .trayecto_comments{
-        label{
+
+      .trayecto_comments {
+        label {
           font-weight: 600;
           font-size: 17px;
         }
+
       }
 
-      .trayecto_total{
-        h4{
+      .trayecto_total {
+        padding: 20px 0;
+
+        h4 {
           font-size: 25px;
           text-transform: uppercase;
-          font-weight: 600;
-          span{
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background-color: #f1f1f1;
+          gap: 20px;
+          padding: 15px;
+
+          span {
             background: #086ACF;
             color: #fff;
             padding: 10px 20px;
             border-radius: 5px;
             margin-left: 15px;
+            font-weight: 500;
           }
+
         }
-        p{
+
+        ul {
+          list-style: none;
+          padding: 0;
+
+          li {
+            position: relative;
+            padding-left: 26px;
+
+            &:before {
+              content: "\eed9";
+              font-family: Icofont;
+              position: absolute;
+              top: 0;
+              left: 0;
+              color: green;
+            }
+
+          }
+
+        }
+
+        p {
           color: #3c3b3b;
           display: flex;
-          span{
+
+          span {
             color: #000;
             font-weight: 600;
             font-size: 18px;
             margin-left: 25px;
           }
+
         }
+
       }
 
     }
+
   }
+
 }

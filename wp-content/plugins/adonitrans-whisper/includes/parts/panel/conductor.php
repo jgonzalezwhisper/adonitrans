@@ -40,10 +40,15 @@
                 $foto_de_usuario = $foto_de_usuario? $foto_de_usuario['url']: URL_ADONITRANSPLUG."assets/images/profile.jpg";
             ?>
             <form id="conductor-form" method="post" class="formplug" autocomplete="off">
-
                 <input type="hidden" name="post_id" value="<?= $post_id ?>">
+                <input type="hidden" name="tiempo_espera" value="1">
+                <div id="wrap-contador-espera" style="display:none;">
+                    <div class="contador">00:00</div>
+                    <a href="#" class="btn button" data-action="iniciar" disabled>Inicio de Ruta</a>
+                    <input type="hidden" name="tiempo_calculado" id="tiempo_calculado" value="">
+                </div>
                 <div class="trayecto_info">
-                    <div class="column-1">
+                    <div class="column column-1">
                         <div class="wrap profile_photo">
                             <img id="profile-photo-preview" data-original="<?= $foto_de_usuario; ?>" src="<?= $foto_de_usuario; ?>" >
                         </div>
@@ -59,32 +64,36 @@
                             </div>
                         </div>
                     </div>
-                    <div class="column-2">
+                    <div class="column column-2">
                         <div class="wrap trayecto">
                             <div class="trayecto_user">
                                 <label for="user-destinoi"><i class="icofont-save"></i> Origen:</label>
-                                <input type="text" id="user-destinoi" name="user-destinoi" value="<?= $ciudad_inicial_recorrido." - ".$barrio_inicial_recorrido; ?>">
-                                <input class="time_user" type="text" id="user-horainicio" name="user-horainicio" value="<?= $hora_inicio_recorrido ?>">
+                                <p><?= $ciudad_inicial_recorrido." - ".$barrio_inicial_recorrido; ?></p>
+                                <p><?= $hora_inicio_recorrido ?></p>
                             </div>
                             <div class="trayecto_user">
                                 <label for="user-destinoi"><i class="icofont-save"></i> Destino:</label>
-                                <input type="text" id="user-destinof" name="user-destinof" value="<?= $ciudad_final_recorrido." - ".$barrio_final_recorrido; ?>">
+                                <p><?= $ciudad_final_recorrido." - ".$barrio_final_recorrido; ?></p>
                             </div>
                         </div>
                     </div>
-
-                    <div class="column-2">
+                    <div class="column column-3">
                         <div class="wrap trayecto_acciones">
                             <div class="trayecto_bottons binicio">
-                                <a href="#" class="btn button save-info">Guardar Informacion</a>
-                                <p>Hora de Inicio: 8:30 a.m</p>
+                                <a href="#" class="btn button" data-action="llegada">Llegada al Destino</a>                                
+                                <a href="#" class="btn button" data-action="cancelar">Cancelar Ruta</a>
+                                <a href="#" class="btn button save-info" data-action="iniciar">Guardar Informacion</a>
+                                <a href="#" class="btn button end-recorrido" data-action="iniciar">Finalizar Recorrido</a>
                             </div>
                             <div class="trayecto_bottons bmedio">
-                                <!-- <button>Inicia el recorrido</button>
-                                <p>8:40 a.m</p> -->
-                            </div>
-                            <div class="trayecto_bottons bfinal">
-                                <a href="#" class="btn button end-recorrido">Finalizar Recorrido</a>
+                                <h5><strong>Track Time</strong></h5>
+                                <ul id="list-info-recorrido">
+                                    <li><strong>Hora Llegada (Conductor):</strong></strong> <span>8:30 a.m</span></li>
+                                    <li><strong>Hora Inicio Recorrido:</strong> <span>8:40 a.m</span></li>
+                                    <li><strong>Parada 1:</strong> <span>9:10 a.m</span></li>
+                                    <li><strong>Parada 2:</strong> <span>9:10 a.m</span></li>
+                                    <li><strong>Finalizacion Recorrido:</strong> <span>9:10 a.m</span></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -94,7 +103,7 @@
                     <h3 class="titulo">Finaliza el Servicio</h3>
 
                     <div id="wrap-peajes" class="wrap wrap-fanjas">
-                        <h5>Añadir Pasajero Adicional</h5>
+                        <h5><strong>Peajes en el Camino</strong></h5>
 
                         <div id="clonar-peaje" style="display:none">
 
@@ -119,36 +128,24 @@
                         <div id="wrap-peaje" class="wrap-franja">                            
                         </div>
 
-                        <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir</a>
+                        <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir Peaje</a>
                     </div>
 
-                    <div class="trayecto_peajes">
-                        <h4>Ruta con peajes?</h4>
-                        <div class="peaje_option">
-                            <input type="radio" id="peajesi" name="peajesi" value="SI"><label>SI</label>
-                        </div>
-                        <div class="peaje_option peaje_option_no">
-                            <input type="radio" id="peajeno" name="peajeno" value="NO"><label>NO</label>
-                        </div>
-                        <div class="peaje_si_aplica">
-                            <input type="text" id="peaje_nombre" name="peaje_nombre" placeholder="Nombre peaje">
-                            <input type="number" id="peaje_valor" name="peaje_valor" placeholder="Valor del peaje">
-                            <label>Comprobante pago</label>
-                            <input type="file" id="peaje_pago" name="peaje_pago" placeholder="Nombre peaje">
-                        </div>
-                    </div>
                     <div class="trayecto_comments">
                         <label>Comentarios adicionales:</label>
                         <textarea id="trayecto_commen" name="trayecto_commen" rows="8" cols="115"></textarea>
                     </div>
-                    <div class="trayecto_total">
-                        <h4>Total servicio: <span>$51.000</span></h4>
+                    <div class="trayecto_total">                        
                         <div class="trayecto_total_detail">
-                            <p>Recorrido 100587 CL - PL - CL <span>$35.000</span></p>
-                            <p>Recorrido 100587 CL - PL - CL <span>$35.000</span></p>
-                            <p>Recorrido 100587 CL - PL - CL <span>$35.000</span></p>
-                            <p>Recorrido 100587 CL - PL - CL <span>$35.000</span></p>
+                            <ul>
+                                <li><strong>Recorrido Inicial:</strong> <span class="symbol">$<span class="price">35.000</span></span></li>
+                                <li><strong>Trayectos Adicionales:</strong> <span class="symbol">$<span class="price">55.000</span></span></li>
+                                <li><strong>Peajes:</strong> <span class="symbol">$<span class="price">55.000</span></span></li>
+                                <li><strong>Usuario(s) Adicional(es):</strong> <span class="symbol">$<span class="price">75.000</span></span></li>
+                                <li><strong>Tiempo de Espera:</strong> <span class="symbol">$<span class="price">15.000</span></span></li>
+                            </ul>
                         </div>
+                        <h4>Total servicio: <span>$51.000</span></h4>
                     </div>
                 </div>   
             </form>
