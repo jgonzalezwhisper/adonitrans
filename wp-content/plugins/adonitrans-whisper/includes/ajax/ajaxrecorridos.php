@@ -216,6 +216,8 @@ function create_recorrido_function() {
     $fecha_inicio_recorrido = sanitize_text_field($_POST['fecha_inicio_recorrido']);
     $hora_inicio_recorrido = sanitize_text_field($_POST['hora_inicio_recorrido']);
     $centro_de_costo = sanitize_text_field($_POST['centro_de_costo']);
+    $razon_uso_recorrido = sanitize_text_field($_POST['razon_uso_recorrido']);
+    $persona_autoriza_recorrido = sanitize_text_field($_POST['persona_autoriza_recorrido']);
 
     // Validar si ya existe un recorrido con la misma fecha y hora de inicio
     $args = array(
@@ -368,6 +370,9 @@ function create_recorrido_function() {
     update_field('comentario_colaborador_inicio_recorrido', $comentario_colaborador_inicio_recorrido, $post_id);
     update_field('fecha_inicio_recorrido', $fecha_inicio_recorrido, $post_id);
     update_field('hora_inicio_recorrido', $hora_inicio_recorrido, $post_id);
+
+    update_field('razon_de_uso_del_recorrido', $razon_uso_recorrido, $post_id);
+    update_field('persona_que_autoriza_el_recorrido', $persona_autoriza_recorrido, $post_id);
     
 
     if (empty(get_field('estado_del_recorrido', $post_id))) {

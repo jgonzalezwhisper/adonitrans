@@ -143,6 +143,7 @@ function obtener_conductores_asignados() {
                         $dia_inicio = $asignacion['dia_inicio_de_asignacion'];
                         $dia_fin = $asignacion['dia_fin_de_asignacion'];
                         $franja_horaria = $asignacion['franja_horaria_asignacion'];
+                        $placa_vehi = $asignacion['placa_vehiculo'];
 
                         // Convertimos las fechas para la comparación
                         $fecha_solicitud_dt = DateTime::createFromFormat('Y-m-d', $fecha_solicitud);
@@ -167,8 +168,9 @@ function obtener_conductores_asignados() {
                                             $nombre = get_user_meta($conductor, 'first_name', true);
                                             $apellido = get_user_meta($conductor, 'last_name', true);
                                             $conductor_info = array(
-                                                'id' => $conductor,
-                                                'nombre' => $nombre . " " . $apellido
+                                                'id'        => $conductor,
+                                                'nombre'    => "$nombre $apellido - $placa_vehi",
+                                                'placa'     => $placa_vehi,
                                             );
 
                                             // Evitar duplicados en $conductores_asignados

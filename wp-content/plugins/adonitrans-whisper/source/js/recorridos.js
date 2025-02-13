@@ -1103,8 +1103,11 @@ jQuery(document).ready(function($) {
                 comentario_colaborador_inicio_recorrido: {
                     required: true,
                 },
-                centro_de_costo: {
-                    select2Required: true,
+                razon_uso_recorrido: {
+                    required: true,
+                },
+                persona_autoriza_recorrido: {
+                    required: true,
                 }
             },
             messages: {
@@ -1118,7 +1121,8 @@ jQuery(document).ready(function($) {
                 dir_inicial_recorrido: "Este dato es obligatorio",
                 dir_final_recorrido: "Este dato es obligatorio",
                 comentario_colaborador_inicio_recorrido: "Este dato es obligatorio",
-                centro_de_costo: "Este dato es obligatorio",
+                razon_uso_recorrido: "Este dato es obligatorio",
+                persona_autoriza_recorrido: "Este dato es obligatorio",
             },
             submitHandler: function(form) {
 

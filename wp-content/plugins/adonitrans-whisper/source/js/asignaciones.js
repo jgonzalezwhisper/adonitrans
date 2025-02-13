@@ -3,22 +3,23 @@ jQuery(document).ready(function($) {
     $(document).on('change', '#inicio_semana_asignacion', function() {
         const input = $(this);
         const date = new Date(input.val());
-        const day = date.getDay();
+        const day = date.getDay(); // 0 (domingo) a 6 (sábado)
 
+        // Verifica si el día seleccionado es lunes (1)
         if (day !== 0) {
             Swal.fire(
                 'Error',
                 'Por favor, selecciona un lunes.',
                 'error'
             );
-            input.val('');
+            input.val(''); // Limpia el campo si no es lunes
         } else {
-            // Encuentra el próximo sábado
-            let nextSaturday = new Date(date);
-            nextSaturday.setDate(date.getDate() + 5); // 5 días después de lunes es sábado
+            // Encuentra el próximo domingo (6 días después del lunes)
+            let nextSunday = new Date(date);
+            nextSunday.setDate(date.getDate() + 6); // 6 días después de lunes es domingo
 
             // Formatea la fecha como "YYYY-MM-DD"
-            const formattedDate = nextSaturday.toISOString().split('T')[0];
+            const formattedDate = nextSunday.toISOString().split('T')[0];
 
             // Ajusta la fecha en el input de fin de semana
             $('#fin_semana_asignacion').val(formattedDate);

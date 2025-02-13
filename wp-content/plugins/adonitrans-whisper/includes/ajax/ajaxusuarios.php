@@ -137,9 +137,6 @@ function create_user_function() {
         sprintf('<p>Apellidos: <strong>%s</strong></p>',
             esc_html($last_name)
         ),
-        sprintf('<p>Empresa: <strong>%s</strong></p>',
-            esc_html(get_the_title( $_POST['sel_empresa_asociada'] ))
-        ),        
         sprintf('<p>Correo: <strong>%s</strong></p>',
             esc_html($email)
         ),
