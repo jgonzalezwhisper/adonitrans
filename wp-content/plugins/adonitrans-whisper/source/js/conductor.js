@@ -1,19 +1,18 @@
+let storedData = JSON.parse(localStorage.getItem('dataRecorrido')) || {};
 jQuery(document).ready(function($) {
-    /*FRANJAS DE ASIGNACION*/
+
+    /*** FRANJAS DE ASIGNACIÓN ***/
     $(document).on('click', '#wrap-peajes .button-add', function(e) {
         e.preventDefault();
 
-        var franjaCount = $('#wrap-peajes .franja').length;
-        var newRow = $('#clonar-peaje .franja').clone();
+        let franjaCount = $('#wrap-peajes .franja').length;
+        let newRow = $('#clonar-peaje .franja').clone();
 
-        newRow.find('label').attr('for', 'franja-' + franjaCount);
-        newRow.find('input').val('').attr('id', 'franja-' + franjaCount);
+        newRow.find('label').attr('for', `franja-${franjaCount}`);
+        newRow.find('input').val('').attr('id', `franja-${franjaCount}`);
 
-        // Obtener el select clonado y restablecer su estado
-        var newSelect = newRow.find('.select');
-        newSelect.addClass('select_vehiculo');
-
-        // Agregar la nueva fila al DOM
+        // Restablecer y configurar select2
+        let newSelect = newRow.find('.select').addClass('select_vehiculo');
         $('#wrap-peaje').append(newRow);
 
         newSelect.select2({
@@ -25,62 +24,48 @@ jQuery(document).ready(function($) {
 
     $(document).on('click', '#wrap-peajes .remove', function(e) {
         e.preventDefault();
-
-        var $wrapFranjas = $('#wrap-peaje');
-        var $franja = $(this).closest('.franja');
-
-        $franja.remove();
+        $(this).closest('.franja').remove();
     });
 
-    /*ACCIONES BOTONES*/
-    let tiempoEspera; // Declarar la variable en un ámbito superior
-    let contadorInterval;
-    let startTime;
-    let isWaitingPeriod;
-
-    let tiempoEsperado = localStorage.getItem('tiempo_espera');
-
-    // Validar si hay un tiempo configurado y es un número válido
-    if (tiempoEsperado !== null && isNaN(tiempoEsperado)) {
-
-        console.log("Entra valido");
-
-        const tiempoFormateado = convertirTiempo(tiempoEsperado);
-        $('.contador').text(tiempoFormateado);
-        $("#wrap-contador-espera").removeClass('ocultar');
-        $("#conductor-form .button[data-action='llegada'], #conductor-form .button[data-action='cancelar']").addClass('ocultar');
-        $("#conductor-form .button[data-action='save-info'], #conductor-form .button[data-action='end-recorrido']").removeClass('ocultar');
-    } else {
-    }
-
-    // Usar el valor de tiempoEsperado en tu lógica
-    console.log("Tiempo esperado a usar:", tiempoEsperado);
+    /*** GESTIÓN DEL TEMPORIZADOR ***/
+    let tiempoEspera = 1;
+    let contadorInterval, startTime, isWaitingPeriod;
 
     function convertirTiempo(segundos) {
-        // Calcular minutos y segundos
-        const minutos = Math.floor(segundos / 60); // Obtener los minutos completos
-        const segundosRestantes = segundos % 60; // Obtener los segundos restantes
-
-        // Formatear para que siempre tenga dos dígitos
-        const minutosFormateados = String(minutos).padStart(2, '0'); // Asegurar dos dígitos
-        const segundosFormateados = String(segundosRestantes).padStart(2, '0'); // Asegurar dos dígitos
-
-        // Devolver el tiempo en formato minutos:segundos
-        return `${minutosFormateados}:${segundosFormateados}`;
+        let minutos = String(Math.floor(segundos / 60)).padStart(2, '0');
+        let segundosRestantes = String(segundos % 60).padStart(2, '0');
+        return `${minutos}:${segundosRestantes}`;
     }
 
-    // Ejemplo de uso
-    const tiempoEnSegundos = 350; // 5 minutos y 50 segundos
-    const tiempoFormateado = convertirTiempo(tiempoEnSegundos);
-    console.log(tiempoFormateado); // Salida: "05:50"
+    function actualizarListaRecorrido() {
+        let dataRecorrido = JSON.parse(localStorage.getItem('dataRecorrido')) || {};
+        let listHtml = '';
+
+        if (dataRecorrido.horaLlegada) {
+            listHtml += `<li><strong>Hora Llegada (Conductor):</strong> <span>${dataRecorrido.horaLlegada}</span></li>`;
+        }
+        if (dataRecorrido.horaInicio) {
+            listHtml += `<li><strong>Hora Inicio Recorrido:</strong> <span>${dataRecorrido.horaInicio}</span></li>`;
+        }
+        if (dataRecorrido.horaFin) {
+            listHtml += `<li><strong>Finalización Recorrido:</strong> <span>${dataRecorrido.horaFin}</span></li>`;
+        }
+
+        $('#list-info-recorrido').html(listHtml);
+    }
+
+    function guardarEnLocalStorage(clave, valor) {
+        let dataRecorrido = JSON.parse(localStorage.getItem('dataRecorrido')) || {};
+        dataRecorrido[clave] = valor;
+        localStorage.setItem('dataRecorrido', JSON.stringify(dataRecorrido));
+        actualizarListaRecorrido();
+    }
 
     function startTimer() {
         startTime = new Date();
         isWaitingPeriod = true;
         $('.contador').css('color', 'red');
         contadorInterval = setInterval(updateTimer, 1000);
-
-        // Guardar el tiempo de inicio en localStorage
         localStorage.setItem('startTime', startTime.getTime());
     }
 
@@ -89,73 +74,50 @@ jQuery(document).ready(function($) {
     }
 
     function updateTimer() {
-        const now = new Date();
-        const diff = Math.floor((now - startTime) / 1000); // Diferencia en segundos
-        const minutes = Math.floor(diff / 60);
-        const seconds = diff % 60;
+        let now = new Date();
+        let diff = Math.floor((now - startTime) / 1000);
+        $('.contador').text(convertirTiempo(diff));
 
-        // Formatear el tiempo para mostrarlo en el contador
-        const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        $('.contador').text(formattedTime);
-
-        // Cambiar el color del contador después de que pase el tiempo de espera
         if (isWaitingPeriod && diff >= tiempoEspera * 60) {
             $('.contador').css('color', 'green');
             isWaitingPeriod = false;
         }
     }
-
-    function calculateAndSaveTime() {
-        const now = new Date();
-        const diff = Math.floor((now - startTime) / 1000); // Diferencia en segundos
-        const totalMinutes = Math.ceil(diff / 60); // Redondear hacia arriba
-
-        // Guardar el tiempo calculado en el campo hidden
-        $('#tiempo_de_espera').val(totalMinutes);
-    }
-
-    // Recuperar el tiempo de inicio desde localStorage al cargar la página
-    const storedStartTime = localStorage.getItem('startTime');
-    if (storedStartTime) {
-        startTime = new Date(parseInt(storedStartTime, 10));
-        isWaitingPeriod = true;
-        $('.contador').css('color', 'red');
-        contadorInterval = setInterval(updateTimer, 1000);
+    console.log("dataRecorrido " + storedData);
+    if (storedData) {
+        actualizarListaRecorrido();
+        console.log("Entra IF " + storedData);
     }
 
     $(document).on('click', '#conductor-form .button:not(.save-info)', function(e) {
         e.preventDefault();
+        tiempoEspera = parseInt($('#tiempo_espera').val(), 10) || 1;
 
-        // Obtener el valor de tiempo_espera desde un campo oculto
-        tiempoEspera = parseInt($('#tiempo_espera').val(), 10); // Cambia esto según tu campo oculto
-        if (isNaN(tiempoEspera)) {
-            tiempoEspera = 1; // Valor por defecto para pruebas
-        }
-
-        const action = $(this).data('action');
+        let action = $(this).data('action');
+        let horaActual = new Date().toLocaleTimeString();
 
         if (action === 'llegada') {
             $("#wrap-contador-espera").removeClass('ocultar');
             $("#conductor-form .button[data-action='cancelar']").addClass('ocultar');
             $(this).addClass('ocultar');
             startTimer();
+            guardarEnLocalStorage('horaLlegada', horaActual);
         } else if (action === 'iniciar') {
             stopTimer();
-            calculateAndSaveTime();
-
-            tempstarttime = localStorage.getItem('startTime');
-            localStorage.setItem('tiempo_espera', tempstarttime);
-
-            // Limpiar localStorage cuando se inicia el proceso
-            localStorage.removeItem('startTime');
-
-            console.log(tempstarttime);
+            clearInterval(contadorInterval);
+            isWaitingPeriod = false;
+            startTime = null;
+            guardarEnLocalStorage('horaInicio', horaActual);
+            $("#conductor-form .button[data-action='save-info'], #conductor-form .button[data-action='end-recorrido']").removeClass('ocultar');
+        } else if (action === 'end-recorrido') {
+            guardarEnLocalStorage('horaFin', horaActual);
+            localStorage.removeItem('dataRecorrido');
+            actualizarListaRecorrido();
         }
     });
 
     $(document).on('click', '#conductor-form .save-info', function(e) {
-        e.preventDefault(); // Evita el comportamiento por defecto del enlace
-
+        e.preventDefault();
         Swal.fire({
             title: "¿Estás seguro?",
             text: "Se guardarán los datos del recorrido.",
@@ -165,27 +127,149 @@ jQuery(document).ready(function($) {
             cancelButtonText: "Cancelar"
         }).then((result) => {
             if (result.isConfirmed) {
-                let form = $('#conductor-form')[0]; // Obtiene el formulario
-                let formData = new FormData(form);
-                formData.append('action', 'guardar_peajes'); // Acción AJAX de WordPress
-
+                let formData = new FormData($('#conductor-form')[0]);
+                formData.append('action', 'guardar_peajes');
+                $('body').addClass('actloader');
                 $.ajax({
-                    url: conductorAjax.ajaxurl, // admin-ajax.php
+                    url: conductorAjax.ajaxurl,
                     type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        if (response.success) {
-                            Swal.fire("¡Guardado!", "Los peajes se guardaron correctamente.", "success");
-                        } else {
-                            Swal.fire("Error", "Hubo un problema al guardar los peajes.", "error");
-                        }
+                        $('body').removeClass('actloader');
+                        Swal.fire(response.success ? "¡Guardado!" : "Error", response.success ? "Información Actualizada." : "Hubo un problema al guardar los peajes.", response.success ? "success" : "error");
                     },
                     error: function() {
+                        $('body').removeClass('actloader');
                         Swal.fire("Error", "Hubo un problema con la conexión.", "error");
                     }
                 });
+            }
+        });
+    });
+
+    $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .iniciar-recorrido', function(event) {
+        event.preventDefault();
+
+        // Obtener el ID del usuario desde el botón
+        let recorridoid = $(this).data('id');
+
+        // Mostrar la confirmación con SweetAlert
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción no se puede reversar.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, Iniciar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('body').addClass('actloader');
+                $.ajax({
+                    url: recorridoAjax.ajaxurl, // La URL de admin-ajax.php en WordPress
+                    method: 'POST',
+                    data: {
+                        action: 'iniciar_recorrido', // Acción personalizada en WordPress
+                        post_id: recorridoid
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Mostrar mensaje de éxito
+                            Swal.fire(
+                                '¡Recorrido Iniciado!',
+                                'Has comenzado tu recorrido con éxito. ¡Disfruta del viaje y mantente seguro!',
+                                'success'
+                            ).then(() => {
+                                var fileUrl = recorridoAjax.plugin_url + "includes/parts/panel/conductor.php";
+
+                                $.ajax({
+                                    url: fileUrl,
+                                    method: "POST",
+                                    data: {
+                                        action: 'render_html_panel',
+                                        post_id: recorridoid
+                                    },
+                                    success: function(response) {
+                                        $("#informacion").html(response);
+                                        initRecorridos();
+                                    },
+                                    error: function() {
+                                        $("#informacion").html("<p>Error al cargar el contenido. Intenta nuevamente.</p>");
+                                    }
+                                });
+                            });
+                            $('body').removeClass('actloader');
+
+                        } else {
+                            $('body').removeClass('actloader');
+                            // Mostrar mensaje de error
+                            Swal.fire(
+                                'Error',
+                                response.data.message || 'No se pudo eliminar el vehículo.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function() {
+                        $('body').removeClass('actloader');
+                        // Mostrar mensaje de error si AJAX falla
+                        Swal.fire(
+                            'Error',
+                            'Hubo un problema al intentar eliminar el vehículo.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .panel-recorrido', function(event) {
+        event.preventDefault();
+
+        // Obtener el ID del usuario desde el botón
+        let recorridoid = $(this).data('id');
+
+        // Mostrar la confirmación con SweetAlert
+        Swal.fire({
+            title: '¿Desea Continuar?',
+            text: 'Esta seguro de retomar el servicio?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, Continuar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('body').addClass('actloader');
+
+                var fileUrl = recorridoAjax.plugin_url + "includes/parts/panel/conductor.php";
+
+                $.ajax({
+                    url: fileUrl,
+                    method: "POST",
+                    data: {
+                        action: 'render_html_panel',
+                        post_id: recorridoid
+                    },
+                    success: function(response) {
+                        $("#informacion").html(response);
+                        console.log("Entra AJAX ANTES " + storedData);
+                        if (storedData) {
+                            actualizarListaRecorrido();
+                            console.log("Entra AJAX TAL " + storedData);
+                        }
+                        $('body').removeClass('actloader');
+                    },
+                    error: function() {
+                        $("#informacion").html("<p>Error al cargar el contenido. Intenta nuevamente.</p>");
+                    }
+                });
+
             }
         });
     });

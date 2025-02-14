@@ -28,7 +28,7 @@
                 $id_solicitante = get_field('id_solicitante_recorrido', $post_id);
                 $foto_de_usuario = get_field('foto_de_usuario', 'user_' . $id_solicitante['ID']);
                 $empresa_solicitante_recorrido = get_field('empresa_solicitante_recorrido', $post_id);
-                $tiempo_de_espera_para_recorrido = get_field('tiempo_de_espera_para_recorrido', $empresa_solicitante_recorrido);
+                $tiempo_de_espera_para_recorrido = get_field('tiempo_de_espera_para_recorrido', $empresa_solicitante_recorrido) ?? 15;
                 $fecha_inicio_recorrido = get_field('fecha_inicio_recorrido', $post_id);
                 $hora_inicio_recorrido = get_field('hora_inicio_recorrido', $post_id);
                 $ciudad_inicial_recorrido = get_field('ciudad_inicial_recorrido', $post_id)->ID;
@@ -87,13 +87,13 @@
                                 <a href="#" class="btn button end-recorrido ocultar" data-action="end-recorrido">Finalizar Recorrido</a>
                             </div>
                             <div class="trayecto_bottons bmedio">
-                                <h5><strong>Track Time</strong></h5>
+                                <h5><strong>Seguimiento de Tiempo</strong></h5>
                                 <ul id="list-info-recorrido">
-                                    <li><strong>Hora Llegada (Conductor):</strong></strong> <span>8:30 a.m</span></li>
+                                    <!-- <li><strong>Hora Llegada (Conductor):</strong></strong> <span>8:30 a.m</span></li>
                                     <li><strong>Hora Inicio Recorrido:</strong> <span>8:40 a.m</span></li>
                                     <li><strong>Parada 1:</strong> <span>9:10 a.m</span></li>
                                     <li><strong>Parada 2:</strong> <span>9:10 a.m</span></li>
-                                    <li><strong>Finalizacion Recorrido:</strong> <span>9:10 a.m</span></li>
+                                    <li><strong>Finalizacion Recorrido:</strong> <span>9:10 a.m</span></li> -->
                                 </ul>
                             </div>
                         </div>

@@ -3,6 +3,24 @@
     "title": "Datos Adicionales Recorrido",
     "fields": [
         {
+            "key": "field_67af61609245f",
+            "label": "Usuario Recorrido",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
             "key": "field_6781560b5d2a7",
             "label": "ID Solicitante Recorrido",
             "name": "id_solicitante_recorrido",
@@ -53,6 +71,51 @@
             "allow_in_bindings": 0,
             "bidirectional": 0,
             "ui": 1,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_67ad301cedacc",
+            "label": "Razon de Uso del Recorrido",
+            "name": "razon_de_uso_del_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_67ad304cea090",
+            "label": "Persona que Autoriza el Recorrido",
+            "name": "persona_que_autoriza_el_recorrido",
+            "aria-label": "",
+            "type": "user",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "role": [
+                "empresa"
+            ],
+            "return_format": "array",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
             "bidirectional_target": []
         },
         {
@@ -147,6 +210,24 @@
             "allow_in_bindings": 0,
             "bidirectional": 0,
             "bidirectional_target": []
+        },
+        {
+            "key": "field_67af618392460",
+            "label": "Informacion Recorrido",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
         },
         {
             "key": "field_678158350efbe",
@@ -793,6 +874,24 @@
             "append": ""
         },
         {
+            "key": "field_67af61459245e",
+            "label": "Conductor Recorrido",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
             "key": "field_67a27d5c81da2",
             "label": "Valor Ruta Recorrido",
             "name": "valor_ruta_recorrido",
@@ -930,51 +1029,6 @@
             "delay": 0
         },
         {
-            "key": "field_67ad301cedacc",
-            "label": "Razon de Uso del Recorrido",
-            "name": "razon_de_uso_del_recorrido",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_67ad304cea090",
-            "label": "Persona que Autoriza el Recorrido",
-            "name": "persona_que_autoriza_el_recorrido",
-            "aria-label": "",
-            "type": "user",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "role": [
-                "empresa"
-            ],
-            "return_format": "array",
-            "multiple": 0,
-            "allow_null": 0,
-            "allow_in_bindings": 0,
-            "bidirectional": 0,
-            "bidirectional_target": []
-        },
-        {
             "key": "field_67ae997c1bd42",
             "label": "Tiempo de Espera Recorrido",
             "name": "tiempo_de_espera_recorrido",
@@ -994,6 +1048,71 @@
             "placeholder": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_67af60d62af1d",
+            "label": "Seguimiento de Tiempo en Recorrido",
+            "name": "seguimiento_de_tiempo_en_recorrido",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Agregar Fila",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_67af60f32af1e",
+                    "label": "Motivo",
+                    "name": "motivo",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67af60d62af1d"
+                },
+                {
+                    "key": "field_67af60fa2af1f",
+                    "label": "Hora",
+                    "name": "hora",
+                    "aria-label": "",
+                    "type": "time_picker",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "g:i a",
+                    "return_format": "g:i a",
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_67af60d62af1d"
+                }
+            ]
         }
     ],
     "location": [
@@ -1014,5 +1133,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1739542642
+    "modified": 1739547112
 }

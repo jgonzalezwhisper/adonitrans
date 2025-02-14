@@ -124,7 +124,12 @@
       width: 100%;
       font-size: 26px;
       font-weight: 600;
-      font-family: 'POPPINS';
+      font-family: 'Poppins';
+
+      .contador{
+        width: 90px;
+        text-align: center;
+      }
     }
 
     .trayecto_info {
@@ -468,7 +473,7 @@
     }
 
     .ocultar{
-      display: none;
+      display: none !important;
     }
 
   }
