@@ -433,6 +433,9 @@
           li {
             position: relative;
             padding-left: 26px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
 
             &:before {
               content: "\eed9";
@@ -462,6 +465,10 @@
 
       }
 
+    }
+
+    .ocultar{
+      display: none;
     }
 
   }

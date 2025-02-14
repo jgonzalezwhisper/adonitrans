@@ -973,6 +973,27 @@
             "allow_in_bindings": 0,
             "bidirectional": 0,
             "bidirectional_target": []
+        },
+        {
+            "key": "field_67ae997c1bd42",
+            "label": "Tiempo de Espera Recorrido",
+            "name": "tiempo_de_espera_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         }
     ],
     "location": [
@@ -993,5 +1014,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1739403432
+    "modified": 1739495822
 }

@@ -1,6 +1,4 @@
 jQuery(document).ready(function($) {
-
-
     /*FRANJAS DE ASIGNACION*/
     $(document).on('click', '#wrap-peajes .button-add', function(e) {
         e.preventDefault();
@@ -35,70 +33,124 @@ jQuery(document).ready(function($) {
     });
 
     /*ACCIONES BOTONES*/
-    $(document).ready(function() {
-        let tiempoEspera; // Declarar la variable en un ámbito superior
-        let contadorInterval;
-        let startTime;
-        let isWaitingPeriod;
+    let tiempoEspera; // Declarar la variable en un ámbito superior
+    let contadorInterval;
+    let startTime;
+    let isWaitingPeriod;
 
-        function startTimer() {
-            startTime = new Date();
-            isWaitingPeriod = true;
-            $('.contador').css('color', 'red');
-            contadorInterval = setInterval(updateTimer, 1000);
+    let tiempoEsperado = localStorage.getItem('tiempo_espera');
+
+    // Validar si hay un tiempo configurado y es un número válido
+    if (tiempoEsperado !== null && isNaN(tiempoEsperado)) {
+
+        console.log("Entra valido");
+
+        const tiempoFormateado = convertirTiempo(tiempoEsperado);
+        $('.contador').text(tiempoFormateado);
+        $("#wrap-contador-espera").removeClass('ocultar');
+        $("#conductor-form .button[data-action='llegada'], #conductor-form .button[data-action='cancelar']").addClass('ocultar');
+        $("#conductor-form .button[data-action='save-info'], #conductor-form .button[data-action='end-recorrido']").removeClass('ocultar');
+    } else {
+    }
+
+    // Usar el valor de tiempoEsperado en tu lógica
+    console.log("Tiempo esperado a usar:", tiempoEsperado);
+
+    function convertirTiempo(segundos) {
+        // Calcular minutos y segundos
+        const minutos = Math.floor(segundos / 60); // Obtener los minutos completos
+        const segundosRestantes = segundos % 60; // Obtener los segundos restantes
+
+        // Formatear para que siempre tenga dos dígitos
+        const minutosFormateados = String(minutos).padStart(2, '0'); // Asegurar dos dígitos
+        const segundosFormateados = String(segundosRestantes).padStart(2, '0'); // Asegurar dos dígitos
+
+        // Devolver el tiempo en formato minutos:segundos
+        return `${minutosFormateados}:${segundosFormateados}`;
+    }
+
+    // Ejemplo de uso
+    const tiempoEnSegundos = 350; // 5 minutos y 50 segundos
+    const tiempoFormateado = convertirTiempo(tiempoEnSegundos);
+    console.log(tiempoFormateado); // Salida: "05:50"
+
+    function startTimer() {
+        startTime = new Date();
+        isWaitingPeriod = true;
+        $('.contador').css('color', 'red');
+        contadorInterval = setInterval(updateTimer, 1000);
+
+        // Guardar el tiempo de inicio en localStorage
+        localStorage.setItem('startTime', startTime.getTime());
+    }
+
+    function stopTimer() {
+        clearInterval(contadorInterval);
+    }
+
+    function updateTimer() {
+        const now = new Date();
+        const diff = Math.floor((now - startTime) / 1000); // Diferencia en segundos
+        const minutes = Math.floor(diff / 60);
+        const seconds = diff % 60;
+
+        // Formatear el tiempo para mostrarlo en el contador
+        const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        $('.contador').text(formattedTime);
+
+        // Cambiar el color del contador después de que pase el tiempo de espera
+        if (isWaitingPeriod && diff >= tiempoEspera * 60) {
+            $('.contador').css('color', 'green');
+            isWaitingPeriod = false;
+        }
+    }
+
+    function calculateAndSaveTime() {
+        const now = new Date();
+        const diff = Math.floor((now - startTime) / 1000); // Diferencia en segundos
+        const totalMinutes = Math.ceil(diff / 60); // Redondear hacia arriba
+
+        // Guardar el tiempo calculado en el campo hidden
+        $('#tiempo_de_espera').val(totalMinutes);
+    }
+
+    // Recuperar el tiempo de inicio desde localStorage al cargar la página
+    const storedStartTime = localStorage.getItem('startTime');
+    if (storedStartTime) {
+        startTime = new Date(parseInt(storedStartTime, 10));
+        isWaitingPeriod = true;
+        $('.contador').css('color', 'red');
+        contadorInterval = setInterval(updateTimer, 1000);
+    }
+
+    $(document).on('click', '#conductor-form .button:not(.save-info)', function(e) {
+        e.preventDefault();
+
+        // Obtener el valor de tiempo_espera desde un campo oculto
+        tiempoEspera = parseInt($('#tiempo_espera').val(), 10); // Cambia esto según tu campo oculto
+        if (isNaN(tiempoEspera)) {
+            tiempoEspera = 1; // Valor por defecto para pruebas
         }
 
-        function stopTimer() {
-            clearInterval(contadorInterval);
+        const action = $(this).data('action');
+
+        if (action === 'llegada') {
+            $("#wrap-contador-espera").removeClass('ocultar');
+            $("#conductor-form .button[data-action='cancelar']").addClass('ocultar');
+            $(this).addClass('ocultar');
+            startTimer();
+        } else if (action === 'iniciar') {
+            stopTimer();
+            calculateAndSaveTime();
+
+            tempstarttime = localStorage.getItem('startTime');
+            localStorage.setItem('tiempo_espera', tempstarttime);
+
+            // Limpiar localStorage cuando se inicia el proceso
+            localStorage.removeItem('startTime');
+
+            console.log(tempstarttime);
         }
-
-        function updateTimer() {
-            const now = new Date();
-            const diff = Math.floor((now - startTime) / 1000); // Diferencia en segundos
-            const minutes = Math.floor(diff / 60);
-            const seconds = diff % 60;
-
-            // Formatear el tiempo para mostrarlo en el contador
-            const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            $('.contador').text(formattedTime);
-
-            // Cambiar el color del contador después de que pase el tiempo de espera
-            if (isWaitingPeriod && diff >= tiempoEspera * 60) {
-                $('.contador').css('color', 'green');
-                isWaitingPeriod = false;
-            }
-        }
-
-        function calculateAndSaveTime() {
-            const now = new Date();
-            const diff = Math.floor((now - startTime) / 1000); // Diferencia en segundos
-            const totalMinutes = Math.ceil(diff / 60); // Redondear hacia arriba
-
-            // Guardar el tiempo calculado en el campo hidden
-            $('#tiempo_calculado').val(totalMinutes);
-        }
-
-        $(document).on('click', '#conductor-form .button:not(.save-info)', function(e) {
-            e.preventDefault();
-
-            // Obtener el valor de tiempo_espera desde un campo oculto
-            tiempoEspera = parseInt($('input[name="tiempo_espera"]').val(), 10); // Cambia esto según tu campo oculto
-            if (isNaN(tiempoEspera)) {
-                tiempoEspera = 1; // Valor por defecto para pruebas
-            }
-
-            const action = $(this).data('action');
-
-            if (action === 'llegada') {
-                $("#wrap-contador-espera").show();
-                $("#conductor-form .button[data-action='cancelar']").hide();
-                $(this).hide();
-                startTimer();
-            } else if (action === 'iniciar') {
-                stopTimer();
-                calculateAndSaveTime();
-            }
-        });
     });
 
     $(document).on('click', '#conductor-form .save-info', function(e) {
@@ -137,5 +189,4 @@ jQuery(document).ready(function($) {
             }
         });
     });
-
 });

@@ -72,6 +72,27 @@
             "selected": 0
         },
         {
+            "key": "field_67ae95197cdb5",
+            "label": "Tiempo de espera para recorrido",
+            "name": "tiempo_de_espera_para_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_6777f7b0c9ea5",
             "label": "Centros de Costos Empresa",
             "name": "centros_de_costos_empresa",
@@ -268,5 +289,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1739374847
+    "modified": 1739495070
 }

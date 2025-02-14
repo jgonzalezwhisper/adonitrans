@@ -28,6 +28,7 @@
                 $id_solicitante = get_field('id_solicitante_recorrido', $post_id);
                 $foto_de_usuario = get_field('foto_de_usuario', 'user_' . $id_solicitante['ID']);
                 $empresa_solicitante_recorrido = get_field('empresa_solicitante_recorrido', $post_id);
+                $tiempo_de_espera_para_recorrido = get_field('tiempo_de_espera_para_recorrido', $empresa_solicitante_recorrido);
                 $fecha_inicio_recorrido = get_field('fecha_inicio_recorrido', $post_id);
                 $hora_inicio_recorrido = get_field('hora_inicio_recorrido', $post_id);
                 $ciudad_inicial_recorrido = get_field('ciudad_inicial_recorrido', $post_id)->ID;
@@ -41,11 +42,11 @@
             ?>
             <form id="conductor-form" method="post" class="formplug" autocomplete="off">
                 <input type="hidden" name="post_id" value="<?= $post_id ?>">
-                <input type="hidden" name="tiempo_espera" value="1">
-                <div id="wrap-contador-espera" style="display:none;">
+                <input type="hidden" id="tiempo_espera" value="<?= $tiempo_de_espera_para_recorrido ?>">
+                <div id="wrap-contador-espera" class="ocultar">
                     <div class="contador">00:00</div>
                     <a href="#" class="btn button" data-action="iniciar" disabled>Inicio de Ruta</a>
-                    <input type="hidden" name="tiempo_calculado" id="tiempo_calculado" value="">
+                    <input type="hidden" name="tiempo_de_espera" id="tiempo_de_espera" value="">
                 </div>
                 <div class="trayecto_info">
                     <div class="column column-1">
@@ -80,10 +81,10 @@
                     <div class="column column-3">
                         <div class="wrap trayecto_acciones">
                             <div class="trayecto_bottons binicio">
-                                <a href="#" class="btn button" data-action="llegada">Llegada al Destino</a>                                
+                                <a href="#" class="btn button" data-action="llegada">Llegada al Destino</a>                               
                                 <a href="#" class="btn button" data-action="cancelar">Cancelar Ruta</a>
-                                <a href="#" class="btn button save-info" data-action="iniciar">Guardar Informacion</a>
-                                <a href="#" class="btn button end-recorrido" data-action="iniciar">Finalizar Recorrido</a>
+                                <a href="#" class="btn button save-info ocultar" data-action="save-info">Guardar Informacion</a>
+                                <a href="#" class="btn button end-recorrido ocultar" data-action="end-recorrido">Finalizar Recorrido</a>
                             </div>
                             <div class="trayecto_bottons bmedio">
                                 <h5><strong>Track Time</strong></h5>
