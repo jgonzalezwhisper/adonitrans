@@ -86,7 +86,7 @@
                                 <a href="#" class="btn button save-info ocultar" data-action="save-info">Guardar Informacion</a>
                                 <a href="#" class="btn button end-recorrido ocultar" data-action="end-recorrido">Finalizar Recorrido</a>
                             </div>
-                            <div class="trayecto_bottons bmedio">
+                            <div id="wrap-listadocheck" class="trayecto_bottons bmedio ocultar">
                                 <h5><strong>Seguimiento de Tiempo</strong></h5>
                                 <ul id="list-info-recorrido">
                                     <!-- <li><strong>Hora Llegada (Conductor):</strong></strong> <span>8:30 a.m</span></li>
@@ -99,6 +99,40 @@
                         </div>
                     </div>
                 </div>
+
+                <?php
+                $usuarios_adicionales = get_field('usuarios_adicionales_recorrido', $post_id);
+                if ($usuarios_adicionales):?>
+                    <div id="wrap-usuarios-adicionales">                    
+                        <?php
+                        foreach ($usuarios_adicionales as $usuario):
+                            // Obtener los valores de cada subcampo
+                            $id_usuario_adicional = $usuario['id_usuario_adicional'];
+                            $origen = $usuario['origen'];
+                            $direccion_origen = $usuario['direccion_origen'];
+                            $destino = $usuario['destino'];
+                            $direccion_destino = $usuario['direccion_destino'];
+
+                            // Aquí puedes obtener el nombre y apellido del usuario basado en el $id_usuario_adicional
+                            // Esto depende de cómo tengas almacenados los usuarios en tu sistema
+                            $nombre_usuario = get_the_author_meta('display_name', $id_usuario_adicional);
+                            $apellido_usuario = get_the_author_meta('last_name', $id_usuario_adicional);
+
+                            // Generar el HTML para cada fila
+                            ?>
+                            <div class="usuario-adicional">
+                                <input type="checkbox" name="usuarios_adicionales[]" value="<?php echo esc_attr($id_usuario_adicional); ?>">
+                                <span class="nombre-usuario"><?php echo esc_html($nombre_usuario . ' ' . $apellido_usuario); ?></span>
+                                <span class="origen"><?php echo esc_html($origen . ' (' . $direccion_origen . ')'); ?></span>
+                                <span class="destino"><?php echo esc_html($destino . ' (' . $direccion_destino . ')'); ?></span>
+                            </div>
+                            <?php
+                        endforeach;
+                        ?>
+                    </div>
+                    <?php
+                endif;
+                ?>
 
                 <div class="wrap trayecto_finalizar">
                     <h3 class="titulo">Finaliza el Servicio</h3>

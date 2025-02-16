@@ -34,10 +34,7 @@
                     </div>
                     <div class="boton" data-action="usuario">
                         <i class="icofont-users-social"></i><span>Usuarios</span> 
-                    </div> 
-                    <div class="boton" data-action="conductor">
-                        <i class="icofont-user"></i><span>Conductor</span> 
-                    </div>        
+                    </div>     
                     <div class="boton" data-action="empresa">
                         <i class="icofont-building-alt"></i><span>Empresas</span> 
                     </div>
