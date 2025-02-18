@@ -9,6 +9,12 @@ function actualizarStoredData() {
     storedData = JSON.parse(localStorage.getItem('dataRecorrido')) || {};
 }
 
+
+function formatoMonedaColombiana(valor) {
+    valor = valor.toString().split('.')[0];
+    return valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
 jQuery(document).ready(function($) {
     const tiempoEspera = 1; // Tiempo de espera en minutos
     // Función para actualizar storedData desde localStorage
@@ -54,6 +60,26 @@ jQuery(document).ready(function($) {
         return `Tiempo de espera total: ${minutos}:${segundosRestantes}`;
     }
 
+    function calcularTiempoExtra() {
+        // Obtener el valor del tiempo de espera en minutos desde el input
+        const tiempoEsperaMinutos = parseInt($('#tiempo_espera').val(), 10) || 0;
+
+        // Convertir el tiempo de espera a segundos
+        const tiempoEsperaSegundos = tiempoEsperaMinutos * 60;
+
+        // Obtener el tiempo de espera almacenado (si existe)
+        const storedTimeEspera = storedData.timeEspera || 0;
+
+        // Calcular la diferencia en segundos
+        const diferenciaSegundos = storedTimeEspera - tiempoEsperaSegundos;
+
+        // Convertir la diferencia a minutos y redondear hacia arriba
+        const minutosExtras = Math.ceil(diferenciaSegundos / 60);
+
+        // Retornar el tiempo extra en minutos
+        return minutosExtras;
+    }
+
     // Función para actualizar la lista de recorrido en la interfaz
     function refreshFront() {
         actualizarStoredData();
@@ -67,7 +93,7 @@ jQuery(document).ready(function($) {
         }
 
         if (storedData.estado == "llegada" || storedData.estado == "iniciar") {
-            $("#wrap-contador-espera, #wrap-listadocheck").removeClass('ocultar');
+            $("#wrap-contador-espera, #wrap-listadocheck, #wrap_trayecto_finalizar").removeClass('ocultar');
 
             // Obtener el tiempo de espera definido en el input
             const tiempoEspera = parseInt($("#tiempo_espera").val(), 10) || 1;
@@ -92,22 +118,13 @@ jQuery(document).ready(function($) {
             $("#wrap-listadocheck").removeClass('ocultar');
 
             $('.contador').text(convertirTiempo(storedData.timeEspera)).css('color', 'green');
-
-            const tiempoEsperaMinutos = parseInt($('#tiempo_espera').val(), 10) || 0;
-            const tiempoEsperaSegundos = tiempoEsperaMinutos * 60;
-            const storedTimeEspera = storedData.timeEspera || 0;
-
-            console.log(`Tiempo obtenido ${tiempoEsperaMinutos} storedTimeEspera: ${storedTimeEspera}`);
-
-            const diferenciaSegundos = storedTimeEspera - tiempoEsperaSegundos;
-            const minutosExtras = Math.ceil(diferenciaSegundos / 60);
-
-            console.log(`diferenciaSegundos ${diferenciaSegundos} minutosExtras: ${minutosExtras}`);
+            const minutosExtras = calcularTiempoExtra();
+            
             if (minutosExtras > 0) {
                 listHtml += `<li><strong>Minutos Extra:</strong> <span>${minutosExtras}</span></li>`;
             }
         }
-        
+
         if (storedData.horaFin) {
             listHtml += `<li><strong>Finalización Recorrido:</strong> <span>${storedData.horaFin}</span></li>`;
         }
@@ -157,29 +174,119 @@ jQuery(document).ready(function($) {
         const action = $(this).data('action');
         const horaActual = new Date().toLocaleTimeString();
 
-        if (action === 'llegada') {
-            $("#wrap-contador-espera").removeClass('ocultar');
+        if (action === 'llegada') {            
             $("#conductor-form .button[data-action='cancelar']").addClass('ocultar');
             $(this).addClass('ocultar');
             startTimer();
             actualizarEstado("llegada");
             guardarEnLocalStorage('horaLlegada', horaActual);
             refreshFront();
+            $("#wrap-contador-espera").removeClass('ocultar');
         } else if (action === 'iniciar') {
             stopTimer();
             clearInterval(contadorInterval);
             isWaitingPeriod = false;
             startTime = null;
+
+            /*Calcular tiempo a guardar en localstorage*/
+            let timeEmpSeg = (tiempoEspera * 60);
+            let extramincond = 0;
+            if (timetempsav > timeEmpSeg) {
+                extramincond = Math.ceil( (timetempsav - timeEmpSeg) / 60)
+            }
+
             actualizarEstado("iniciar");
             guardarEnLocalStorage('horaInicio', horaActual);
             guardarEnLocalStorage('timeEspera', timetempsav);
+            guardarEnLocalStorage('minutosExtras', extramincond);
             refreshFront();
             $(this).addClass('ocultar');
             $("#conductor-form .button[data-action='save-info'], #conductor-form .button[data-action='end-recorrido']").removeClass('ocultar');
+        } else if (action === 'cancelar') {
+            return;
         } else if (action === 'end-recorrido') {
-            actualizarEstado("end-recorrido");
-            guardarEnLocalStorage('horaFin', horaActual);
-            refreshFront();
+
+            var valcomentconductor = $('#trayecto_commen').val().trim();
+
+            if (valcomentconductor === "") {
+                Swal.fire(
+                    'Importante',
+                    'Es necesario que realice un comentario sobre el recorrido antes de finalizarlo.',
+                    'error'
+                );
+                return;
+            } else {
+                Swal.fire({
+                    title: "¿Estás seguro de finalizar el recorrido?",
+                    text: "Una vez que finalices el recorrido, no podrás revertir esta acción. Asegúrate de haber completado todos los pasos necesarios antes de continuar.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, Finalizar Recorrido",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        const formData = new FormData($('#conductor-form')[0]);
+                        formData.append('action', 'finalizar_recorrido_conductor');
+
+                        // Obtener los datos del localStorage
+                        const dataRecorrido = JSON.parse(localStorage.getItem('dataRecorrido'));
+
+                        // Agregar los datos del localStorage al FormData
+                        for (const key in dataRecorrido) {
+                            if (dataRecorrido.hasOwnProperty(key)) {
+                                formData.append(key, dataRecorrido[key]);
+                            }
+                        }
+
+                        $('body').addClass('actloader');
+                        $.ajax({
+                            url: conductorAjax.ajaxurl,
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+
+                                actualizarEstado("end-recorrido");
+                                guardarEnLocalStorage('horaFin', horaActual);
+                                refreshFront();
+
+                                if (response.data.datos) {
+
+                                    var costos = response.data.datos;
+                                    var ulContent = '';
+                                    var totalRecorrido = 0;
+
+                                    // Recorrer los costos para construir el contenido del ul
+                                    $.each(costos, function(index, costo) {
+                                        if (costo.motivo !== 'Total Recorrido') {
+                                            ulContent += '<li><strong>' + costo.motivo + ':</strong> <span class="symbol">$<span class="price">' + formatoMonedaColombiana(costo.valor) + '</span></span></li>';
+                                        } else {
+                                            totalRecorrido = costo.valor;
+                                        }
+                                    });
+
+                                    $('#wrap-total-calculo .trayecto_total_detail ul').empty().html(ulContent);
+
+                                    $('#wrap-total-calculo h4 span').text('$' + formatoMonedaColombiana(totalRecorrido));
+
+                                    $('#wrap-total-calculo').removeClass('ocultar');
+                                }
+
+                                $("#conductor-form .trayecto_bottons .btn").addClass('ocultar');
+
+                                $('body').removeClass('actloader');
+                                Swal.fire(response.success ? "¡Guardado!" : "Error", response.success ? "Recorrido Finalizado." : "Hubo un problema al guardar los datos.", response.success ? "success" : "error");
+                            },
+                            error: function() {
+                                $('body').removeClass('actloader');
+                                Swal.fire("Error", "Hubo un problema con la conexión.", "error");
+                            }
+                        });
+                    }
+                });
+            }
         }
     });
 
@@ -336,6 +443,7 @@ jQuery(document).ready(function($) {
                             storedData.estado = "sin-iniciar";
                             guardarStoredData();
                         }
+                        actualizarStoredData();
                         if (storedData) {
                             refreshFront();
                         }
@@ -350,7 +458,7 @@ jQuery(document).ready(function($) {
         });
     });
 
-    /*FRANJAS DE ASIGNACION*/
+    /*PEAJES*/
     $(document).on('click', '#wrap-peajes .button-add', function(e) {
         e.preventDefault();
 

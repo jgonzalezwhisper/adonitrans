@@ -126,10 +126,11 @@
       font-weight: 600;
       font-family: 'Poppins';
 
-      .contador{
+      .contador {
         font-size: 18px;
         text-align: center;
       }
+
     }
 
     .trayecto_info {
@@ -176,6 +177,14 @@
         &:nth-child(2),
         &:nth-child(3) {
           padding-left: 20px;
+        }
+
+        .trayecto_acciones {
+          gap: 20px;
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: column;
+          padding: 20px 0;
         }
 
       }
@@ -275,7 +284,6 @@
         }
 
         &.bmedio {
-          padding-top: 25px;
           flex-direction: column;
 
           h5 {
@@ -331,6 +339,18 @@
 
       }
 
+    }
+
+    #wrap-usuarios-adicionales {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      input{
+        cursor: pointer;
+      }
+      .nombre-usuario{
+        font-weight: 700;
+      }
     }
 
     .trayecto_finalizar {
@@ -472,7 +492,7 @@
 
     }
 
-    .ocultar{
+    .ocultar {
       display: none !important;
     }
 

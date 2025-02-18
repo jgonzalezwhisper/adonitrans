@@ -45,7 +45,7 @@
 
       label {
         .title_form_login {
-          color: #fff;
+          color: #2d2d2d;
           display: block;
           width: 100%;
           margin: 0;
@@ -55,7 +55,7 @@
 
         input {
           background-color: rgba(255, 255, 255, 0.3);
-          color: #fff;
+          color: #2d2d2d;
           border: none;
           padding: 10px 30px;
           width: 100%;
@@ -66,8 +66,10 @@
 
         i {
           color: #fff;
-          top: 44px;
+          top: 37px;
+          color: #0095e8;
         }
+
       }
 
       .button {
@@ -87,13 +89,26 @@
           color: #000;
           transform: translateY(-5px);
         }
+
       }
 
       #token-section {
         background: rgba(0, 0, 0, 0.7);
+        color: #fff;
         padding: 30px;
         border-radius: 20px;
         margin-top: 30px;
+
+        label {
+          .title_form_login {
+            text-align: center;
+            color: #fff;
+          }
+          input{
+            color: #fff;
+          }
+
+        }
 
         .button {
           font-size: 14px;
@@ -102,22 +117,30 @@
           display: block;
           background: #FCD72296;
         }
+
       }
+
     }
+
   }
 
   @keyframes ani-blur {
-    0%, 100% {
+    0%,
+    100% {
       filter: blur(1px);
     }
+
     50% {
       filter: blur(3px);
     }
+
   }
 
-  @media only screen and (max-width: 490px) {
+  @media only screen and (max-width:490px) {
     .wrap-login {
       padding: 40px 30px;
     }
+
   }
+
 }
