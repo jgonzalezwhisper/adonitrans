@@ -608,6 +608,28 @@
                     "prepend": "",
                     "append": "",
                     "parent_repeater": "field_67a4f19f870f3"
+                },
+                {
+                    "key": "field_67b234439bc96",
+                    "label": "Estado",
+                    "name": "estado",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67a4f19f870f3"
                 }
             ]
         },
@@ -705,27 +727,6 @@
             "key": "field_67815acc3f1a0",
             "label": "Comentario Conductor Inicio Recorrido",
             "name": "comentario_conductor_inicio_recorrido",
-            "aria-label": "",
-            "type": "textarea",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "rows": "",
-            "placeholder": "",
-            "new_lines": ""
-        },
-        {
-            "key": "field_67ab80858fcda",
-            "label": "Comentario Conductor Final Recorrido",
-            "name": "comentario_conductor_final_recorrido",
             "aria-label": "",
             "type": "textarea",
             "instructions": "",
@@ -874,24 +875,6 @@
             "append": ""
         },
         {
-            "key": "field_67af61459245e",
-            "label": "Conductor Recorrido",
-            "name": "",
-            "aria-label": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 0,
-            "selected": 0
-        },
-        {
             "key": "field_67a27d5c81da2",
             "label": "Valor Ruta Recorrido",
             "name": "valor_ruta_recorrido",
@@ -911,6 +894,24 @@
             "placeholder": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_67af61459245e",
+            "label": "Conductor Recorrido",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
         },
         {
             "key": "field_67a57015211cc",
@@ -1029,9 +1030,114 @@
             "delay": 0
         },
         {
+            "key": "field_67ab80858fcda",
+            "label": "Comentario Conductor Final Recorrido",
+            "name": "comentario_conductor_final_recorrido",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_67b233100e007",
+            "label": "Hora Llegada Recorrido",
+            "name": "hora_llegada_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_67b2331f0e008",
+            "label": "Hora Inicio Recorrido",
+            "name": "hora_inicio_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_67ae997c1bd42",
-            "label": "Tiempo de Espera Recorrido",
+            "label": "Tiempo de Espera Recorrido - Minutos",
             "name": "tiempo_de_espera_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_67b233300e009",
+            "label": "Hora Final Recorrido",
+            "name": "hora_final_recorrido",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_67b234ecd2e30",
+            "label": "Pasajeros Recogidos Recorrido",
+            "name": "pasajeros_recogidos_recorrido",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -1113,6 +1219,74 @@
                     "parent_repeater": "field_67af60d62af1d"
                 }
             ]
+        },
+        {
+            "key": "field_67b27267ae83b",
+            "label": "Costo Calculado del Recorrido",
+            "name": "costo_calculado_del_recorrido",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Agregar Fila",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_67b27267ae83c",
+                    "label": "Motivo",
+                    "name": "motivo",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67b27267ae83b"
+                },
+                {
+                    "key": "field_67b27267ae83d",
+                    "label": "Valor",
+                    "name": "valor",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 1,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67b27267ae83b"
+                }
+            ]
         }
     ],
     "location": [
@@ -1133,5 +1307,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1739547112
+    "modified": 1739756148
 }
