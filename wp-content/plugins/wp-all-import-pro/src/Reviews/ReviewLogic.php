@@ -171,7 +171,7 @@ class ReviewLogic
 
         // Go through the imports and find the import count for each import type
         foreach($imports as $import) {
-            $options = pmxi_maybe_unserialize($import->options);
+            $options = \pmxi_maybe_unserialize($import->options);
 
             if ($options) {
 

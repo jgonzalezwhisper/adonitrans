@@ -143,7 +143,7 @@ class AttachmentHandler{
 		self::store_data($field, [], $autoload, $import_id);
 	}
 
-	private function deleteImageMetaFields(){
+	public function deleteImageMetaFields(){
 		if ( $this->isImageToUpdate and ! empty($this->imageUploadDir) and false === $this->imageUploadDir['error'] and (empty($this->articleData['ID']) or self::$importRecord->options['update_all_data'] == "yes" or ( self::$importRecord->options['update_all_data'] == "no" and self::$importRecord->options['is_update_images']))) {
 			// If images set to be updated then delete image related custom fields as well.
 			if ( self::$importRecord->options['update_images_logic'] == "full_update" ) {
@@ -1125,8 +1125,7 @@ class AttachmentHandler{
 	}
 
 	public function importCore() {
-
-		$this->deleteImageMetaFields();
+		
 		$this->importImages();
 		$this->importAttachments();
 
@@ -1412,7 +1411,9 @@ class AttachmentHandler{
 		} else {
 
 			if(!$downloaded_with_curl) {
-				file_put_contents( $image_filepath, wp_remote_retrieve_body( $response ) );
+				$image_from_body = wp_remote_retrieve_body( $response );
+				wp_all_import_sanitize_svg($image_from_body, false);
+				file_put_contents( $image_filepath, $image_from_body );
 			}
 
 			if(!file_exists($image_filepath)){

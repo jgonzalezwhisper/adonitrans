@@ -405,7 +405,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 				// apply options from WP All Export bundle
 				if ( ! empty($post['template'])) {
 					$templates = json_decode($post['template'], true);
-					$template_options = pmxi_maybe_unserialize($templates[0]['options']);
+					$template_options = \pmxi_maybe_unserialize($templates[0]['options']);
 					$template_options['type'] 	     = ($post['custom_type'] == 'page') ? 'page' : 'post';
 					$template_options['custom_type'] = $post['custom_type'];
 					$template_options['wizard_type'] = $post['wizard_type'];
@@ -1762,7 +1762,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                 $this->data['existing_attributes'] = array();
                 if ( ! empty($existing_attributes)){
                     foreach ($existing_attributes as $key => $existing_attribute) {
-                        $existing_attribute = pmxi_maybe_unserialize($existing_attribute->meta_value);
+                        $existing_attribute = \pmxi_maybe_unserialize($existing_attribute->meta_value);
                         if (!empty($existing_attribute) and is_array($existing_attribute)):
                             foreach ($existing_attribute as $attr_key => $value) {
                                 if (strpos($attr_key, "pa_") === false and ! in_array($attr_key, $this->data['existing_attributes'])) $this->data['existing_attributes'][] = $attr_key;
@@ -2377,7 +2377,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                 $this->data['existing_attributes'] = array();
                 if ( ! empty($existing_attributes)){
                     foreach ($existing_attributes as $key => $existing_attribute) {
-                        $existing_attribute = pmxi_maybe_unserialize($existing_attribute->meta_value);
+                        $existing_attribute = \pmxi_maybe_unserialize($existing_attribute->meta_value);
                         if (!empty($existing_attribute) and is_array($existing_attribute)):
                             foreach ($existing_attribute as $attr_key => $value) {
                                 if (strpos($attr_key, "pa_") === false and ! in_array($attr_key, $this->data['existing_attributes'])) $this->data['existing_attributes'][] = $attr_key;

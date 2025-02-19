@@ -76,7 +76,7 @@ class PMXI_Handler extends PMXI_Session {
 		}
 
 		if( !empty($session) && !is_array($session) ) {
-			$session_clear = pmxi_maybe_unserialize( base64_decode( $session ) );
+			$session_clear = \pmxi_maybe_unserialize( base64_decode( $session ) );
 			if($session === $session_clear){
 				$delete_option = true;
 			}else{

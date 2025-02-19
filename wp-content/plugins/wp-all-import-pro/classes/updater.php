@@ -147,7 +147,7 @@ if( ! class_exists('PMXI_Updater') ) {
                         {
                             $cache_value = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $this->slug . '_' . $cache_key ) );
                             if ( is_object( $cache_value ) and ! empty($cache_value->option_value)) {
-                                $version_info = pmxi_maybe_unserialize($cache_value->option_value);
+                                $version_info = maybe_unserialize($cache_value->option_value);
                             }
                         }
                     }
@@ -234,7 +234,7 @@ if( ! class_exists('PMXI_Updater') ) {
                         {
                             $cache_value = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $this->slug . '_' . $cache_key ) );
                             if ( is_object( $cache_value ) and ! empty($cache_value->option_value)) {
-                                $version_info = pmxi_maybe_unserialize($cache_value->option_value);
+                                $version_info = maybe_unserialize($cache_value->option_value);
                             }
                         }
                     }
@@ -412,7 +412,7 @@ if( ! class_exists('PMXI_Updater') ) {
                     {
                         $cache_value = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $this->slug . '_' . $cache_key ) );
                         if ( is_object( $cache_value ) and ! empty($cache_value->option_value)) {
-                            $_data = pmxi_maybe_unserialize($cache_value->option_value);
+                            $_data = maybe_unserialize($cache_value->option_value);
                         }
                     }
                 }
@@ -516,15 +516,15 @@ if( ! class_exists('PMXI_Updater') ) {
             }
 
             if ( $request && isset( $request->contributors ) ) {
-                $request->contributors = pmxi_maybe_unserialize( $request->contributors );
+                $request->contributors = maybe_unserialize( $request->contributors );
             }
 
             if ( $request && isset( $request->banners ) ) {
-                $request->banners = pmxi_maybe_unserialize( $request->banners );
+                $request->banners = maybe_unserialize( $request->banners );
             }
 
             if ( $request && isset( $request->sections ) ) {
-                $request->sections = pmxi_maybe_unserialize( $request->sections );
+                $request->sections = maybe_unserialize( $request->sections );
             } else {
                 $request = false;
             }

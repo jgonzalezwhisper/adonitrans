@@ -352,11 +352,11 @@ class PMXI_Addon_Updater {
         }
 
         if ( $request && isset( $request->banners ) ) {
-            $request->banners = pmxi_maybe_unserialize( $request->banners );
+            $request->banners = maybe_unserialize( $request->banners );
         }
 
         if ( $request && isset( $request->sections ) ) {
-            $request->sections = pmxi_maybe_unserialize( $request->sections );
+            $request->sections = maybe_unserialize( $request->sections );
         } else {
             $request = false;
         }

@@ -555,7 +555,7 @@ if (!class_exists('PMXI_RapidAddon')) {
 				);
 
 			} else if($field_params['type'] == 'acf') {
-				$fieldData = (!empty($field_params['field_obj']->post_content)) ? pmxi_maybe_unserialize($field_params['field_obj']->post_content) : array();
+				$fieldData = (!empty($field_params['field_obj']->post_content)) ? \pmxi_maybe_unserialize($field_params['field_obj']->post_content) : array();
 				$fieldData['ID']    = $field_params['field_obj']->ID;
 				$fieldData['id']    = $field_params['field_obj']->ID;
 				$fieldData['label'] = $field_params['field_obj']->post_title;
@@ -1200,7 +1200,7 @@ if (!class_exists('PMXI_RapidAddon')) {
 			$option_key = 'post_type_move';
 
 			if ( array_key_exists( $option_key, $options ) ) {
-				$move_rules = pmxi_maybe_unserialize( $options[ $option_key ] );
+				$move_rules = \pmxi_maybe_unserialize( $options[ $option_key ] );
 
 				foreach ( $move_rules as $rule ) {
 					$move_this  = $rule['move_this'];
@@ -1274,7 +1274,7 @@ if (!class_exists('PMXI_RapidAddon')) {
 			$options = $this->options_array();
 			$option_key = 'post_type_image';
 			if ( array_key_exists( $option_key, $options ) ) {
-				$post_type_image_rules = pmxi_maybe_unserialize( $options[ $option_key ] );
+				$post_type_image_rules = \pmxi_maybe_unserialize( $options[ $option_key ] );
 				return $post_type_image_rules;
 			}
 			return $image;

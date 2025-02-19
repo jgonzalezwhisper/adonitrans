@@ -12,30 +12,33 @@ if ( ! function_exists('is_exists_term') ) {
 }
 
 if( ! function_exists('pmxi_term_exists')){
-	function pmxi_term_exists($term, $taxonomy = '', $parent = null){
-		$existing_term = term_exists($term, $taxonomy, $parent);
+	function pmxi_term_exists($term, $taxonomy = '', $parent = ''){
 
-		if (!empty($existing_term)) {
-			// Get the actual term object.
-			$term_object = get_term_by('id', $existing_term['term_id'], $taxonomy);
+		// Search by slug.
+		$terms = get_terms( [
+			'taxonomy'   => $taxonomy,
+			'slug'       => sanitize_title( $term ),
+			'parent'     => $parent ?? '',
+			'hide_empty' => false,
+		] );
 
-			// Check if the provided term matches the found term's slug or name.
-			if ($term == $term_object->slug || $term == $term_object->name) {
-				return $existing_term;
-			}else{
-				$terms = get_terms([
-					'taxonomy' => $taxonomy,
-					'name' => $term,
-					'parent' => $parent,
-					'hide_empty' => false,
-				]);
-
-				if (!empty($terms) && !is_wp_error($terms)) {
-					return (array) $terms[0];
-				}
-			}
+		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+			return (array) $terms[0];
 		}
 
+		// Search by name.
+		$terms = get_terms([
+			'taxonomy' => $taxonomy,
+			'name' => $term,
+			'parent' => $parent ?? '',
+			'hide_empty' => false,
+		]);
+
+		if (!empty($terms) && !is_wp_error($terms)) {
+			return (array) $terms[0];
+		}
+
+		// No term found.
 		return false;
 	}
 }

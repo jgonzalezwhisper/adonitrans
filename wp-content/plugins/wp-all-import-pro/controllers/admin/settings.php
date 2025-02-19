@@ -215,7 +215,7 @@ class PMXI_Admin_Settings extends PMXI_Controller_Admin {
 										$templateOptions = $templates_data[0]['options'];
 									}
 									else{
-										$templateOptions = empty($templates_data[0]['options']) ? false : pmxi_maybe_unserialize($templates_data[0]['options']);
+										$templateOptions = empty($templates_data[0]['options']) ? false : \pmxi_maybe_unserialize($templates_data[0]['options']);
 									}
 									if ( empty($templateOptions) ){
 										$this->errors->add('form-validation', __('The template is invalid. Options are missing.', 'wp-all-import-pro'));

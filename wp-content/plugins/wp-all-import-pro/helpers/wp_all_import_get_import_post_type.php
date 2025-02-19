@@ -17,7 +17,7 @@ if ( ! function_exists( 'wp_all_import_get_import_post_type' ) ) {
     
         // If this is an existing import load the custom post type from the array
         if ( ! empty($import_options) )	{
-            $import_options_arr = pmxi_maybe_unserialize($import_options['options']);
+            $import_options_arr = \pmxi_maybe_unserialize($import_options['options']);
             $custom_type = $import_options_arr['custom_type'];
         } else {
             // If this is a new import get the custom post type data from the current session

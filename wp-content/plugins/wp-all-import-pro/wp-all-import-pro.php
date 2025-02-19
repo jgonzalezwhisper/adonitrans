@@ -3,7 +3,7 @@
 Plugin Name: WP All Import Pro
 Plugin URI: http://www.wpallimport.com/
 Description: The most powerful solution for importing XML and CSV files to WordPress. Import to Posts, Pages, and Custom Post Types. Support for imports that run on a schedule, ability to update existing imports, and much more.
-Version: 4.9.8
+Version: 4.9.11
 Requires PHP: 7.4
 Author: Soflyy
 */
@@ -26,7 +26,7 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
     /**
      *
      */
-    define('PMXI_VERSION', '4.9.8');
+    define('PMXI_VERSION', '4.9.11');
 
     /**
      *
@@ -1051,7 +1051,7 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
 							foreach ($imports_list as $import_entry) {
 								$import_id = $import_entry->id;
 								$import = $pmxi_import->getById($import_id);
-								$import_options = pmxi_maybe_unserialize($import->options);
+								$import_options = \pmxi_maybe_unserialize($import->options);
 								$import_type = $import_options['custom_type'];
 								if ( in_array($import_type, array('import_users', 'shop_customer')) ) {
                                     $user_imports[] = $import_id;
@@ -1121,7 +1121,7 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
 				foreach ($imports_list as $import_entry) {
 					$import_id = $import_entry->id;
 					$import = $pmxi_import->getById($import_id);
-					$import_options = pmxi_maybe_unserialize($import->options);
+					$import_options = \pmxi_maybe_unserialize($import->options);
 					$import_type = $import_options['custom_type'];
 					if ( in_array($import_type, array('import_users', 'shop_customer')) ) {
                         $user_imports[] = $import_id;
@@ -1778,7 +1778,7 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
         }
 	}
 
-	add_action( 'admin_init', 'wp_all_import_pro_updater', 0 );
+	add_action( 'plugins_loaded', 'wp_all_import_pro_updater', 0 );
 
 }
 

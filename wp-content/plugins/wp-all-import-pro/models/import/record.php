@@ -1432,7 +1432,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                             if (!empty($serialized_meta_keys)){
                                 foreach ($serialized_meta_keys as $skey => $sval) {
                                     foreach ($sval as $ipost => $ival) {
-                                        $v = (is_serialized($serialized_meta_values[$skey][$ipost])) ? pmxi_maybe_unserialize($serialized_meta_values[$skey][$ipost]) : $serialized_meta_values[$skey][$ipost];
+                                        $v = (is_serialized($serialized_meta_values[$skey][$ipost])) ? \pmxi_maybe_unserialize($serialized_meta_values[$skey][$ipost]) : $serialized_meta_values[$skey][$ipost];
                                         ( "" == $ival ) ? array_push($meta_values[$j][$ipost], $v) : $meta_values[$j][$ipost][$ival] = $v;
                                     }
                                 }
@@ -3146,8 +3146,6 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                         $order->save();
                     }
 
-					// [addons import]
-
 					// prepare data for import
 					\Wpai\WordPress\AttachmentHandler::$importData = $importData = array(
 						'pid' => $pid,
@@ -3161,6 +3159,14 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 						'post_type' => $post_type[$i],
                         'current_xml_node' => $current_xml_node
 					);
+
+					// [featured image]
+					// [/featured image]
+					$attachmentHandler = new \Wpai\WordPress\AttachmentHandler($articleData, $pid, $missing_images, $post_author[$i], $post_type[$i], $i);
+					$attachmentHandler->deleteImageMetaFields();
+					// [attachments]
+					// [/attachments]
+					// [addons import]
 
 					$import_functions = apply_filters('wp_all_import_addon_import', array());
 
@@ -3267,7 +3273,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 
                                 $logger and call_user_func($logger, __('- <b>ACTION</b>: pmxi_custom_field', 'wp-all-import-pro'));
                                 $cf_original_value = isset($existing_meta[$m_key][0]) ? $existing_meta[$m_key][0] : '';
-                                $cf_value = apply_filters('pmxi_custom_field', (is_serialized($values[$i])) ? pmxi_maybe_unserialize($values[$i]) : $values[$i], $pid, $m_key, $cf_original_value, $existing_meta_keys, $this->id);
+                                $cf_value = apply_filters('pmxi_custom_field', (is_serialized($values[$i])) ? \pmxi_maybe_unserialize($values[$i]) : $values[$i], $pid, $m_key, $cf_original_value, $existing_meta_keys, $this->id);
 
                                 $m_key = wp_unslash( $m_key );
                                 $cf_value = wp_unslash( $cf_value );
@@ -3345,7 +3351,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                                     foreach ($meta_fields as $meta_key => $meta_value) {
                                         $internal_meta_key = ! empty( $meta_key ) && $order->get_data_store() && in_array( $meta_key, $order->get_data_store()->get_internal_meta_keys(), true );
                                         if (!$internal_meta_key) {
-											$meta_value = pmxi_maybe_unserialize($meta_value);
+											$meta_value = \pmxi_maybe_unserialize($meta_value);
                                             $order->update_meta_data($meta_key, $meta_value);
                                             // Trigger actions for updated meta fields.
                                             do_action( 'pmxi_update_post_meta', $pid, $meta_key, $meta_value); // hook that was triggered after post meta data updated
@@ -3372,7 +3378,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 
                                     // Trigger actions for updated meta fields.
                                     foreach ($meta_fields as $meta_key => $meta_value) {
-                                        do_action( 'pmxi_update_post_meta', $pid, $meta_key, pmxi_maybe_unserialize($meta_value)); // hook that was triggered after post meta data updated
+                                        do_action( 'pmxi_update_post_meta', $pid, $meta_key, \pmxi_maybe_unserialize($meta_value)); // hook that was triggered after post meta data updated
                                     }
 
                                     wp_cache_delete($pid, $meta_type . '_meta');
@@ -3394,16 +3400,10 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 					if ( ! empty($articleData['post_type']) && !in_array($articleData['post_type'], array('taxonomies', 'comments', 'woo_reviews', 'gf_entries')) && ('page' == $articleData['post_type'] || version_compare($wp_version, '4.7.0', '>=')) && wp_all_import_is_update_cf('_wp_page_template', $this->options) && ( !empty($this->options['page_template']) || "no" == $this->options['is_multiple_page_template']) ){
 						update_post_meta($pid, '_wp_page_template', ("no" == $this->options['is_multiple_page_template']) ? $page_template[$i] : $this->options['page_template']);
 					}
-
-					// [featured image]
-
-					// [/featured image]
-					$attachmentHandler = new \Wpai\WordPress\AttachmentHandler($articleData, $pid, $missing_images, $post_author[$i], $post_type[$i], $i);
+					
+					// Core images
 					$attachmentHandler->importCore();
-                    // [attachments]
-
-                    // [/attachments]
-
+					
                     // [comments] - Temporary disabled.
                     if ( false && ! empty($comments['content']) && !in_array($this->options['custom_type'], ['comments', 'woo_reviews', 'taxonomies', 'import_users']) ) {
                         $logger and call_user_func($logger, __('<b>COMMENTS:</b>', 'wp-all-import-pro'));
@@ -3790,8 +3790,6 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 
     protected function get_missing_records_from_imported( $iteration ) {
 
-        $postList = new PMXI_Post_List();
-
         $args = [ 'import_id' => $this->id, 'iteration !=' => $iteration ];
 
         if ( $this->options['custom_type'] !== "product" && $this->options['custom_type'] !== "taxonomies" ) {
@@ -3800,21 +3798,11 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 
         if ( ! empty($this->options['is_import_specified']) ) $args['specified'] = 1;
 
-        $missing_ids = [];
-        $missingPosts = $postList->getBy($args);
-
-        if ( ! $missingPosts->isEmpty() ) {
-            foreach ($missingPosts as $missingPost) {
-                $missing_ids[] = $missingPost;
-            }
-        }
-        return $missing_ids;
+        return wp_all_import_get_pmxi_post_query($args, false, true);
     }
 
     protected function get_missing_records_from_all( $iteration ) {
 
-        $ids = [];
-        $postList = new PMXI_Post_List();
         $args = [ 'import_id' => $this->id, 'iteration' => $iteration ];
 
         if ( $this->options['custom_type'] !== "product" && $this->options['custom_type'] !== "taxonomies" ) {
@@ -3823,14 +3811,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 
         if ( ! empty($this->options['is_import_specified']) ) $args['specified'] = 1;
 
-        $posts = $postList->getBy($args);
-        if ( ! $posts->isEmpty() ) {
-            foreach ($posts as $post) {
-                $ids[] = $post['post_id'];
-            }
-        }else{
-			$ids[] = 0; // We need a default value to ensure the MySQL query is valid.
-        }
+        $ids = wp_all_import_get_pmxi_post_query($args);
 
         $missing_status = false;
         if ($this->options['delete_missing_action'] == 'keep') {
@@ -4019,7 +4000,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                 $missing_ids = $this->wpdb->get_results($query, ARRAY_A);
                 break;
             default:
-                $missing_ids = $this->importer->get_missing_records($ids, $missing_status, $missing_cf ?? [], $query);
+                $missing_ids = $this->importer->get_missing_records($ids, $missing_status, $missing_cf ?? []);
                 break;
         }
 

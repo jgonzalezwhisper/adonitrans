@@ -54,7 +54,7 @@ function pmxi_wp_ajax_auto_detect_sf(){
 		if ( ! empty($values) ){
 			foreach ($values as $key => $value) {
 				if ( ! empty($value['meta_value']) and is_serialized($value['meta_value'])){
-					$v = pmxi_maybe_unserialize($value['meta_value']);
+					$v = \pmxi_maybe_unserialize($value['meta_value']);
 					if ( ! empty($v) and is_array($v) ){
 						foreach ($v as $skey => $svalue) {
 							$result[] = array(
