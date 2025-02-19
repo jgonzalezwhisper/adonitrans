@@ -1,5 +1,4 @@
 <?php
-
 /*Acción AJAX para CREAR un Vehiculo*/
 add_action('wp_ajax_create_vehiculo', 'create_vehiculo_function');
 add_action('wp_ajax_nopriv_create_vehiculo', 'create_vehiculo_function');

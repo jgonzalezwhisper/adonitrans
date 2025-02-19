@@ -1,5 +1,4 @@
 <?php 
-
 add_action('wp_ajax_update_generales', 'update_generales_handler');
 add_action('wp_ajax_nopriv_update_generales', 'update_generales_handler');
 function update_generales_handler() {
@@ -14,8 +13,8 @@ function update_generales_handler() {
         foreach ($nombres as $index => $nombre) {
             $franjas_horas_trabajo[] = [
                 'nombre' => sanitize_text_field($nombre),
-               	'hora_inicio' => date('g:i:s a', strtotime(sanitize_text_field($horas_inicio[$index]))),
-            	'hora_fin' => date('g:i:s a', strtotime(sanitize_text_field($horas_fin[$index]))),
+               	'hora_inicio' => $horas_inicio[$index],
+            	'hora_fin' => $horas_fin[$index],
             ];
         }
     }else{
@@ -38,7 +37,6 @@ function update_generales_handler() {
 	        }
 	    }
 	}
-
 
     // Guardar datos en la base de datos (Opciones)
     update_field('franjas_horas_trabajo', $franjas_horas_trabajo, 'option');

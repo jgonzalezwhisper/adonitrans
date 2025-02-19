@@ -16,22 +16,27 @@ function formatoMonedaColombiana(valor) {
 }
 
 jQuery(document).ready(function($) {
-    const tiempoEspera = 1; // Tiempo de espera en minutos
-    // Función para actualizar storedData desde localStorage
+    const tiempoEspera = 1;
 
-    // Función para guardar storedData en localStorage
+    // Verificar si hay un tiempo de inicio guardado
+    const savedStartTime = localStorage.getItem('startTime');
+    if (savedStartTime) {
+        startTime = new Date(parseInt(savedStartTime, 10));
+        isWaitingPeriod = true;
+        contadorInterval = setInterval(updateTimer, 1000);
+        updateTimer(); // Actualizar el contador inmediatamente
+    }
+
     function guardarStoredData() {
         localStorage.setItem('dataRecorrido', JSON.stringify(storedData));
     }
 
-    // Función para guardar el recorridoid en localStorage y en storedData
     function guardarRecorridoId(recorridoid) {
         actualizarStoredData();
         storedData.recorridoid = recorridoid;
         guardarStoredData();
     }
 
-    // Función para verificar si el recorridoid es el mismo
     function verificarRecorridoId(recorridoid) {
         actualizarStoredData();
         if (storedData.recorridoid && storedData.recorridoid !== recorridoid) {
@@ -119,7 +124,7 @@ jQuery(document).ready(function($) {
 
             $('.contador').text(convertirTiempo(storedData.timeEspera)).css('color', 'green');
             const minutosExtras = calcularTiempoExtra();
-            
+
             if (minutosExtras > 0) {
                 listHtml += `<li><strong>Minutos Extra:</strong> <span>${minutosExtras}</span></li>`;
             }
@@ -152,6 +157,7 @@ jQuery(document).ready(function($) {
     // Función para detener el temporizador
     function stopTimer() {
         clearInterval(contadorInterval);
+        localStorage.removeItem('startTime');
     }
 
     // Función para actualizar el temporizador
@@ -174,7 +180,7 @@ jQuery(document).ready(function($) {
         const action = $(this).data('action');
         const horaActual = new Date().toLocaleTimeString();
 
-        if (action === 'llegada') {            
+        if (action === 'llegada') {
             $("#conductor-form .button[data-action='cancelar']").addClass('ocultar');
             $(this).addClass('ocultar');
             startTimer();
@@ -192,7 +198,7 @@ jQuery(document).ready(function($) {
             let timeEmpSeg = (tiempoEspera * 60);
             let extramincond = 0;
             if (timetempsav > timeEmpSeg) {
-                extramincond = Math.ceil( (timetempsav - timeEmpSeg) / 60)
+                extramincond = Math.ceil((timetempsav - timeEmpSeg) / 60)
             }
 
             actualizarEstado("iniciar");
@@ -226,6 +232,10 @@ jQuery(document).ready(function($) {
                 }).then((result) => {
                     if (result.isConfirmed) {
 
+                        actualizarEstado("end-recorrido");
+                        guardarEnLocalStorage('horaFin', horaActual);
+                        refreshFront();
+
                         const formData = new FormData($('#conductor-form')[0]);
                         formData.append('action', 'finalizar_recorrido_conductor');
 
@@ -247,10 +257,6 @@ jQuery(document).ready(function($) {
                             processData: false,
                             contentType: false,
                             success: function(response) {
-
-                                actualizarEstado("end-recorrido");
-                                guardarEnLocalStorage('horaFin', horaActual);
-                                refreshFront();
 
                                 if (response.data.datos) {
 

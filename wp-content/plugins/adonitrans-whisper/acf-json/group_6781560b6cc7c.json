@@ -292,9 +292,9 @@
                 "class": "",
                 "id": ""
             },
-            "display_format": "g:i:s a",
-            "return_format": "g:i:s a",
-            "allow_in_bindings": 0
+            "display_format": "g:i a",
+            "return_format": "g:i a",
+            "allow_in_bindings": 1
         },
         {
             "key": "field_67815a255546a",
@@ -1074,7 +1074,7 @@
         {
             "key": "field_67b2331f0e008",
             "label": "Hora Inicio Recorrido",
-            "name": "hora_inicio_recorrido",
+            "name": "hora_inicio_recorrido_conductor",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -1307,5 +1307,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1739756148
+    "modified": 1739968751
 }

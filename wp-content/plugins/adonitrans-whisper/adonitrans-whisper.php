@@ -8,7 +8,6 @@
  * Domain Path: /languages
  * Requires Plugins: advanced-custom-fields-pro
  */
-
 define('PATH_ADONITRANSPLUG',plugin_dir_path(__FILE__));
 define('URL_ADONITRANSPLUG',plugin_dir_url(__FILE__));
 define('PLUG_VERSION', '0.0.13');
@@ -87,9 +86,6 @@ function enqueue_custom_login_scripts() {
             ));
 
             wp_enqueue_style( 'adoni-cuenta-css', URL_ADONITRANSPLUG.'assets/css/panel-cuenta.css', array(), PLUG_VERSION );
-
-        }
-    	if (is_page($slugadm)) { 
 
             wp_enqueue_style( 'adoni-asignaciones-css', URL_ADONITRANSPLUG.'assets/css/panel-asignaciones.css', array(), PLUG_VERSION );
             wp_enqueue_style( 'adoni-empresa-css', URL_ADONITRANSPLUG.'assets/css/panel-empresa.css', array(), PLUG_VERSION );

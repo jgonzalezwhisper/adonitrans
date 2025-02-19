@@ -1,5 +1,4 @@
 <?php 
-date_default_timezone_set('America/Bogota');
 add_action('wp_ajax_guardar_peajes', 'func_guardar_peajes');
 add_action('wp_ajax_nopriv_guardar_peajes', 'func_guardar_peajes');
 function func_guardar_peajes() {
@@ -129,6 +128,29 @@ function func_finalizar_recorrido_conductor() {
     update_field('peajes_del_recorrido', $peajes, $post_id);
 
     /*USUARIOS ADICIONALES*/
+
+    $barrio_inicial = get_field('barrio_inicial_recorrido');
+    $barrio_final = get_field('barrio_final_recorrido');
+    $usuarios_adicionales = get_field('usuarios_adicionales_recorrido');
+
+    // Inicializar contadores
+    $contador_coincidencias = 0;
+    $contador_no_coincidencias = 0;
+
+    // Verificar si el campo repetidor tiene datos
+    if ($usuarios_adicionales) {
+        foreach ($usuarios_adicionales as $usuario) {
+            $origen = $usuario['origen'];
+            $destino = $usuario['destino'];
+
+            // Comparar los valores
+            if ($barrio_inicial === $origen && $barrio_final === $destino) {
+                $contador_coincidencias++;
+            } else {
+                $contador_no_coincidencias++;
+            }
+        }
+    }
     if (isset($_POST['usuarios_adicionales']) && !empty($_POST['usuarios_adicionales'])) {
 
         $usuarios_adicionales = array_filter($_POST['usuarios_adicionales']);
@@ -139,7 +161,7 @@ function func_finalizar_recorrido_conductor() {
 
     /*DATOS DE TIEMPO*/
     update_field('hora_llegada_recorrido', $_POST['horaLlegada'], $post_id);
-    update_field('hora_inicio_recorrido', $_POST['horaInicio'], $post_id);
+    update_field('hora_inicio_recorrido_conductor', $_POST['horaInicio'], $post_id);
     update_field('hora_final_recorrido', $_POST['horaFin'], $post_id);
     update_field('tiempo_de_espera_recorrido', $_POST['minutosExtras'], $post_id);    
 
@@ -199,11 +221,11 @@ function func_finalizar_recorrido_conductor() {
 
         $nombre_tarifa_normalizado = strtolower($value['nombre']);
 
-        if (strpos($nombre_tarifa_normalizado, 'pasajero adicional') !== false) {
+        if (strpos($nombre_tarifa_normalizado, 'pasajero adicional') !== false && $contador_no_coincidencias > 0) {
             $costos[] = ['motivo' => 'Usuario(s) Adicional(es)', 'valor' => intval($contrecogidos * $value['valor']) ];
             $total_recorrido += intval($contrecogidos * $value['valor']);
         }
-        if (strpos($nombre_tarifa_normalizado, 'peajes') !== false && !empty($_POST['valor_peaje'])) {
+        if (strpos($nombre_tarifa_normalizado, 'peajes') !== false && !empty($_POST['valor_peaje'][0])) {
             $total_peajes = array_sum($valores);
             $nume_peajes = $contpeajes * $value['valor'];
             $costos[] = ['motivo' => 'Peajes', 'valor' => intval($total_peajes + $nume_peajes) ];

@@ -1,5 +1,4 @@
 <?php
-
 function convertir_a_24h($hora) {
     return date("H:i:s", strtotime($hora));
 }
