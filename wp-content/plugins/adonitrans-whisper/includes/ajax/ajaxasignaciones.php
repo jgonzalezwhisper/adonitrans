@@ -846,7 +846,7 @@ function func_gen_reporte_excel() {
         ]);
 
         if ($query->have_posts()) {
-            $headers = ['Empresa', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $headers = ['Empresa', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo', 'Motivo Cancelacion'];
             $filtpor = "Colaborador: $first_name $last_name";
             $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
 
@@ -876,6 +876,7 @@ function func_gen_reporte_excel() {
                     $nombciu_inicio,
                     get_field('barrio_inicial_recorrido', $post_id),
                     get_field('centro_de_costo', $post_id),
+                    wp_strip_all_tags(get_field('motivo_cancelacion_recorrido', $post_id)),
                 ];
             }
 
@@ -931,7 +932,7 @@ function func_gen_reporte_excel() {
         $query = new WP_Query($args);
 
         if ($query->have_posts()) {
-            $headers = ['ID Servicio', 'Solicitante', 'Conductor', 'Placa Vehículo', 'Estado', 'Fecha Inicio', 'Hora Inicio', 'Ciudad Inicio', 'Barrio Inicio', 'Centro de Costo'];
+            $headers = ['ID Servicio', 'Nombre del Usuario', 'Nombre del Conductor', '# Móvil', 'Estado', 'Hra Servicio', 'Hra Fin Servicio', 'Barrio', 'Observaciones - Razon de Uso', 'Centro de Costo', 'Autorizado Por', 'Ruta', 'T. Espera', 'Fecha Factura', 'Valor', 'Categoria'];
             $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
             $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
 
@@ -939,9 +940,21 @@ function func_gen_reporte_excel() {
             foreach ($query->posts as $post_id) {
 
                 $id_solicitante_recorrido = get_field('id_solicitante_recorrido', $post_id)['ID'];
+                $costo_calculado_del_recorrido = get_field('costo_calculado_del_recorrido', $post_id);
                 $nombre_solicitante = get_user_meta($id_solicitante_recorrido, 'first_name', true)." ".get_user_meta($id_solicitante_recorrido, 'last_name', true);
 
+                $id_persona_autoriza = 0;
+
+                $id_persona_autoriza = get_field('persona_que_autoriza_el_recorrido', $post_id);
+                $nombre_autorizador_recorrido = "N/A";
+                if ($id_persona_autoriza) {
+                    $nombre_autorizador_recorrido = $id_persona_autoriza['user_firstname']." ".$id_persona_autoriza['user_lastname'];
+                }                
+
                 $nombre_conductor = "Sin Asignar";
+
+                error_log( "Persona autoriza ->".print_r($id_persona_autoriza,true) );
+                error_log( "Arr Costo calculado ->".print_r($costo_calculado_del_recorrido, true));
 
                 if (get_field('id_conductor_recorrido', $post_id)) {
                     $id_conductor_recorrido = get_field('id_conductor_recorrido', $post_id)['ID'];
@@ -957,12 +970,41 @@ function func_gen_reporte_excel() {
                     $nombre_conductor,
                     get_field('placa_vehiculo_recorrido', $post_id),
                     get_field('estado_del_recorrido', $post_id),
-                    get_field('fecha_inicio_recorrido', $post_id),
                     get_field('hora_inicio_recorrido', $post_id),
-                    $nombciu_inicio,
+                    get_field('hora_final_recorrido', $post_id),
                     get_field('barrio_inicial_recorrido', $post_id),
+                    get_field('razon_de_uso_del_recorrido', $post_id),
                     get_field('centro_de_costo', $post_id),
+                    $nombre_autorizador_recorrido,
+                    get_field('nombre_ruta_recorrido', $post_id),
+                    get_field('tiempo_de_espera_recorrido', $post_id),
+                    date('d/m/Y'),    
+                    '--',
+                    '--',
                 ];
+
+                if ($costo_calculado_del_recorrido) {
+                    foreach ($costo_calculado_del_recorrido as $costo_calculado) {
+                        $data[] = [
+                            $post_id,
+                            $nombre_solicitante,
+                            $nombre_conductor,
+                            get_field('placa_vehiculo_recorrido', $post_id),
+                            get_field('estado_del_recorrido', $post_id),
+                            get_field('hora_inicio_recorrido', $post_id),
+                            get_field('hora_final_recorrido', $post_id),
+                            get_field('barrio_inicial_recorrido', $post_id),
+                            get_field('razon_de_uso_del_recorrido', $post_id),
+                            get_field('centro_de_costo', $post_id),
+                            $nombre_autorizador_recorrido,
+                            get_field('nombre_ruta_recorrido', $post_id),
+                            get_field('tiempo_de_espera_recorrido', $post_id),
+                            date('d/m/Y'),
+                            $costo_calculado['valor'],
+                            $costo_calculado['motivo'],                            
+                        ];
+                    }
+                }
             }
 
             wp_reset_postdata();

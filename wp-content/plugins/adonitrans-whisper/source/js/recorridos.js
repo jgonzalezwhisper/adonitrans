@@ -744,6 +744,7 @@ jQuery(document).ready(function($) {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
+                $('body').addClass('actloader');
                 // Si el usuario confirma, realiza la solicitud AJAX
                 $.ajax({
                     url: recorridoAjax.ajaxurl, // La URL de admin-ajax.php en WordPress
@@ -753,7 +754,11 @@ jQuery(document).ready(function($) {
                         post_id: recorridoid
                     },
                     success: function(response) {
+                        
                         if (response.success) {
+
+                            $('body').removeClass('actloader');
+                            
                             // Mostrar mensaje de éxito
                             Swal.fire(
                                 '¡Eliminado!',
@@ -776,9 +781,10 @@ jQuery(document).ready(function($) {
                                         $("#informacion").html("<p>Error al cargar el contenido. Intenta nuevamente.</p>");
                                     }
                                 });
+                                
                             });
-
                         } else {
+                            $('body').removeClass('actloader');
                             // Mostrar mensaje de error
                             Swal.fire(
                                 'Error',
@@ -788,6 +794,7 @@ jQuery(document).ready(function($) {
                         }
                     },
                     error: function() {
+                        $('body').removeClass('actloader');
                         // Mostrar mensaje de error si AJAX falla
                         Swal.fire(
                             'Error',
@@ -858,6 +865,7 @@ jQuery(document).ready(function($) {
 
 
                 } else {
+                    $('body').removeClass('actloader');
                     // Mostrar mensaje de error desde la respuesta
                     Swal.fire({
                         title: 'Algo ha ocurrido!',

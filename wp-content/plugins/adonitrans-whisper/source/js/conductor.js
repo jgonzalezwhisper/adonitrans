@@ -248,8 +248,7 @@ jQuery(document).ready(function($) {
                                 formData.append(key, dataRecorrido[key]);
                             }
                         }
-
-                        $('body').addClass('actloader');
+                        
                         $.ajax({
                             url: conductorAjax.ajaxurl,
                             type: 'POST',
@@ -284,6 +283,8 @@ jQuery(document).ready(function($) {
 
                                 $('body').removeClass('actloader');
                                 Swal.fire(response.success ? "¡Guardado!" : "Error", response.success ? "Recorrido Finalizado." : "Hubo un problema al guardar los datos.", response.success ? "success" : "error");
+
+                                localStorage.clear();
                             },
                             error: function() {
                                 $('body').removeClass('actloader');

@@ -80,7 +80,7 @@ function func_finalizar_recorrido_conductor() {
     $comprobantes = $_FILES['comprobante_pago_peaje'];
 
     if (!empty($_POST['valor_peaje'])) {
-        $contpeajes = count($_POST['valor_peaje']);
+        $contpeajes = count( array_filter($_POST['valor_peaje']) );
     }
     
     $peajes = [];
@@ -115,6 +115,9 @@ function func_finalizar_recorrido_conductor() {
 
                 $comprobante_id = $attach_id; // Guarda el ID en lugar de la URL
             }
+            else{
+                error_log("ERROR AL CARGAR DOCUMENTO ".$comprobantes['name'][$index]);
+            }
         }
 
         if (!empty($nombre) && !empty($valor)) {
@@ -128,10 +131,9 @@ function func_finalizar_recorrido_conductor() {
     update_field('peajes_del_recorrido', $peajes, $post_id);
 
     /*USUARIOS ADICIONALES*/
-
-    $barrio_inicial = get_field('barrio_inicial_recorrido');
-    $barrio_final = get_field('barrio_final_recorrido');
-    $usuarios_adicionales = get_field('usuarios_adicionales_recorrido');
+    $barrio_inicial = get_field('barrio_inicial_recorrido', $post_id);
+    $barrio_final = get_field('barrio_final_recorrido', $post_id);
+    $usuarios_adicionales = get_field('usuarios_adicionales_recorrido', $post_id);
 
     // Inicializar contadores
     $contador_coincidencias = 0;
@@ -195,8 +197,6 @@ function func_finalizar_recorrido_conductor() {
         $tarifa_id = $tarifas[0];
         $tarifas_base_empresa = get_field('tarifas_base_empresa', $tarifa_id);
 
-        /*error_log("ACF TARIFAS BASE EMPRESA ".print_r($tarifas_base_empresa,true));*/
-
         if ($tarifas_base_empresa) {            
 
             foreach ($tarifas_base_empresa as $tarifa_base) {
@@ -222,11 +222,12 @@ function func_finalizar_recorrido_conductor() {
         $nombre_tarifa_normalizado = strtolower($value['nombre']);
 
         if (strpos($nombre_tarifa_normalizado, 'pasajero adicional') !== false && $contador_no_coincidencias > 0) {
-            $costos[] = ['motivo' => 'Usuario(s) Adicional(es)', 'valor' => intval($contrecogidos * $value['valor']) ];
+            $costos[] = ['motivo' => 'Usuario(s) Adicional(es)', 'valor' => intval($contador_no_coincidencias * $value['valor']) ];
             $total_recorrido += intval($contrecogidos * $value['valor']);
         }
-        if (strpos($nombre_tarifa_normalizado, 'peajes') !== false && !empty($_POST['valor_peaje'][0])) {
+        if (strpos($nombre_tarifa_normalizado, 'peajes') !== false ) {
             $total_peajes = array_sum($valores);
+
             $nume_peajes = $contpeajes * $value['valor'];
             $costos[] = ['motivo' => 'Peajes', 'valor' => intval($total_peajes + $nume_peajes) ];
             $total_recorrido += intval($total_peajes + $nume_peajes);
