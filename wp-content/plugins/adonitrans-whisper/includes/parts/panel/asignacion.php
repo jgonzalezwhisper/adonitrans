@@ -33,6 +33,9 @@
                 <div class="boton" data-action="exportar">
                     <i class="icofont-file-excel"></i> <span>Reportes</span>
                 </div>
+                <div class="boton" data-action="exportar-pdf">
+                    <i class="icofont-file-pdf"></i> <span>PDF</span>
+                </div>
             </div>
         </div>
 
@@ -485,6 +488,81 @@
 
                     <div class="wrap">
                         <button class="button button-add" type="submit">Generar Reporte</button>
+                    </div>  
+                </form>
+            </div>
+        </div>
+
+        <div class="wrap wrap-gestion wrap-exportar-pdf" data-target="exportar-pdf" style="display:none">
+            <div class="wrap">
+                <form id="filt-excel-form" method="post" class="formplug" autocomplete="off">
+                    <?php
+                        $argscon = array(
+                            'role'    => 'conductor',
+                            'orderby' => 'display_name',
+                            'order'   => 'ASC',
+                            'meta_query' => array(
+                                array(
+                                    'key'   => 'estado_usuario',
+                                    'value' => 'Activo',
+                                    'compare' => '='
+                                )
+                            )
+                        );
+                        $user_query = new WP_User_Query($argscon);
+                        $conductores = $user_query->get_results();
+
+                        // Argumentos para la consulta de posts
+                        $args_vehiculos = array(
+                            'post_type'      => 'vehiculo', // Reemplaza 'vehiculo' con el nombre de tu CPT
+                            'posts_per_page' => -1, // Trae todos los posts
+                            'post_status'    => 'publish', // Solo posts publicados
+                            'fields'         => 'ids', // Solo obtener los IDs de los posts
+                        );
+                        // Realizar la consulta
+                        $vehiculos_ids = get_posts($args_vehiculos);
+
+                    ?>
+                    <div class="wrap wrap-2">
+                        <label for="desde_formpdf">Desde: </label>
+                        <input type="date" id="desde_formpdf" name="desde_formpdf" value="" placeholder="dd/mm/yyyy" required>
+                    </div>
+                    <div class="wrap wrap-2">
+                        <label for="hasta_formpdf">Hasta: </label>
+                        <input type="date" id="hasta_formpdf" name="hasta_formpdf" value="" placeholder="dd/mm/yyyy" required>
+                    </div>
+                    <div class="wrap wrap-2 wrap-select" data-select="conductor">
+                        <label for="sel_condpdf">Conductor</label>
+                        <select id="sel_condpdf" name="sel_condpdf" >
+                            <option value="">Selecciona un Conductor</option>
+                            <?php foreach ($conductores as $conductor): ?>
+                            <?php
+                                $user_id = $conductor->ID;
+                                $first_name = get_user_meta($user_id, 'first_name', true);
+                                $last_name = get_user_meta($user_id, 'last_name', true);
+                                $email = $conductor->user_email;
+                                $name = trim("$first_name $last_name");
+                                $display_name = $name ? $name : $conductor->display_name;
+                            ?>
+                            <option value="<?php echo esc_attr($user_id); ?>">
+                                <?php echo esc_html("$display_name ($email)"); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div> 
+
+                    <div class="wrap wrap-2 wrap-select" data-select="vehiculo">
+                        <label for="sel_vehpdf"># Móvil</label>
+                        <select id="sel_vehpdf" name="sel_vehpdf" >
+                            <option value="">Selecciona un Móvil</option>
+                            <?php foreach ($vehiculos_ids as $vehiculo): ?>
+                                <option value="<?php echo $vehiculo; ?>"><?php echo esc_html(get_field('placa_vehiculo', $vehiculo)); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div> 
+
+                    <div class="wrap">
+                        <button class="button button-add" type="submit">Generar PDF</button>
                     </div>  
                 </form>
             </div>

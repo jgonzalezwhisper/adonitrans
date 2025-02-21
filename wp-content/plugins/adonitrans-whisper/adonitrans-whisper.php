@@ -95,6 +95,7 @@ function enqueue_custom_login_scripts() {
             wp_enqueue_script('adoni-asignaciones-js', URL_ADONITRANSPLUG . 'assets/js/asignaciones.js', array('jquery'), null, true);
             wp_localize_script('adoni-asignaciones-js', 'asignacionAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
+                'urlsite' => get_site_url( ),
                 'plugin_url' => URL_ADONITRANSPLUG,
             ));            
 

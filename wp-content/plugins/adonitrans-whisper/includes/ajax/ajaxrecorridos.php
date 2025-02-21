@@ -219,11 +219,7 @@ function create_recorrido_function() {
     $centro_de_costo = sanitize_text_field($_POST['centro_de_costo']);
     $razon_uso_recorrido = sanitize_text_field($_POST['razon_uso_recorrido']);
     $persona_autoriza_recorrido = sanitize_text_field($_POST['persona_autoriza_recorrido']);
-
-    // Registra los valores de $_POST en el error_log
-    error_log('Valores recibidos en $_POST: ' . print_r($_POST, true));
-
-
+    
 
     // Validar si ya existe un recorrido con la misma fecha y hora de inicio
     $args = array(

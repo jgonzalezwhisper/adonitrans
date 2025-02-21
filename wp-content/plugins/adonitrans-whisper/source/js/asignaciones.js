@@ -590,5 +590,26 @@ jQuery(document).ready(function($) {
         }
     });
 
+    /*GENERADOR PDF*/
+    $(document).on('submit', '#filt-excel-form', function(event) {
+        // Prevenir el comportamiento por defecto del formulario
+        event.preventDefault();
+
+        // Obtener los datos del formulario
+        var desde = $('#desde_formpdf').val();
+        var hasta = $('#hasta_formpdf').val();
+        var conductor = $('#sel_condpdf').val();
+        var vehiculo = $('#sel_vehpdf').val();
+
+        // Construir la URL con los parámetros GET
+        var url = asignacionAjax.urlsite+'/generador-pdf' +
+                  '?desde=' + encodeURIComponent(desde) +
+                  '&hasta=' + encodeURIComponent(hasta) +
+                  '&conductor=' + encodeURIComponent(conductor) +
+                  '&vehiculo=' + encodeURIComponent(vehiculo);
+
+        window.open(url, '_blank');
+    });
+
 
 });

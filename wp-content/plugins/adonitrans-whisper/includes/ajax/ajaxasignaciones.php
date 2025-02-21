@@ -953,9 +953,6 @@ function func_gen_reporte_excel() {
 
                 $nombre_conductor = "Sin Asignar";
 
-                error_log( "Persona autoriza ->".print_r($id_persona_autoriza,true) );
-                error_log( "Arr Costo calculado ->".print_r($costo_calculado_del_recorrido, true));
-
                 if (get_field('id_conductor_recorrido', $post_id)) {
                     $id_conductor_recorrido = get_field('id_conductor_recorrido', $post_id)['ID'];
                     $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
