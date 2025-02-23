@@ -367,7 +367,7 @@ function create_recorrido_function() {
 
 
         if (empty($estado_actual) || $estado_actual=='Por Asignar') {
-            update_field('estado_del_recorrido', 'Pendiente', $post_id);
+            update_field('estado_del_recorrido', 'Conductor Asignado', $post_id);
         }
     }
     update_field('ciudad_inicial_recorrido', $ciudad_inicio, $post_id);
@@ -825,7 +825,8 @@ function load_recorrido_data_function() {
         $response['centro_de_costo']          = get_field('centro_de_costo', $post_id);
         $response['razon_de_uso_del_recorrido'] = get_field('razon_de_uso_del_recorrido', $post_id);
         $response['codigo_de_ruta_recorrido'] = get_field('codigo_de_ruta_recorrido', $post_id);
-        $response['quien_autoriza_recorrido'] = get_field('persona_que_autoriza_el_recorrido', $post_id)['ID'];        
+        $response['quien_autoriza_recorrido'] = get_field('persona_que_autoriza_el_recorrido', $post_id)['ID'];   
+        $response['id_conductor_recorrido']   = get_field('id_conductor_recorrido',$post_id)['ID'];
 
         $empresa_solicitante = get_field('empresa_solicitante_recorrido', $post_id);
 
@@ -874,7 +875,6 @@ function load_recorrido_data_function() {
         }
 
         /*OBTENER TARIFAS PARA RUTAS*/
-
         $rutas = [];
 
         $args = [
@@ -912,12 +912,37 @@ function load_recorrido_data_function() {
             }
         }
 
+        /*USUARIOS COLABORADOR EXCLUIDO EL SOLICITANTE*/
+        $solicitante_id = get_field('id_solicitante_recorrido', $post_id)['ID'];
+        $args = [
+            'role'    => 'colaborador',
+            'exclude' => [$solicitante_id],
+            'meta_query' => [
+                [
+                    'key'   => 'empresa_asociada_usuario',
+                    'value' => $empresa_solicitante->ID,
+                    'compare' => '='
+                ]
+            ]
+        ];
+
+        $colaboradores = get_users($args);
+        $list_colaboradores = [];
+        foreach ($colaboradores as $colaborador) {
+            $list_colaboradores[] = [
+                'ID'        => $colaborador->ID,
+                'nombre'    => get_user_meta($colaborador->ID, 'first_name', true).' '.get_user_meta($colaborador->ID, 'last_name', true),
+            ];
+        }
+
+
         // Añadir la lista de barrios al response
         $response['barrios_empresa'] = $barrios_empresa;
         $response['razon_de_uso_para_el_recorrido'] = get_field('razon_de_uso_para_el_recorrido', $empresa_solicitante->ID);
         $response['usuarios_administradores_empresa'] = get_field('usuarios_administradores_empresa', $empresa_solicitante->ID);
         $response['centros_de_costos_empresa'] = get_field('centros_de_costos_empresa', $empresa_solicitante->ID);
         $response['rutas_empresa'] = $rutas;
+        $response['list_colaboradores'] = $list_colaboradores;
     }
 
 

@@ -5,26 +5,27 @@ jQuery(document).ready(function($) {
         const date = new Date(input.val());
         const day = date.getDay(); // 0 (domingo) a 6 (sábado)
 
-        // Verifica si el día seleccionado es lunes (1)
-        if (day !== 0) {
+        // Verifica si el día seleccionado es domingo (0)
+        if (day !== 6) {
             Swal.fire(
                 'Error',
-                'Por favor, selecciona un lunes.',
+                'Por favor, selecciona un domingo.',
                 'error'
             );
-            input.val(''); // Limpia el campo si no es lunes
+            input.val(''); // Limpia el campo si no es domingo
         } else {
-            // Encuentra el próximo domingo (6 días después del lunes)
-            let nextSunday = new Date(date);
-            nextSunday.setDate(date.getDate() + 6); // 6 días después de lunes es domingo
+            // Encuentra el siguiente sábado (6 días después del domingo)
+            let nextSaturday = new Date(date);
+            nextSaturday.setDate(date.getDate() + 6); // 6 días después de domingo es sábado
 
             // Formatea la fecha como "YYYY-MM-DD"
-            const formattedDate = nextSunday.toISOString().split('T')[0];
+            const formattedDate = nextSaturday.toISOString().split('T')[0];
 
             // Ajusta la fecha en el input de fin de semana
             $('#fin_semana_asignacion').val(formattedDate);
         }
     });
+
 
     $(document).on('click', '#wrap-asignaciones .boton', function(event) {
         event.preventDefault();
@@ -602,11 +603,11 @@ jQuery(document).ready(function($) {
         var vehiculo = $('#sel_vehpdf').val();
 
         // Construir la URL con los parámetros GET
-        var url = asignacionAjax.urlsite+'/generador-pdf' +
-                  '?desde=' + encodeURIComponent(desde) +
-                  '&hasta=' + encodeURIComponent(hasta) +
-                  '&conductor=' + encodeURIComponent(conductor) +
-                  '&vehiculo=' + encodeURIComponent(vehiculo);
+        var url = asignacionAjax.urlsite + '/generador-pdf' +
+            '?desde=' + encodeURIComponent(desde) +
+            '&hasta=' + encodeURIComponent(hasta) +
+            '&conductor=' + encodeURIComponent(conductor) +
+            '&vehiculo=' + encodeURIComponent(vehiculo);
 
         window.open(url, '_blank');
     });

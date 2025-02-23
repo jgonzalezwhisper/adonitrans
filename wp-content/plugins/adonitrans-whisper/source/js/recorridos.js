@@ -661,7 +661,6 @@ jQuery(document).ready(function($) {
         $(document).off('change', '#barrio_fin');
 
 
-
         // Enviar la solicitud AJAX para obtener los datos del recorrido
         $.ajax({
             url: recorridoAjax.ajaxurl,
@@ -771,11 +770,12 @@ jQuery(document).ready(function($) {
                             // Agregar la nueva fila al DOM
                             $('#wrap-usuario-adicional').append(newRow);
 
-                            /*newSelect.removeAttr('disabled').select2({
-                                placeholder: "Selecciona un Valor",
-                                allowClear: true,
-                                width: '100%'
-                            });*/
+                            response.data.list_colaboradores.forEach(colaborador => {
+                                newRow.find('.sel_adicional_usuario').append(`<option value="${colaborador.ID}">${colaborador.nombre}</option>`);
+                            });
+                            if (usuario.id_usuario_adicional) {
+                                newRow.find('.sel_adicional_usuario').val(usuario.id_usuario_adicional).trigger('change');
+                            }
 
                             // Llenar selects en la nueva fila
                             llenarSelectsRepetidorV2(barriosEmpresa, newRow, usuario);
@@ -785,7 +785,59 @@ jQuery(document).ready(function($) {
                         });
                     }
 
+                    /*CENTROS DE COSTO POR EMPRESA*/
+                    if (response.data.centros_de_costos_empresa) {
 
+                        $("#centro_de_costo").empty().append('<option value="">Seleccione una Opción</option>').prop('disabled', false);
+
+                        response.data.centros_de_costos_empresa.forEach(cce => {
+                            $("#centro_de_costo").append(`<option value="${cce.codigo}">${cce.nombre}</option>`);
+                        });
+                        if (response.data.centro_de_costo && $('#centro_de_costo').length) {
+                            $("#centro_de_costo").val(response.data.centro_de_costo).trigger('change');
+                        }
+                    }
+
+                    /*AJAX CONSULTA DE CONDUCTORES DISPONIBLES PARA LA FECHA Y HORA*/
+                    $.ajax({
+                        url: recorridoAjax.ajaxurl,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'obtener_conductores_asignados',
+                            id_recorrido: post_id
+                        },
+                        success: function(resdatavehiculo) {
+                            if (resdatavehiculo.success) {
+                                $('#id_conductor_recorrido').html('<option value="0">Selecciona un Móvil</option>');
+                                $.each(resdatavehiculo.data, function(index, conductor) {
+                                    $('#id_conductor_recorrido').append(
+                                        `<option value="${conductor.id}">${conductor.nombre}</option>`
+                                    );
+                                });
+
+                                // Asegúrate de seleccionar el conductor si existe
+                                if (response.data.id_conductor_recorrido) {
+                                    $('#id_conductor_recorrido').val(response.data.id_conductor_recorrido).trigger('change');
+                                }
+                            } else {
+                                Swal.fire({
+                                    title: '¡Error!',
+                                    text: resdatavehiculo.data,
+                                    icon: 'error',
+                                    confirmButtonText: 'Aceptar',
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                title: '¡Error!',
+                                text: 'Error en la solicitud AJAX para obtener conductores.',
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar',
+                            });
+                        }
+                    });
 
                 } else {
                     $('body').removeClass('actloader');
