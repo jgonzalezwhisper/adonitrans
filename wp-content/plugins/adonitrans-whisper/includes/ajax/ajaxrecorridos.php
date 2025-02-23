@@ -18,10 +18,16 @@ function func_get_rutas() {
         'fields'         => 'ids',
         'posts_per_page' => 1,
         'meta_query'     => [
+            'relation' => 'AND',
             [
                 'key'     => 'empresa_aplicar_tarifa',
                 'value'   => $empresa_asociada->ID,
-                'compare' => '=LIKE'
+                'compare' => '='
+            ],
+            [
+                'key'     => 'ano_aplicar_tarifa',
+                'value'   => date('Y'),
+                'compare' => '='
             ]
         ]
     ];
@@ -186,6 +192,7 @@ function func_get_centros_de_costo() {
 add_action('wp_ajax_create_recorrido', 'create_recorrido_function');
 add_action('wp_ajax_nopriv_create_recorrido', 'create_recorrido_function');
 function create_recorrido_function() {
+
     // Verificar nonce si es necesario (no se ha incluido en el ejemplo)
     if (!isset($_POST['create_recorrido_nonce']) || !wp_verify_nonce($_POST['create_recorrido_nonce'], 'create_recorrido_action')) {
         wp_send_json_error(['message' => 'Nonce no válido.']);
@@ -381,22 +388,21 @@ function create_recorrido_function() {
         update_field('estado_del_recorrido', 'Por Asignar', $post_id);
     }
 
-    if (isset($_POST['ciudad_adicional_recorrido']) && isset($_POST['barrio_adicional_recorrido'])) {
+    if (!empty($_POST['ciudad_adicional_recorrido']) && !empty($_POST['barrio_adicional_recorrido']) && !empty($_POST['direccion_adicional_zona'])) {
         // Obtener los valores de los campos
         $ciudades = $_POST['ciudad_adicional_recorrido'];
-        $barrios = $_POST['barrio_adicional_recorrido'];     
-        if (!empty($_POST['barrio_adicional_zona'])) {
-            $zonas = $_POST['barrio_adicional_zona'];
-        }   
+        $barrios = $_POST['barrio_adicional_recorrido'];   
+        $direcci = $_POST['direccion_adicional_zona'];
+
         $puntos_recorrido = array();
 
-        $total_francjas = count($ciudades);
-        for ($i = 0; $i < $total_francjas; $i++) {
+        $total_franjas = count($ciudades);
+        for ($i = 0; $i < $total_franjas; $i++) {
             if (!empty($ciudades[$i]) && !empty($barrios[$i])) {
                 $puntos_recorrido[] = array(
                     'ciudad' => $ciudades[$i],
-                    'zona_barrio' => $zonas[$i],
-                    'nombre_del_barrio' => $barrios[$i]
+                    'barrio' => $barrios[$i],
+                    'direccion' => $direcci[$i]
                 );
             }
         }
@@ -426,37 +432,67 @@ function create_recorrido_function() {
 
     $ciudad_fin = sanitize_text_field($_POST['ciudad_fin']);
 
-    if (isset($_POST['sel_id_usuario_adicional'], $_POST['origen_adicional'], $_POST['direccion_origen_adicional'], $_POST['destino_adicional'], $_POST['direccion_destino_adicional'])) {
-        $sel_id_usuario_adicional = $_POST['sel_id_usuario_adicional'];
-        $origen_adicional = $_POST['origen_adicional'];
-        $direccion_origen_adicional = $_POST['direccion_origen_adicional'];
-        $destino_adicional = $_POST['destino_adicional'];
-        $direccion_destino_adicional = $_POST['direccion_destino_adicional'];
+    if (
+        isset(
+            $_POST['sel_id_usuario_adicional'], 
+            $_POST['barrio_origen_pasajero_adi'], 
+            $_POST['direccion_origen_adicional'], 
+            $_POST['barrio_destino_pasajero_adi'], 
+            $_POST['direccion_destino_adicional'],
+            $_POST['ciudad_origen_pasajero_adicional'], 
+            $_POST['ciudad_destino_pasajero_adicional']
+        ) &&
+        is_array($_POST['sel_id_usuario_adicional']) && 
+        is_array($_POST['barrio_origen_pasajero_adi']) &&
+        is_array($_POST['direccion_origen_adicional']) &&
+        is_array($_POST['barrio_destino_pasajero_adi']) &&
+        is_array($_POST['direccion_destino_adicional'])
+    ) {
+        $sel_id_usuario_adicional = array_map('sanitize_text_field', $_POST['sel_id_usuario_adicional']);
+        $origen_ciu_adicional = array_map('sanitize_text_field', $_POST['ciudad_origen_pasajero_adicional']);
+        $origen_adicional = array_map('sanitize_text_field', $_POST['barrio_origen_pasajero_adi']);
+        $direccion_origen_adicional = array_map('sanitize_text_field', $_POST['direccion_origen_adicional']);
+        $destino_ciu_adicional = array_map('sanitize_text_field', $_POST['ciudad_destino_pasajero_adicional']);
+        $destino_adicional = array_map('sanitize_text_field', $_POST['barrio_destino_pasajero_adi']);
+        $direccion_destino_adicional = array_map('sanitize_text_field', $_POST['direccion_destino_adicional']);
 
         $total = count($sel_id_usuario_adicional);
 
-        if ($total === count($origen_adicional) && $total === count($direccion_origen_adicional) && $total === count($destino_adicional) && $total === count($direccion_destino_adicional)) {
+        if (
+            $total === count($origen_adicional) &&
+            $total === count($direccion_origen_adicional) &&
+            $total === count($destino_adicional) &&
+            $total === count($direccion_destino_adicional)
+        ) {
             $usuarios_adicionales = [];
 
             foreach ($sel_id_usuario_adicional as $key => $usuario_adicional) {
+                $fila_ciuori = $origen_ciu_adicional[$key] ?? '';
                 $fila_origen = $origen_adicional[$key] ?? '';
                 $fila_dirori = $direccion_origen_adicional[$key] ?? '';
+                $fila_ciudes = $destino_ciu_adicional[$key] ?? '';
                 $fila_destin = $destino_adicional[$key] ?? '';
                 $fila_dirdes = $direccion_destino_adicional[$key] ?? '';
 
                 if (!empty($usuario_adicional) && !empty($fila_origen) && !empty($fila_destin)) {
                     $usuarios_adicionales[] = [
-                        'id_usuario_adicional' => sanitize_text_field($usuario_adicional),
-                        'origen' => sanitize_text_field($fila_origen),
-                        'direccion_origen' => sanitize_text_field($fila_dirori),
-                        'destino' => sanitize_text_field($fila_destin),
-                        'direccion_destino' => sanitize_text_field($fila_dirdes),
+                        'id_usuario_adicional' => $usuario_adicional,
+                        'ciudad_origen'     => $fila_ciuori,
+                        'origen'            => $fila_origen,
+                        'direccion_origen'  => $fila_dirori,
+                        'ciudad_destino'    => $fila_ciudes,
+                        'destino'           => $fila_destin,
+                        'direccion_destino' => $fila_dirdes,
                     ];
                 }
             }
-            update_field('usuarios_adicionales_recorrido', $usuarios_adicionales, $post_id);
+
+            if (!empty($usuarios_adicionales) && isset($post_id)) {
+                update_field('usuarios_adicionales_recorrido', $usuarios_adicionales, $post_id);
+            }
         }
     }
+
 
     /*MENSAJE A CONDUCTOR CC OPERADORES*/
     $usuario        = get_field('id_solicitante_recorrido', $post_id);
@@ -464,8 +500,10 @@ function create_recorrido_function() {
     $mail_usuario   = $usuario['user_email'];
 
     $conductor      = get_field('id_conductor_recorrido', $post_id);
-    $nomb_conductor = $conductor['user_firstname']." ".$conductor['user_lastname'];
-    $mail_conductor = $conductor['user_email'];
+    if ($conductor) {
+        $nomb_conductor = $conductor['user_firstname']." ".$conductor['user_lastname'];
+        $mail_conductor = $conductor['user_email'];
+    }
 
     $empresa     = get_field('empresa_solicitante_recorrido', $post_id);
     $nomb_empresa   = $empresa->post_title;
@@ -477,18 +515,39 @@ function create_recorrido_function() {
         return $user_data ? $user_data->user_email : null;
     }, $ids_usuarios));
 
+    $maildathor = esc_html($fecha_inicio_recorrido).' '.esc_html($hora_inicio_recorrido);
+    $mailorigen = esc_html(get_field('ciudad_para_empresa', $ciudad_inicio)).' - '.$barrio_inicio.' - '.$dir_inicial_recorrido;
+    $maildestin = esc_html(get_field('ciudad_para_empresa', $ciudad_fin)).' - '.$barrio_fin.' - '.$dir_final_recorrido;
+
+
+    $user_data = get_userdata($persona_autoriza_recorrido);
+    if ($user_data) {
+        $nombre = !empty($user_data->first_name) ? $user_data->first_name : '';
+        $apellido = !empty($user_data->last_name) ? $user_data->last_name : '';
+        $email = $user_data->user_email;
+
+        $mailperaut = "$nombre $apellido ($email)";
+
+    } else {
+        $mailperaut =  "N/A";
+    }
+
+    $mailcencos = $centro_de_costo;    
+
     // Asunto y mensaje para el usuario
-    $subject_usuario = 'Recorrido ' . $accion2 . ' en AdoniGo';
+    $subject_usuario = 'Servicio ' . $accion2 . ' en AdoniGo';
     $message_usuario = [
         '<h2>Hola ' . esc_html($nomb_usuario) . ',</h2>',
         '<p>Un recorrido ha sido ' . $accion2 . '. A continuación encontrará los detalles:</p>',
         '<br>',
         sprintf('<p style="text-align:left;">ID Servicio: <strong>%s</strong></p>', esc_html($post_id)),
-        sprintf('<p style="text-align:left;">Fecha Inicio: <strong>%s</strong></p>', esc_html($fecha_inicio_recorrido)),
-        sprintf('<p style="text-align:left;">Hora Inicio: <strong>%s</strong></p>', esc_html($hora_inicio_recorrido)),
-        sprintf('<p style="text-align:left;">Ciudad Inicio: <strong>%s</strong></p>', esc_html($nombre_inicio)),
-        sprintf('<p style="text-align:left;">Barrio Inicio: <strong>%s</strong></p>', esc_html($barrio_inicio)),
+        sprintf('<p style="text-align:left;">Fecha y Hora de Inicio: <strong>%s</strong></p>', $maildathor),
+        sprintf('<p style="text-align:left;">Origen: <strong>%s</strong></p>', $mailorigen),
+        sprintf('<p style="text-align:left;">Destino: <strong>%s</strong></p>', esc_html($maildestin)),
         sprintf('<p style="text-align:left;">Empresa Solicitante: <strong>%s</strong></p>', esc_html($nomb_empresa)),
+        sprintf('<p style="text-align:left;">Razón de Uso: <strong>%s</strong></p>', esc_html($razon_uso_recorrido)),
+        sprintf('<p style="text-align:left;">Persona que Autoriza: <strong>%s</strong></p>', esc_html($mailperaut)),
+        sprintf('<p style="text-align:left;">Centro de Costos: <strong>%s</strong></p>', esc_html($mailcencos)),
         '<br><br>',
         '<p">Gracias por confiar en AdoniGo.</p>',
     ];
@@ -502,17 +561,19 @@ function create_recorrido_function() {
     $adonicc = get_mails_role($roles_cc);
 
     // Asunto y mensaje para el conductor
-    $subject_conductor = 'Recorrido ' . $accion2 . ' en AdoniGo';
+    $subject_conductor = 'Servicio ' . $accion2 . ' en AdoniGo';
     $message_conductor = [
-        '<h2>Hola ' . esc_html($nomb_conductor) . ',</h2>',
+        '<h2>Hola,</h2>',
         '<p>Un recorrido ha sido ' . $accion2 . '. A continuación encontrará los detalles:</p><br>',
         sprintf('<p style="text-align:left;">ID Servicio: <strong>%s</strong></p>', esc_html($post_id)),
-        sprintf('<p style="text-align:left;">Fecha Inicio: <strong>%s</strong></p>', esc_html($fecha_inicio_recorrido)),
-        sprintf('<p style="text-align:left;">Hora Inicio: <strong>%s</strong></p>', esc_html($hora_inicio_recorrido)),
-        sprintf('<p style="text-align:left;">Ciudad Inicio: <strong>%s</strong></p>', esc_html($nombre_inicio)),
-        sprintf('<p style="text-align:left;">Barrio Inicio: <strong>%s</strong></p>', esc_html($barrio_inicio)),
-        sprintf('<p style="text-align:left;">Solicitante: <strong>%s</strong></p>', esc_html($nomb_usuario)),
+        sprintf('<p style="text-align:left;">Fecha y Hora de Inicio: <strong>%s</strong></p>', $maildathor),
+        sprintf('<p style="text-align:left;">Origen: <strong>%s</strong></p>', $mailorigen),
+        sprintf('<p style="text-align:left;">Destino: <strong>%s</strong></p>', esc_html($maildestin)),
         sprintf('<p style="text-align:left;">Empresa Solicitante: <strong>%s</strong></p>', esc_html($nomb_empresa)),
+        sprintf('<p style="text-align:left;">Solicitante: <strong>%s</strong></p>', esc_html($nomb_usuario)),
+        sprintf('<p style="text-align:left;">Razón de Uso: <strong>%s</strong></p>', esc_html($razon_uso_recorrido)),
+        sprintf('<p style="text-align:left;">Persona que Autoriza: <strong>%s</strong></p>', esc_html($mailperaut)),
+        sprintf('<p style="text-align:left;">Centro de Costos: <strong>%s</strong></p>', esc_html($mailcencos)),
         '<br><br>',
         '<p>Por favor, asegúrese de estar preparado para la fecha y hora indicadas.</p>',
     ];
@@ -746,9 +807,9 @@ function load_recorrido_data_function() {
         while (have_rows('puntos_recorrido_adicionales', $post_id)) {
             the_row();
             $puntos_recorrido[] = array(
-                'ciudad'           => get_sub_field('ciudad')->ID,
-                'zona_barrio'      => get_sub_field('zona_barrio'),
-                'nombre_del_barrio'=> get_sub_field('nombre_del_barrio')
+                'ciudad'           => get_sub_field('ciudad'),
+                'barrio'      => get_sub_field('barrio'),
+                'direccion'=> get_sub_field('direccion')
             );
         }
     }
@@ -762,8 +823,103 @@ function load_recorrido_data_function() {
         $response['id_solicitante_recorrido'] = get_field('id_solicitante_recorrido', $post_id)['ID'];
         $response['id_conductor_recorrido']   = get_field('id_conductor_recorrido', $post_id);
         $response['centro_de_costo']          = get_field('centro_de_costo', $post_id);
+        $response['razon_de_uso_del_recorrido'] = get_field('razon_de_uso_del_recorrido', $post_id);
         $response['codigo_de_ruta_recorrido'] = get_field('codigo_de_ruta_recorrido', $post_id);
+        $response['quien_autoriza_recorrido'] = get_field('persona_que_autoriza_el_recorrido', $post_id)['ID'];        
+
+        $empresa_solicitante = get_field('empresa_solicitante_recorrido', $post_id);
+
+        // Buscar IDs de posts tipo 'ciudad' donde empresa_asociada_a_ciudad sea igual a $empresa_solicitante
+        $ciudades = get_posts([
+            'post_type'  => 'ciudad',
+            'meta_query' => [
+                [
+                    'key'   => 'empresa_asociada_a_ciudad',
+                    'value' => $empresa_solicitante->ID,
+                ]
+            ],
+            'fields' => 'ids',
+            'posts_per_page' => -1,
+        ]);
+
+        $barrios_empresa = [];
+
+        // Iterar sobre las ciudades encontradas
+        foreach ($ciudades as $ciudad_id) {
+            $ciudad_nombre = get_field('ciudad_para_empresa', $ciudad_id);
+            $repetidor_barrios = get_field('repetidor_de_barrios', $ciudad_id);
+
+            $barrios = [];
+
+            // Si hay barrios, recorrerlos
+            if (!empty($repetidor_barrios)) {
+                foreach ($repetidor_barrios as $barrio) {
+                    $zona = $barrio['zona'] ?? '';
+                    $barrio_nombre = $barrio['barrio'] ?? '';
+
+                    // Si la zona está vacía, usar el nombre del barrio
+                    $barrios[] = [
+                        'zona'   => !empty($zona) ? $zona : $barrio_nombre,
+                        'barrio' => $barrio_nombre,
+                    ];
+                }
+            }
+
+            // Agregar a la lista de barrios por ciudad
+            $barrios_empresa[] = [
+                'id'  => $ciudad_id,
+                'ciudad'  => $ciudad_nombre,
+                'barrios' => $barrios,
+            ];
+        }
+
+        /*OBTENER TARIFAS PARA RUTAS*/
+
+        $rutas = [];
+
+        $args = [
+            'post_type'      => 'tarifa',
+            'post_status'    => 'publish',
+            'fields'         => 'ids',
+            'posts_per_page' => 1,
+            'meta_query'     => [
+                'relation' => 'AND',
+                [
+                    'key'     => 'empresa_aplicar_tarifa',
+                    'value'   => $empresa_solicitante->ID,
+                    'compare' => '='
+                ],
+                [
+                    'key'     => 'ano_aplicar_tarifa',
+                    'value'   => date('Y'),
+                    'compare' => '='
+                ]
+            ]
+        ];
+    
+        $tarifa_ids = get_posts($args);
+
+        $tarifa_id = $tarifa_ids[0];
+        $repetidor = get_field('repetidor_de_tarifas', $tarifa_id);
+        
+        if ($repetidor) {
+            foreach ($repetidor as $item) {
+                $rutas[] = [
+                    'codigo' => $item['codigo'],
+                    'nombre_de_ruta' => $item['nombre_de_ruta'],
+                    'valor' => $item['valor'],
+                ];
+            }
+        }
+
+        // Añadir la lista de barrios al response
+        $response['barrios_empresa'] = $barrios_empresa;
+        $response['razon_de_uso_para_el_recorrido'] = get_field('razon_de_uso_para_el_recorrido', $empresa_solicitante->ID);
+        $response['usuarios_administradores_empresa'] = get_field('usuarios_administradores_empresa', $empresa_solicitante->ID);
+        $response['centros_de_costos_empresa'] = get_field('centros_de_costos_empresa', $empresa_solicitante->ID);
+        $response['rutas_empresa'] = $rutas;
     }
+
 
     // Si el usuario es colaborador, solo incluir centro_de_costo
     if ($user_role === 'colaborador') {

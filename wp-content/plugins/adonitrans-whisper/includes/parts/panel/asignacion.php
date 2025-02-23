@@ -551,7 +551,7 @@
                         </select>
                     </div> 
 
-                    <div class="wrap wrap-2 wrap-select" data-select="vehiculo">
+                    <!-- <div class="wrap wrap-2 wrap-select" data-select="vehiculo">
                         <label for="sel_vehpdf"># Móvil</label>
                         <select id="sel_vehpdf" name="sel_vehpdf" >
                             <option value="">Selecciona un Móvil</option>
@@ -559,7 +559,7 @@
                                 <option value="<?php echo $vehiculo; ?>"><?php echo esc_html(get_field('placa_vehiculo', $vehiculo)); ?></option>
                             <?php endforeach; ?>
                         </select>
-                    </div> 
+                    </div>  -->
 
                     <div class="wrap">
                         <button class="button button-add" type="submit">Generar PDF</button>

@@ -638,6 +638,15 @@
 			border-radius: 15px;
 			width: 100%;
 
+			.wrap{
+				display: flex;
+				gap: 20px;
+
+				select{
+					width: 100%;
+				}
+			}
+
 			label:not(.error) {
 				display: block;
 				font-weight: 700;

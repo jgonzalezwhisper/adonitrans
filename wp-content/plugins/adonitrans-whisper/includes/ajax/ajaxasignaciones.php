@@ -168,7 +168,7 @@ function obtener_conductores_asignados() {
                                             $apellido = get_user_meta($conductor, 'last_name', true);
                                             $conductor_info = array(
                                                 'id'        => $conductor,
-                                                'nombre'    => "$nombre $apellido - $placa_vehi",
+                                                'nombre'    => "$placa_vehi - $nombre $apellido ",
                                                 'placa'     => $placa_vehi,
                                             );
 

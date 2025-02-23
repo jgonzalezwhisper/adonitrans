@@ -126,6 +126,8 @@ if ( !empty($_GET['conductor']) && is_user_logged_in() ) {
     $costo_calculado = get_field('costo_calculado_del_recorrido', $recorrido);
     $nomb_empresa = get_field('empresa_solicitante_recorrido', $recorrido);
     $placa_vehiculo = get_field('placa_vehiculo_recorrido', $recorrido);
+    $base_recorrido = get_field('valor_ruta_recorrido', $recorrido);
+    $fecha_inicio   = get_field('fecha_inicio_recorrido', $recorrido);
     error_log("Array Costo Calculado ".print_r($costo_calculado,true));
 ?> 
 
@@ -267,6 +269,7 @@ if ( !empty($_GET['conductor']) && is_user_logged_in() ) {
                     <td>$ 1.536.709</td>
                 </tr>
             </table>
+
             <table class="header-table">    
                 <tr>
                     <td>Desde:</td>
@@ -284,8 +287,13 @@ if ( !empty($_GET['conductor']) && is_user_logged_in() ) {
                     <?php if (strpos($costo['motivo'], 'Total Recorrido') === false) : ?>
                         <tr>
                             <td>1</td>
-                            <td><?= $costo['motivo'] ?></td>
-                            <td>$ 1.536.709</td>
+                            <td>
+                                <?= $costo['motivo'] ?>
+                                <?php if (strpos($costo['motivo'], 'Recorrido Inicial') !== false) : ?>
+                                    <?= " ($fecha_inicio)" ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= formatear_moneda_colombia($base_recorrido) ?></td>
                             <td style="text-align: right;"><?= formatear_moneda_colombia($costo['valor']) ?></td>
                         </tr>
                     <?php else: ?>
@@ -295,9 +303,9 @@ if ( !empty($_GET['conductor']) && is_user_logged_in() ) {
                             <td style="text-align: right;"><?= formatear_moneda_colombia($costo['valor']) ?></td>
                         </tr>
                     <?php endif ?>                    
-                <?php endforeach ?>
-                
+                <?php endforeach ?>                
             </table>
+
             <table class="header-table">    
                 <tr>
                     <td colspan="6">DESCUENTOS:</td>

@@ -478,6 +478,96 @@
             "append": ""
         },
         {
+            "key": "field_67b93220c52bb",
+            "label": "Puntos Recorrido Adicionales",
+            "name": "puntos_recorrido_adicionales",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Agregar Fila",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_67b93220c52bd",
+                    "label": "Ciudad",
+                    "name": "ciudad",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67b93220c52bb"
+                },
+                {
+                    "key": "field_67b93220c52bf",
+                    "label": "Barrio",
+                    "name": "barrio",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67b93220c52bb"
+                },
+                {
+                    "key": "field_67b93220c52c0",
+                    "label": "Direccion",
+                    "name": "direccion",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67b93220c52bb"
+                }
+            ]
+        },
+        {
             "key": "field_67a4f19f870f3",
             "label": "Usuarios Adicionales Recorrido",
             "name": "usuarios_adicionales_recorrido",
@@ -522,6 +612,28 @@
                     "parent_repeater": "field_67a4f19f870f3"
                 },
                 {
+                    "key": "field_67b9f0d2d8182",
+                    "label": "Ciudad Origen",
+                    "name": "ciudad_origen",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67a4f19f870f3"
+                },
+                {
                     "key": "field_67a4f1e4870f5",
                     "label": "Origen",
                     "name": "origen",
@@ -547,6 +659,28 @@
                     "key": "field_67a522de3f460",
                     "label": "Direccion Origen",
                     "name": "direccion_origen",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67a4f19f870f3"
+                },
+                {
+                    "key": "field_67b9f0e8d8183",
+                    "label": "Ciudad Destino",
+                    "name": "ciudad_destino",
                     "aria-label": "",
                     "type": "text",
                     "instructions": "",
@@ -1307,5 +1441,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1739968751
+    "modified": 1740241829
 }

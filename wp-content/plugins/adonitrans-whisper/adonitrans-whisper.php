@@ -10,7 +10,7 @@
  */
 define('PATH_ADONITRANSPLUG',plugin_dir_path(__FILE__));
 define('URL_ADONITRANSPLUG',plugin_dir_url(__FILE__));
-define('PLUG_VERSION', '0.0.13');
+define('PLUG_VERSION', '0.0.14');
 
 include 'includes/roles.php';
 include 'includes/redirecciones.php';

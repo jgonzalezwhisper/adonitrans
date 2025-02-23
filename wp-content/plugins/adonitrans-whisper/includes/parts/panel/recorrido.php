@@ -10,6 +10,20 @@ $user_id = $current_user->ID;
 $user_role = $current_user->roles[0];
 
 $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador', 'supervisores', 'flotantes'];
+
+
+function mostrar_razones($empresa_id) {
+    if (get_field('razon_de_uso_para_el_recorrido', $empresa_id) && have_rows('razon_de_uso_para_el_recorrido', $empresa_id)) {
+        while (have_rows('razon_de_uso_para_el_recorrido', $empresa_id)) {
+            the_row();
+            $razon = get_sub_field('razon');
+            if (!empty($razon)) {
+                echo '<option value="' . esc_attr($razon) . '">' . esc_html($razon) . '</option>';
+            }
+        }
+    }
+}
+
 ?>
 <div id="wrap-recorridos">
     <div class="tarjeta">
@@ -246,9 +260,9 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                 </div>
                 <?php if ($user_role === 'administrator' || $user_role === 'operaciones_1' ): ?>
                 <div class="wrap wrap-2">
-                    <label for="id_conductor_recorrido">Conductor Asignado</label>
+                    <label for="id_conductor_recorrido">Vehículo Asigando</label>
                     <select id="id_conductor_recorrido" name="id_conductor_recorrido">
-                        <option value="0">Selecciona un Conductor</option>
+                        <option value="0">Selecciona un Móvil</option>
                     </select>
                 </div>
                 <?php endif ?>
@@ -322,31 +336,14 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                     <select name="razon_uso_recorrido" id="razon_uso_recorrido" required>
                         <option value="">Seleccione un valor</option>
                         <?php
-                            if ($user_role === 'empresa' || $user_role === 'colaborador'):
+                            $vali_empresa_razon = ['empresa', 'colaborador'];
+                            $vali_adonitr_razon = ['administrator', 'operaciones_1', 'operaciones_2']; 
 
-                                $id_empresa_razon = 0;
+                            if (in_array($user_role, $vali_empresa_razon)) {
+                                $id_empresa_razon = ($user_role === 'empresa') ? $empresa_id : $empresa_asociada;
+                                mostrar_razones($id_empresa_razon);
+                            }
 
-                                if ($user_role === 'empresa') {
-                                    $id_empresa_razon = $empresa_id;
-                                }
-                                if ($user_role === 'colaborador') {
-                                    $id_empresa_razon = $empresa_asociada;
-                                }
-
-                                // Verificar si el campo repetidor existe
-                                if (have_rows('razon_de_uso_para_el_recorrido', $id_empresa_razon)) {
-
-                                    // Recorrer las filas del campo repetidor
-                                    while (have_rows('razon_de_uso_para_el_recorrido', $id_empresa_razon)) {
-                                        the_row();
-                                        $razon = get_sub_field('razon');
-                                        if (!empty($razon)) {
-                                            echo '<option value="' . esc_attr($razon) . '">' . esc_html($razon) . '</option>';
-                                        }
-                                    }
-                                }
-
-                            endif;
                         ?>                        
                     </select>
                 </div>
@@ -411,53 +408,35 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                     <h5>Añadir Parada</h5>
                     <!-- Plantilla oculta -->
                     <div id="plantilla-recorrido" style="display: none;">
-                        <div class="franja">
+                        <div class="franja show">
                             <div class="franja_item">
                                 <label for="ciudad_adicional_recorrido">Ciudad</label>
-                                <select class="ciudad" name="ciudad_adicional_recorrido[]">
+                                <select class="ciudad" name="ciudad_adicional_recorrido[]" disabled>
                                     <option value="">Selecciona una ciudad</option>
                                     <?php if (!empty($resultados)): ?>
-                                    <?php foreach ($resultados as $ciudad): ?>
-                                    <option value="<?php echo esc_attr($ciudad['id']); ?>">
-                                        <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
-                                    </option>
-                                    <?php endforeach; ?>
+                                        <?php foreach ($resultados as $ciudad): ?>
+                                        <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                            <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
+                                        </option>
+                                        <?php endforeach; ?>
                                     <?php endif; ?>
                                 </select>
                             </div>
                             <div class="franja_item">
                                 <label for="barrio_adicional_recorrido">Barrio</label>
                                 <input type="hidden" class="barrio_adicional_zona" name="barrio_adicional_zona[]" value="">
-                                <select class="barrio" name="barrio_adicional_recorrido[]">
+                                <select class="barrio" name="barrio_adicional_recorrido[]" disabled>
                                     <option value="">Selecciona un barrio</option>
                                 </select>
+                            </div>
+                            <div class="franja_item">
+                                <label for="direccion_adicional_zona">Direccion</label>
+                                <input type="text" class="direccion_adicional_zona" name="direccion_adicional_zona[]" value="" disabled>
                             </div>
                             <button type="button" class="button remove">Eliminar Punto</button>
                         </div>
                     </div>
                     <div id="wrap-punto-recorrido" class="wrap-franja">
-                        <div class="franja">
-                            <div class="franja_item">
-                                <label for="ciudad_adicional_recorrido">Ciudad</label>
-                                <select class="ciudad_adicional_recorrido" name="ciudad_adicional_recorrido[]" >
-                                    <option value="">Selecciona una ciudad</option>
-                                    <?php if (!empty($resultados)): ?>
-                                    <?php foreach ($resultados as $ciudad): ?>
-                                    <option value="<?php echo esc_attr($ciudad['id']); ?>">
-                                        <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
-                                    </option>
-                                    <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
-                            </div>
-                            <div class="franja_item">
-                                <label for="barrio_adicional_recorrido">Barrio</label>
-                                <input type="hidden" class="barrio_adicional_zona" name="barrio_adicional_zona[]" value="">
-                                <select class="barrio_adicional_recorrido" name="barrio_adicional_recorrido[]">
-                                    <option value="">Selecciona un barrio</option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
                     <a class="button button-add"><i class="icofont-plus-circle"></i>Añadir Parada</a>
                 </div>
@@ -479,40 +458,71 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                             ?>
 
                             <div class="franja show">
-                                <div class="franja_item">
-                                    <label for="">Usuario</label>
-                                    <select class="select sel_adicional_usuario" name="sel_id_usuario_adicional[]"  >
-                                        <option value="">Seleccione un Usuario</option>
-                                        <?php if (!empty($usuarios)): ?>
-                                            <?php foreach ($usuarios as $key => $usuario): ?>
-                                                <option value="<?php echo esc_attr($usuario['id']); ?>">
-                                                    <?php echo esc_html($usuario['name']); ?>
+                                <div class="wrap">
+                                    <div class="franja_item">
+                                        <label for="">Usuario</label>
+                                        <select class="select sel_adicional_usuario" name="sel_id_usuario_adicional[]" disabled >
+                                            <option value="">Seleccione un Usuario</option>
+                                            <?php if (!empty($usuarios)): ?>
+                                                <?php foreach ($usuarios as $key => $usuario): ?>
+                                                    <option value="<?php echo esc_attr($usuario['id']); ?>">
+                                                        <?php echo esc_html($usuario['name']); ?>
+                                                    </option>
+                                                <?php endforeach ?>
+                                            <?php endif ?>
+                                        </select>
+                                    </div>
+                                    <div class="franja_item">
+                                        <label for="ciudad_origen_pasajero_adicional">Ciudad Origen</label>
+                                        <select class="ciudad_origen_pasajero_adicional" name="ciudad_origen_pasajero_adicional[]" disabled>
+                                            <option value="">Selecciona una ciudad Origen</option>
+                                            <?php if (!empty($resultados)): ?>
+                                                <?php foreach ($resultados as $ciudad): ?>
+                                                <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                                    <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
                                                 </option>
-                                            <?php endforeach ?>
-                                        <?php endif ?>
-                                    </select>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </select>
+                                    </div>
+                                    <div class="franja_item">
+                                        <label for="">Barrio Origen</label>
+                                        <select class="barrio_origen_pasajero_adi" name="barrio_origen_pasajero_adi[]" disabled >
+                                            <option value="">Seleccione un Barrio</option>
+                                        </select>
+                                    </div>
+                                    <div class="franja_item">
+                                        <label for="">Dirección Origen</label>
+                                        <input type="text" class="direccion_origen_adicional" name="direccion_origen_adicional[]" value="" disabled>
+                                    </div>
                                 </div>
-                                <div class="franja_item">
-                                    <label for="">Barrio Origen</label>
-                                    <select class="select barrio sel_adicional_brrorigen" name="origen_adicional[]"  >
-                                        <option value="">Seleccione un Barrio</option>
-                                    </select>
+
+                                <div class="wrap">
+                                    <div class="franja_item">
+                                        <label for="ciudad_destino_pasajero_adicional">Ciudad Destino</label>
+                                        <select class="ciudad_destino_pasajero_adicional" name="ciudad_destino_pasajero_adicional[]" disabled>
+                                            <option value="">Selecciona una ciudad Destino</option>
+                                            <?php if (!empty($resultados)): ?>
+                                                <?php foreach ($resultados as $ciudad): ?>
+                                                <option value="<?php echo esc_attr($ciudad['id']); ?>">
+                                                    <?php echo esc_html($ciudad['ciudad_para_empresa']); ?>
+                                                </option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </select>
+                                    </div>
+                                    <div class="franja_item">
+                                        <label for="">Barrio Destino</label>
+                                        <select class="barrio_destino_pasajero_adi" name="barrio_destino_pasajero_adi[]" disabled >
+                                            <option value="">Seleccione un Barrio</option>
+                                        </select>
+                                    </div>
+                                    <div class="franja_item">
+                                        <label for="">Dirección Destino</label>
+                                        <input type="text" class="direccion_destino_adicional" name="direccion_destino_adicional[]" value="" disabled>
+                                    </div>
+                                    <button type="button" class="button remove">Eliminar Pasajero</button>
                                 </div>
-                                <div class="franja_item">
-                                    <label for="">Dirección Origen</label>
-                                    <input type="text" name="direccion_origen_adicional[]" value="">
-                                </div>
-                                <div class="franja_item">
-                                    <label for="">Destino</label>
-                                    <select class="select barrio sel_adicional_brrdestino" name="destino_adicional[]"  >
-                                        <option value="">Seleccione un Barrio</option>
-                                    </select>
-                                </div>
-                                <div class="franja_item">
-                                    <label for="">Dirección Destino</label>
-                                    <input type="text" name="direccion_destino_adicional[]" value="">
-                                </div>
-                                <button type="button" class="button remove">Eliminar Pasajero</button>
                             </div>         
                         </div>
 
@@ -547,7 +557,7 @@ $roles_solrecorrido = ['administrator', 'empresa', 'operaciones_1', 'colaborador
                 $centros_costo_empresa = get_field('centros_de_costos_empresa', $empresa_asociada->ID); ?>
                 <div class="wrap">
                     <label for="centro_de_costo">Centro de Costo</label>
-                    <select id="centro_de_costo" name="centro_de_costo" required>
+                    <select id="centro_de_costo" name="centro_de_costo">
                         <option value="">Selecciona un Centro de Costo</option>
                         <?php foreach ($centros_costo_empresa as $key => $value): ?>
                         <option value="<?= $value['codigo']; ?>"><?= $value['nombre']; ?></option>
