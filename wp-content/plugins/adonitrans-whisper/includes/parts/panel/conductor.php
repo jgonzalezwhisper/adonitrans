@@ -109,8 +109,10 @@
                         foreach ($usuarios_adicionales as $usuario):
                             // Obtener los valores de cada subcampo
                             $id_usuario_adicional = $usuario['id_usuario_adicional'];
+                            $ciuori = get_field('ciudad_para_empresa', $usuario['ciudad_origen']);
                             $origen = $usuario['origen'];
                             $direccion_origen = $usuario['direccion_origen'];
+                            $ciudest = get_field('ciudad_para_empresa', $usuario['ciudad_destino']);
                             $destino = $usuario['destino'];
                             $direccion_destino = $usuario['direccion_destino'];
 
@@ -124,8 +126,8 @@
                             <div class="usuario-adicional">
                                 <input type="checkbox" name="usuarios_adicionales[]" value="<?php echo esc_attr($id_usuario_adicional); ?>">
                                 <span class="nombre-usuario"><?php echo esc_html($nombre_usuario . ' ' . $apellido_usuario); ?> </span>
-                                <span class="origen"> -- <?php echo esc_html($origen . ' (' . $direccion_origen . ')'); ?></span>
-                                <span class="destino"> - <?php echo esc_html($destino . ' (' . $direccion_destino . ')'); ?></span>
+                                <span class="origen"> -- <strong>Inicio:</strong> <?= $ciuori.' ( '.esc_html($origen . ' - ' . $direccion_origen . ' )'); ?></span>
+                                <span class="destino"> - <strong>Destino:</strong> <?= $ciudest.'( '.esc_html($destino . ' - ' . $direccion_destino . ' )'); ?></span>
                             </div>
                             <?php
                         endforeach;

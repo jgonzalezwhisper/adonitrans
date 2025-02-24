@@ -269,7 +269,7 @@ window.initAsignacion = function initAsignacion() {
         ]
     });
 
-    jQuery('#id_conductor_asignado, #selexc_colaborador, #selexc_empresa, #selexc_conductor, .select_vehiculo').select2({
+    jQuery('#id_conductor_asignado, #selexc_colaborador, #selexc_empresa, #selexc_conductor, .select_vehiculo, #sel_condpdf').select2({
         placeholder: "Selecciona un Valor",
         allowClear: true,
         width: '100%'

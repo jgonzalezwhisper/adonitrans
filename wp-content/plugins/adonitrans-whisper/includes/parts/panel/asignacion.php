@@ -34,7 +34,7 @@
                     <i class="icofont-file-excel"></i> <span>Reportes</span>
                 </div>
                 <div class="boton" data-action="exportar-pdf">
-                    <i class="icofont-file-pdf"></i> <span>PDF</span>
+                    <i class="icofont-file-pdf"></i> <span>PDF Conductor</span>
                 </div>
             </div>
         </div>
@@ -495,7 +495,7 @@
 
         <div class="wrap wrap-gestion wrap-exportar-pdf" data-target="exportar-pdf" style="display:none">
             <div class="wrap">
-                <form id="filt-excel-form" method="post" class="formplug" autocomplete="off">
+                <form id="expor-pdf-conductor" method="post" class="formplug" autocomplete="off">
                     <?php
                         $argscon = array(
                             'role'    => 'conductor',
@@ -551,15 +551,31 @@
                         </select>
                     </div> 
 
-                    <!-- <div class="wrap wrap-2 wrap-select" data-select="vehiculo">
-                        <label for="sel_vehpdf"># Móvil</label>
-                        <select id="sel_vehpdf" name="sel_vehpdf" >
-                            <option value="">Selecciona un Móvil</option>
-                            <?php foreach ($vehiculos_ids as $vehiculo): ?>
-                                <option value="<?php echo $vehiculo; ?>"><?php echo esc_html(get_field('placa_vehiculo', $vehiculo)); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>  -->
+                    <div class="wrap ">
+                        <div id="wrap-tarifas-descuentos">
+                            <div id="wrap-tarifas">
+                                <?php
+                                $tarifas_descuentos = get_field('tarifas_descuentos', 'option');
+                                ?>
+                                <?php foreach ($tarifas_descuentos as $valtardesc):  ?>
+                                <div class="row-tarifa">
+                                    <div class="tarifa-item">
+                                        <label for="elm-tarifa-<?php echo $valtardesc['descripcion']; ?>">Descripcion
+                                            <input type="text" id="elm-tarifa-<?php echo $valtardesc['descripcion']; ?>" name="descripcion[]" value="<?php echo esc_attr($valtardesc['descripcion']); ?>"  />
+                                        </label>
+                                    </div>
+                                    <div class="tarifa-item">
+                                        <label for="elm-tarifa-<?php echo $valtardesc['valor']; ?>">Valor
+                                            <input type="text" id="elm-tarifa-<?php echo $valtardesc['valor']; ?>" name="valor[]" value="<?php echo esc_attr($valtardesc['valor']) ?>"  />
+                                        </label>
+                                    </div>
+                                    <button type="button" class="button button-remove remove-tarifa-row"><i class="icofont-info-circle"></i>Eliminar Tarifa</button>
+                                </div>
+                                <?php endforeach ?>
+                            </div>
+                            <button type="button" id="add-tarifa-row" class="button button-add"><i class="icofont-plus-circle"></i>Añadir Tarifa</button>
+                        </div>
+                    </div>
 
                     <div class="wrap">
                         <button class="button button-add" type="submit">Generar PDF</button>

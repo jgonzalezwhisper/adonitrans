@@ -552,48 +552,6 @@
 
 		}
 
-		#wrap-franjas-trabajo {
-			.franja {
-				display: flex;
-				flex-wrap: wrap;
-				width: 100%;
-				justify-content: space-between;
-
-				button {
-					&.remove-franja-row {
-						&:hover {
-							background-color: red;
-						}
-
-					}
-
-				}
-
-			}
-
-		}
-
-		#wrap-tarifas-descuentos {
-			.row-tarifa {
-				display: flex;
-				flex-wrap: wrap;
-				width: 100%;
-				justify-content: space-between;
-
-				button {
-					&.remove-tarifa-row {
-						&:hover {
-							background-color: red;
-						}
-
-					}
-
-				}
-
-			}
-
-		}
-
 		button {
 			background-color: $blue-dark;
 			color: #fff;
@@ -611,6 +569,48 @@
 			&:hover {
 				background-color: $secondary-color;
 				color: #000;
+			}
+
+		}
+
+	}
+
+	#wrap-franjas-trabajo {
+		.franja {
+			display: flex;
+			flex-wrap: wrap;
+			width: 100%;
+			justify-content: space-between;
+
+			button {
+				&.remove-franja-row {
+					&:hover {
+						background-color: red;
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+	#wrap-tarifas-descuentos {
+		.row-tarifa {
+			display: flex;
+			flex-wrap: wrap;
+			width: 100%;
+			justify-content: space-between;
+
+			button {
+				&.remove-tarifa-row {
+					&:hover {
+						background-color: red;
+					}
+
+				}
+
 			}
 
 		}
@@ -638,13 +638,14 @@
 			border-radius: 15px;
 			width: 100%;
 
-			.wrap{
+			.wrap {
 				display: flex;
 				gap: 20px;
 
-				select{
+				select {
 					width: 100%;
 				}
+
 			}
 
 			label:not(.error) {

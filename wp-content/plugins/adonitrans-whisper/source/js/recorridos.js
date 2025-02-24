@@ -715,7 +715,7 @@ jQuery(document).ready(function($) {
                     $("#tarifaxempresa").empty().append('<option value="">Seleccione una Opción</option>');
 
                     response.data.rutas_empresa.forEach(ruta => {
-                        $("#tarifaxempresa").append(`<option value="${ruta.codigo}">${ruta.nombre_de_ruta}</option>`);
+                        $("#tarifaxempresa").append(`<option data-valor="${ruta.valor}" data-nombre="${ruta.nombre_de_ruta}" value="${ruta.codigo}">${ruta.nombre_de_ruta}</option>`);
                     });
                     if (response.data.codigo_de_ruta_recorrido && $('#tarifaxempresa').length) {
                         $("#tarifaxempresa").val(response.data.codigo_de_ruta_recorrido).trigger('change');
@@ -798,46 +798,18 @@ jQuery(document).ready(function($) {
                         }
                     }
 
-                    /*AJAX CONSULTA DE CONDUCTORES DISPONIBLES PARA LA FECHA Y HORA*/
-                    $.ajax({
-                        url: recorridoAjax.ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'obtener_conductores_asignados',
-                            id_recorrido: post_id
-                        },
-                        success: function(resdatavehiculo) {
-                            if (resdatavehiculo.success) {
-                                $('#id_conductor_recorrido').html('<option value="0">Selecciona un Móvil</option>');
-                                $.each(resdatavehiculo.data, function(index, conductor) {
-                                    $('#id_conductor_recorrido').append(
-                                        `<option value="${conductor.id}">${conductor.nombre}</option>`
-                                    );
-                                });
+                    /*CONDUCTORES Y VEHICULO DISPONIBLE PARA LA FECHA Y HORA*/
+                    if (response.data.cond_vehi_asgi && $('#id_conductor_recorrido').length) {
 
-                                // Asegúrate de seleccionar el conductor si existe
-                                if (response.data.id_conductor_recorrido) {
-                                    $('#id_conductor_recorrido').val(response.data.id_conductor_recorrido).trigger('change');
-                                }
-                            } else {
-                                Swal.fire({
-                                    title: '¡Error!',
-                                    text: resdatavehiculo.data,
-                                    icon: 'error',
-                                    confirmButtonText: 'Aceptar',
-                                });
-                            }
-                        },
-                        error: function() {
-                            Swal.fire({
-                                title: '¡Error!',
-                                text: 'Error en la solicitud AJAX para obtener conductores.',
-                                icon: 'error',
-                                confirmButtonText: 'Aceptar',
-                            });
+                        $("#id_conductor_recorrido").empty().append('<option value="">Seleccione una Opción</option>').prop('disabled', false);
+
+                        response.data.cond_vehi_asgi.forEach(cce => {
+                            $("#id_conductor_recorrido").append(`<option value="${cce.id}">${cce.nombre}</option>`);
+                        });
+                        if (response.data.id_conductor_recorrido) {
+                            $("#id_conductor_recorrido").val(response.data.id_conductor_recorrido).trigger('change');
                         }
-                    });
+                    }
 
                 } else {
                     $('body').removeClass('actloader');

@@ -532,29 +532,6 @@ form {
 
   #ajustes-generales {
     .franja,
-    #wrap-tarifas-descuentos .row-tarifa {
-      justify-content: start !important;
-      background: #ffe3004f;
-      padding: 15px 30px;
-      border-radius: 15px;
-      width: auto;
-
-      .franja_item,
-      .tarifa-item {
-        margin-right: 30px;
-
-        &:last-child {
-          margin-right: 0;
-        }
-
-        label {
-          font-size: 18px;
-        }
-
-      }
-
-    }
-
     div {
       input,
       textarea {
@@ -640,6 +617,32 @@ form {
     #wrap-franjas-trabajo {
       .franja {
         width: auto;
+      }
+
+    }
+
+  }
+
+  #wrap-tarifas-descuentos {
+    .row-tarifa {
+      justify-content: start !important;
+      background: #ffe3004f;
+      padding: 15px 30px;
+      border-radius: 15px;
+      width: auto;
+
+      .franja_item,
+      .tarifa-item {
+        margin-right: 30px;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        label {
+          font-size: 18px;
+        }
+
       }
 
     }

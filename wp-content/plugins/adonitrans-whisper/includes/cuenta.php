@@ -13,23 +13,17 @@ function formatear_fecha_pdf($fecha) {
     return ucfirst($formatter->format($dateTime));
 }
 
-function formatear_moneda_colombia($numero) {
-    if (!is_numeric($numero)) {
-        return ''; // Retornar vacío si el valor no es numérico
-    }
-
-    return '$ ' . number_format($numero, 0, ',', '.');
-}
-
-if (!isset($_GET['desde']) || !isset($_GET['hasta']) || !isset($_GET['conductor']) || !is_user_logged_in()) {
+if (!isset($_REQUEST['desde_formpdf']) || !isset($_REQUEST['hasta_formpdf']) || !isset($_REQUEST['sel_condpdf']) || !is_user_logged_in()) {
     echo "No tienes ACCESO a esta información.";
     return;
 }
 
-if ( !empty($_GET['conductor']) && is_user_logged_in() ) {
-    $id_conductor = intval($_GET['conductor']);
-    $desde = sanitize_text_field($_GET['desde']);
-    $hasta = sanitize_text_field($_GET['hasta']);
+error_log( print_r($_REQUEST, true) );
+
+if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
+    $id_conductor = intval($_REQUEST['sel_condpdf']);
+    $desde = sanitize_text_field($_REQUEST['desde_formpdf']);
+    $hasta = sanitize_text_field($_REQUEST['hasta_formpdf']);
 
     /*CONDUCTOR*/
     $user_data = get_userdata($id_conductor);

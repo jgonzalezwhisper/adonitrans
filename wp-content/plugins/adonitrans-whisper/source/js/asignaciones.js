@@ -592,25 +592,30 @@ jQuery(document).ready(function($) {
     });
 
     /*GENERADOR PDF*/
-    $(document).on('submit', '#filt-excel-form', function(event) {
-        // Prevenir el comportamiento por defecto del formulario
+    $(document).on('submit', '#expor-pdf-conductor', function(event) {
         event.preventDefault();
 
-        // Obtener los datos del formulario
-        var desde = $('#desde_formpdf').val();
-        var hasta = $('#hasta_formpdf').val();
-        var conductor = $('#sel_condpdf').val();
-        var vehiculo = $('#sel_vehpdf').val();
+        var formData = new FormData(this); // Captura todos los datos del formulario
+        $('body').addClass('actloader');
 
-        // Construir la URL con los parámetros GET
-        var url = asignacionAjax.urlsite + '/generador-pdf' +
-            '?desde=' + encodeURIComponent(desde) +
-            '&hasta=' + encodeURIComponent(hasta) +
-            '&conductor=' + encodeURIComponent(conductor) +
-            '&vehiculo=' + encodeURIComponent(vehiculo);
-
-        window.open(url, '_blank');
+        $.ajax({
+            url: asignacionAjax.urlsite + '/generador-pdf',
+            type: 'POST',
+            data: formData,
+            processData: false, // No procesar los datos (necesario para FormData)
+            contentType: false, // No establecer el contentType (necesario para FormData)
+            success: function(response) {
+                $('body').removeClass('actloader');
+                var win = window.open();
+                win.document.write(response);
+            },
+            error: function(xhr) {
+                alert('Error al generar el PDF');
+            }
+        });
     });
+
+
 
 
 });

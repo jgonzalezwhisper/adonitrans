@@ -29,10 +29,8 @@ function update_generales_handler() {
 	    foreach ($descripciones as $index => $descripcion) {
 	        if (isset($valores[$index])) {
 	            $tarifas_descuentos[] = [
-	                'grupo_tarifas_descuentos' => [
-	                    'descripcion' => sanitize_text_field($descripcion),
-	                    'valor' => sanitize_text_field($valores[$index]),
-	                ],
+	                'descripcion' => sanitize_text_field($descripcion),
+	                'valor' => sanitize_text_field($valores[$index]),
 	            ];
 	        }
 	    }

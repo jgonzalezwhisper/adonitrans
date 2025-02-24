@@ -19,5 +19,34 @@
 
 		}
 
-	}	
+	}
+
+	#wrap-tarifas-descuentos {
+		#wrap-tarifas {
+			display: flex;
+			flex-wrap: wrap;
+			width: 100%;
+			gap: 20px;
+			align-items: center;
+
+			.row-tarifa {
+				width: 100%;
+
+				.button-remove {
+					margin: 0;
+					padding: 18px 25px;
+					align-self: center;
+					border-radius: 13px;
+				}
+
+			}
+
+		}
+
+		.button-add {
+			margin: 20px 0 0;
+		}
+
+	}
+
 }

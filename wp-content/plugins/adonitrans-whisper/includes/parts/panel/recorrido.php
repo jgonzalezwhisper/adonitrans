@@ -544,27 +544,27 @@ function mostrar_razones($empresa_id) {
                         <input type="time" id="hora_inicio_recorrido" name="hora_inicio_recorrido" value=""  />
                     </label>
                 </div>
-                <?php if ($user_role === 'empresa' || $user_role === 'colaborador' || $user_role === 'administrator'): ?>
-                <?php if ($user_role === 'administrator'): ?>
-                <div class="wrap">
-                    <label for="centro_de_costo">Centro de Costo</label>
-                    <select id="centro_de_costo" name="centro_de_costo" disabled>
-                        <option value="0">Selecciona un Centro de Costo</option>
-                    </select>
-                </div>
-                <?php endif ?>
-                <?php if ( $user_role === 'colaborador' || $user_role === 'empresa' ):
-                $centros_costo_empresa = get_field('centros_de_costos_empresa', $empresa_asociada->ID); ?>
-                <div class="wrap">
-                    <label for="centro_de_costo">Centro de Costo</label>
-                    <select id="centro_de_costo" name="centro_de_costo">
-                        <option value="">Selecciona un Centro de Costo</option>
-                        <?php foreach ($centros_costo_empresa as $key => $value): ?>
-                        <option value="<?= $value['codigo']; ?>"><?= $value['nombre']; ?></option>
-                        <?php endforeach ?>
-                    </select>
-                </div>
-                <?php endif; ?>
+                <?php if ($user_role === 'empresa' || $user_role === 'colaborador' || $user_role === 'administrator' || $user_role === 'operaciones_1' || $user_role === 'operaciones_2'): ?>
+                    <?php if ($user_role === 'administrator' || $user_role === 'operaciones_1' || $user_role === 'operaciones_2'): ?>
+                        <div class="wrap">
+                            <label for="centro_de_costo">Centro de Costo</label>
+                            <select id="centro_de_costo" name="centro_de_costo" disabled>
+                                <option value="0">Selecciona un Centro de Costo</option>
+                            </select>
+                        </div>
+                    <?php endif ?>
+                    <?php if ( $user_role === 'colaborador' || $user_role === 'empresa' ):
+                        $centros_costo_empresa = get_field('centros_de_costos_empresa', $empresa_asociada->ID); ?>
+                        <div class="wrap">
+                            <label for="centro_de_costo">Centro de Costo</label>
+                            <select id="centro_de_costo" name="centro_de_costo">
+                                <option value="">Selecciona un Centro de Costo</option>
+                                <?php foreach ($centros_costo_empresa as $key => $value): ?>
+                                <option value="<?= $value['codigo']; ?>"><?= $value['nombre']; ?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    <?php endif; ?>
                 <?php endif ?>
                 <div class="wrap">
                     <button class="button button-add" type="submit" name="submit-user">Crear Solicitud</button>

@@ -232,6 +232,8 @@ jQuery(document).ready(function($) {
                 }).then((result) => {
                     if (result.isConfirmed) {
 
+                        $('body').addClass('actloader');
+
                         actualizarEstado("end-recorrido");
                         guardarEnLocalStorage('horaFin', horaActual);
                         refreshFront();

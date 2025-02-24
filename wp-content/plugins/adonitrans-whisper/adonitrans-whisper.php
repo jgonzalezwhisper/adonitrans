@@ -10,7 +10,7 @@
  */
 define('PATH_ADONITRANSPLUG',plugin_dir_path(__FILE__));
 define('URL_ADONITRANSPLUG',plugin_dir_url(__FILE__));
-define('PLUG_VERSION', '0.0.141');
+define('PLUG_VERSION', '0.0.143');
 
 include 'includes/roles.php';
 include 'includes/redirecciones.php';
@@ -197,6 +197,14 @@ function format_time_input($hora12) {
     return $hora24;
 }
 
+function formatear_moneda_colombia($numero) {
+    if (!is_numeric($numero)) {
+        return ''; // Retornar vacío si el valor no es numérico
+    }
+
+    return '$ ' . number_format($numero, 0, ',', '.');
+}
+
 function get_mails_role($roles = []) {
     if (empty($roles)) {
         return [];
@@ -208,6 +216,36 @@ function get_mails_role($roles = []) {
     ]);
 
     return wp_list_pluck($usuarios, 'user_email');
+}
+
+function get_mails_admins_empresa($empresa_id) {
+    // Verifica si el ID de la empresa es válido
+    if (empty($empresa_id)) {
+        return array(); // Retorna un array vacío si no hay ID
+    }
+
+    // Obtiene el campo ACF 'usuarios_administradores_empresa' asociado al ID de la empresa
+    $usuarios_administradores = get_field('usuarios_administradores_empresa', $empresa_id);
+
+    // Inicializa un array para almacenar los correos electrónicos
+    $correos = array();
+
+    // Verifica si hay usuarios administradores
+    if ($usuarios_administradores && is_array($usuarios_administradores)) {
+        // Recorre cada usuario administrador
+        foreach ($usuarios_administradores as $usuario) {
+            // Obtiene el correo electrónico del usuario
+            $correo = isset($usuario['user_email']) ? $usuario['user_email'] : null;
+
+            // Si el correo existe, lo agrega al array
+            if ($correo) {
+                $correos[] = $correo;
+            }
+        }
+    }
+
+    // Retorna el array de correos electrónicos
+    return $correos;
 }
 
 function obtener_usuarios_colaborador($empresa_id, $usuario_actual_id = null) {

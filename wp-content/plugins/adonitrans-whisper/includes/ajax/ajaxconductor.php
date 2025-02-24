@@ -188,10 +188,10 @@ function func_finalizar_recorrido_conductor() {
     $tarifas = get_posts($args_tarifa);
     $res_tarifa = [];
 
-    if (empty($tarifas)) {
+    /*if (empty($tarifas)) {
         wp_send_json_error('No hay tarifas configuradas para la empresa.');
         return;
-    }
+    }*/
 
     if (!empty($tarifas)) {
         $tarifa_id = $tarifas[0];
@@ -238,6 +238,20 @@ function func_finalizar_recorrido_conductor() {
         }
     }
 
+    // Evaluar si se aplica el Recargo Nocturno
+    if (isset($_POST['horaInicio'])) {
+        $horaInicio = strtotime($_POST['horaInicio']);
+        $hora_7pm = strtotime('19:00'); // 7 PM
+        $hora_5am = strtotime('05:00'); // 5 AM (del día siguiente)
+
+        // Si la hora está en el rango de 7 PM a 5 AM
+        if ($horaInicio >= $hora_7pm || $horaInicio < $hora_5am) {
+            $recargo_nocturno = 5527;
+            $costos[] = ['motivo' => 'Recargo Nocturno', 'valor' => $recargo_nocturno];
+            $total_recorrido += $recargo_nocturno;
+        }
+    }
+
     $costos[] = ['motivo' => 'Total Recorrido', 'valor' => intval($total_recorrido) ];
 
     $arr_costos_calculados = [];
@@ -255,6 +269,89 @@ function func_finalizar_recorrido_conductor() {
 
     /*CAMBIO DE ESTADO*/
     update_field('estado_del_recorrido', 'Finalizado', $post_id);
+
+    /*MENSAJE A CONDUCTOR CC OPERADORES*/
+    $conductor      = get_field('id_conductor_recorrido', $post_id);
+    $mail_conductor = $conductor['user_email'];    
+
+    $fec_hor_serv = get_field('fecha_inicio_recorrido', $post_id).' -- '.get_field('hora_inicio_recorrido', $post_id);
+    $fec_hor_lleg = $_POST['horaLlegada'] ?? '';
+    $fec_hor_inic = $_POST['horaInicio'] ?? '';
+    $fec_hor_fina = $_POST['horaFin'] ?? '';
+    $tiempo_esper = $_POST['minutosExtras'] ?? '';
+    $id_persona_autoriza = get_field('persona_que_autoriza_el_recorrido', $post_id);
+    $nombre_autorizador_recorrido = "N/A";
+    if ($id_persona_autoriza) {
+        $nombre_autorizador_recorrido = $id_persona_autoriza['user_firstname']." ".$id_persona_autoriza['user_lastname'];
+    }
+    $empresa     = get_field('empresa_solicitante_recorrido', $post_id);
+    $nomb_empresa   = $empresa->post_title;
+    $mails_admins = get_mails_admins_empresa($empresa);
+
+    $usuarios_adicionales_servicio = get_field('usuarios_adicionales_recorrido', $post_id);
+    $numero_usuarios = empty($usuarios_adicionales_servicio) ? 0 : count($usuarios_adicionales_servicio);
+
+    // Definir el asunto y cuerpo del mensaje
+    $subject = 'Recorrido Finalizado: Gracias por viajar con nosotros';
+    $txtintr = 'A continuación, le compartimos los detalles del recorrido: ';
+    $message = [
+        '<h2>Hola,</h2>',
+        '<p style="text-align:left;">'.$txtintr.'</p>',
+        sprintf('<p style="text-align:left;">ID Asignación: <strong>%s</strong></p>', esc_html($post_id)),
+        sprintf('<p style="text-align:left;">Fecha y Hora del Servicio: <strong>%s</strong></p>', $fec_hor_serv),
+        sprintf('<p style="text-align:left;">Hora Inicio de Recorrido: <strong>%s</strong></p>', esc_html($fec_hor_inic)),
+        sprintf('<p style="text-align:left;">Hora Fin de Recorrido: <strong>%s</strong></p>', esc_html($fec_hor_fina)),
+        sprintf('<p style="text-align:left;">Minutos Extra: <strong>%s</strong></p>', esc_html($tiempo_esper)),
+        sprintf('<p style="text-align:left;">Peajes: <strong>%s</strong></p>', esc_html($contpeajes)),
+        sprintf('<p style="text-align:left;">Usuarios Adicionales: <strong>%s</strong></p>', $numero_usuarios),
+        sprintf('<p style="text-align:left;">Usuarios Recogidos: <strong>%s</strong></p>', esc_html($contrecogidos)),
+        sprintf('<p style="text-align:left;">Empresa Asociada: <strong>%s</strong></p>', esc_html($nomb_empresa)),
+        sprintf('<p style="text-align:left;">Persona quien aprueba: <strong>%s</strong></p>', esc_html($nombre_autorizador_recorrido)),
+        '<br><br>'
+    ];
+
+    /*Correo al Pasajero y operadores de la empresa adonigo*/
+    $usuario        = get_field('id_solicitante_recorrido', $post_id);
+    $nomb_usuario   = $usuario['user_firstname']." ".$usuario['user_lastname'];
+    $mail_usuario   = $usuario['user_email'];
+
+    send_email_notification($subject, $message, $mail_usuario);
+
+
+    $subject = '¡Misión cumplida! El recorrido ha llegado a su fin';
+    $txtintr = 'A continuación, le compartimos los detalles del recorrido, incluyendo los valores correspondientes para su revisión: ';
+    $message = [
+        '<h2>Hola,</h2>',
+        '<p style="text-align:left;">'.$txtintr.'</p>',
+        sprintf('<p style="text-align:left;">ID Asignación: <strong>%s</strong></p>', esc_html($post_id)),
+        sprintf('<p style="text-align:left;">Fecha y Hora del Servicio: <strong>%s</strong></p>', $fec_hor_serv),
+        sprintf('<p style="text-align:left;">Hora Inicio de Recorrido: <strong>%s</strong></p>', esc_html($fec_hor_inic)),
+        sprintf('<p style="text-align:left;">Hora Fin de Recorrido: <strong>%s</strong></p>', esc_html($fec_hor_fina)),
+        sprintf('<p style="text-align:left;">Minutos Extra: <strong>%s</strong></p>', esc_html($tiempo_esper)),
+        sprintf('<p style="text-align:left;">Peajes: <strong>%s</strong></p>', esc_html($contpeajes)),
+        sprintf('<p style="text-align:left;">Usuarios Adicionales: <strong>%s</strong></p>', $numero_usuarios),
+        sprintf('<p style="text-align:left;">Usuarios Recogidos: <strong>%s</strong></p>', esc_html($contrecogidos)),
+        sprintf('<p style="text-align:left;">Empresa Asociada: <strong>%s</strong></p>', esc_html($nomb_empresa)),
+        sprintf('<p style="text-align:left;">Persona quien aprueba: <strong>%s</strong></p>', esc_html($nombre_autorizador_recorrido)),
+        '<br><br>'
+    ];
+
+    $message[] = '<h3 style="text-align:left;"><strong>Valores del Recorrido: </strong></h3>';
+
+    foreach ($arr_costos_calculados as $costo) {
+        $message[] = sprintf('<p style="text-align:left;">Motivo: <strong>%s</strong> -- %s</p>', esc_html($costo['motivo']), formatear_moneda_colombia($costo['valor']));        
+    }
+    $message[] = '<br><br>'; 
+
+    /*Correo al conductor y operadores de la empresa adonigo*/
+    $roles = ['operaciones_1', 'operaciones_2'];
+    $adonicc = get_mails_role($roles);
+
+    // Combina los dos arrays
+    $mails_cc = array_merge($adonicc, $mails_admins);
+    $mails_cc = array_unique($mails_cc);
+
+    send_email_notification($subject, $message, $mail_conductor, $mails_cc);
 
 
     $response = array(

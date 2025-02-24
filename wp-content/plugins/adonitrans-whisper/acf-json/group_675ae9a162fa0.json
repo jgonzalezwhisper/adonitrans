@@ -241,7 +241,7 @@
                 "class": "",
                 "id": ""
             },
-            "layout": "block",
+            "layout": "table",
             "pagination": 0,
             "min": 0,
             "max": 0,
@@ -250,11 +250,11 @@
             "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_675c437db35f1",
-                    "label": "Grupo Tarifas Descuentos",
-                    "name": "grupo_tarifas_descuentos",
+                    "key": "field_675c439eb35f2",
+                    "label": "Descripcion",
+                    "name": "descripcion",
                     "aria-label": "",
-                    "type": "group",
+                    "type": "text",
                     "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
@@ -263,52 +263,35 @@
                         "class": "",
                         "id": ""
                     },
-                    "layout": "table",
-                    "parent_repeater": "field_675c4312b35f0",
-                    "sub_fields": [
-                        {
-                            "key": "field_675c439eb35f2",
-                            "label": "Descripcion",
-                            "name": "descripcion",
-                            "aria-label": "",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": "",
-                            "allow_in_bindings": 0,
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": ""
-                        },
-                        {
-                            "key": "field_675c43bbb35f3",
-                            "label": "Valor",
-                            "name": "valor",
-                            "aria-label": "",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": "",
-                            "allow_in_bindings": 0,
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": ""
-                        }
-                    ]
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_675c4312b35f0"
+                },
+                {
+                    "key": "field_675c43bbb35f3",
+                    "label": "Valor",
+                    "name": "valor",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_675c4312b35f0"
                 }
             ]
         }
@@ -331,5 +314,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 1,
-    "modified": 1739927499
+    "modified": 1740355826
 }

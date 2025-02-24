@@ -820,6 +820,7 @@ function load_recorrido_data_function() {
 
     // Si el usuario es administrador o empresa, añadir más datos
     if ($user_role === 'administrator' || $user_role === 'empresa' || $user_role === 'operaciones_1') {
+
         $response['id_solicitante_recorrido'] = get_field('id_solicitante_recorrido', $post_id)['ID'];
         $response['id_conductor_recorrido']   = get_field('id_conductor_recorrido', $post_id);
         $response['centro_de_costo']          = get_field('centro_de_costo', $post_id);
@@ -935,6 +936,9 @@ function load_recorrido_data_function() {
             ];
         }
 
+        /*CONDUCTORES Y VEHICULOS ASIGNADOS PARA LA FRANJA Y FECHA*/
+        $cond_vehi_asgi = obtener_conductores_asignados_base($post_id);
+        $response['cond_vehi_asgi'] = $cond_vehi_asgi;
 
         // Añadir la lista de barrios al response
         $response['barrios_empresa'] = $barrios_empresa;

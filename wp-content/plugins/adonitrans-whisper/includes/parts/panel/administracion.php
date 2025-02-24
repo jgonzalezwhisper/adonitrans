@@ -83,13 +83,13 @@
 							<?php foreach ($tarifas_descuentos as $valtardesc):  ?>
 							<div class="row-tarifa">
 								<div class="tarifa-item">
-									<label for="elm-tarifa-<?php echo $valtardesc['grupo_tarifas_descuentos']['descripcion']; ?>">Descripcion
-										<input type="text" id="elm-tarifa-<?php echo $valtardesc['grupo_tarifas_descuentos']['descripcion']; ?>" name="descripcion[]" value="<?php echo esc_attr($valtardesc['grupo_tarifas_descuentos']['descripcion']); ?>"  />
+									<label for="elm-tarifa-<?php echo $valtardesc['descripcion']; ?>">Descripcion
+										<input type="text" id="elm-tarifa-<?php echo $valtardesc['descripcion']; ?>" name="descripcion[]" value="<?php echo esc_attr($valtardesc['descripcion']); ?>"  />
 									</label>
 								</div>
 								<div class="tarifa-item">
-									<label for="elm-tarifa-<?php echo $valtardesc['grupo_tarifas_descuentos']['valor']; ?>">Valor
-										<input type="text" id="elm-tarifa-<?php echo $valtardesc['grupo_tarifas_descuentos']['valor']; ?>" name="valor[]" value="<?php echo esc_attr($valtardesc['grupo_tarifas_descuentos']['valor']) ?>"  />
+									<label for="elm-tarifa-<?php echo $valtardesc['valor']; ?>">Valor
+										<input type="text" id="elm-tarifa-<?php echo $valtardesc['valor']; ?>" name="valor[]" value="<?php echo esc_attr($valtardesc['valor']) ?>"  />
 									</label>
 								</div>
 								<button type="button" class="button button-remove remove-tarifa-row"><i class="icofont-info-circle"></i>Eliminar Tarifa</button>
