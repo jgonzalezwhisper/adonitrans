@@ -206,7 +206,7 @@ function create_recorrido_function() {
         $id_conductor_recorrido = sanitize_text_field($_POST['id_conductor_recorrido']);
     }    
     $ciudad_inicio = sanitize_text_field($_POST['ciudad_inicio']);
-    $nombre_inicio = get_the_title( $ciudad_inicio );
+    $nombre_inicio = get_field('ciudad_para_empresa', $ciudad_inicio);
     $barrio_inicio = sanitize_text_field($_POST['barrio_inicio']);
     $dir_inicial_recorrido = sanitize_text_field($_POST['dir_inicial_recorrido']);
     $dir_final_recorrido = sanitize_text_field($_POST['dir_final_recorrido']);
@@ -218,7 +218,7 @@ function create_recorrido_function() {
         $barrio_zona_fin = sanitize_text_field($_POST['barrio_zona_fin']);
     }
     $ciudad_fin = sanitize_text_field($_POST['ciudad_fin']);
-    $nombre_fin = get_the_title( $ciudad_fin );
+    $nombre_fin = get_field('ciudad_para_empresa', $ciudad_fin);
     $barrio_fin = sanitize_text_field($_POST['barrio_fin']);
     $fecha_inicio_recorrido = sanitize_text_field($_POST['fecha_inicio_recorrido']);
     $hora_inicio_recorrido = sanitize_text_field($_POST['hora_inicio_recorrido']);
@@ -260,11 +260,13 @@ function create_recorrido_function() {
         wp_die();
     }
 
-    if ($ciudad_inicio === $ciudad_fin) {
+    /*if ($ciudad_inicio === $ciudad_fin) {
 	    $titulo = "Recorrido $nombre_inicio [$barrio_inicio - $barrio_fin]";
 	} else {
 	    $titulo = "Recorrido $nombre_inicio - $nombre_fin [$barrio_inicio - $barrio_fin]";
-	}
+	}*/
+
+    $titulo = "Recorrido ($nombre_inicio - $barrio_inicio) a ($nombre_fin - $barrio_fin)";
 
     $accion1 = "Crear";   
     $accion2 = "Creado";   
@@ -1066,11 +1068,97 @@ function ver_recorrido_data_function() {
     $first_name = get_user_meta($id_solicitante, 'first_name', true);
     $last_name = get_user_meta($id_solicitante, 'last_name', true);
 
+    $ptos_rec_adicional = get_field('puntos_recorrido_adicionales',$post_id);
+    if ($ptos_rec_adicional) {
+        foreach ($ptos_rec_adicional as &$punto) { // Usamos referencia para modificar el array directamente
+            if (!empty($punto['ciudad'])) {
+                $punto['ciudad'] = get_field('ciudad_para_empresa', $punto['ciudad']); 
+            }
+        }
+        unset($punto);
+    }
+    $usua_rec_adicional = get_field('usuarios_adicionales_recorrido',$post_id);
+    if ($usua_rec_adicional) {
+        foreach ($usua_rec_adicional as &$usuario) { 
+            if (!empty($usuario['id_usuario_adicional'])) {
+                $first_name = get_user_meta($usuario['id_usuario_adicional'], 'first_name', true);
+                $last_name = get_user_meta($usuario['id_usuario_adicional'], 'last_name', true);
+                $usuario['id_usuario_adicional'] = $first_name . ' ' . $last_name; 
+            }
+            if (!empty($usuario['ciudad_origen'])) {
+                $usuario['ciudad_origen'] = get_field('ciudad_para_empresa', $usuario['ciudad_origen']); 
+            }
+            if (!empty($usuario['ciudad_destino'])) {
+                $usuario['ciudad_destino'] = get_field('ciudad_para_empresa', $usuario['ciudad_destino']); 
+            }
+        }
+        unset($usuario);
+    }
+
+
     $response = [
         'fecha_inicio_recorrido' => $fecha_final,
         'destino_inicio'         => "$nomciu_inicio - $barrio_inicio",
         'destino_final'          => "$nomciu_fin - $barrio_fin",
         'nomb_usuario'           => "$first_name $last_name",
+        'ptos_recorrido'         => $ptos_rec_adicional,
+        'usuarios_adi'           => $usua_rec_adicional,
+    ];
+
+    // Devolver la respuesta en formato JSON
+    wp_send_json_success($response);
+}
+
+add_action('wp_ajax_ingresos_recorrido_data', 'func_ingresos_recorrido_data');
+add_action('wp_ajax_nopriv_ingresos_recorrido_data', 'func_ingresos_recorrido_data');
+function func_ingresos_recorrido_data() {
+
+    // Verificar que la solicitud sea válida
+    $post_id = intval($_POST['post_id']);
+
+    if (!$post_id || get_post_type($post_id) !== 'recorrido') {
+        wp_send_json_error(['message' => 'Post no válido o no es un tipo de post recorrido.']);
+    }
+
+    $fecha = get_field('fecha_inicio_recorrido', $post_id); // Formato: d/m/Y
+    $hora = get_field('hora_inicio_recorrido', $post_id);  // Formato: g:i a
+    $fecha_final = "";
+
+    if ($fecha && $hora) {
+        $fecha_obj = DateTime::createFromFormat('d/m/Y', $fecha);
+        if ($fecha_obj) {
+            $dias = ['Sunday' => 'Domingo', 'Monday' => 'Lunes', 'Tuesday' => 'Martes', 'Wednesday' => 'Miércoles', 'Thursday' => 'Jueves', 'Friday' => 'Viernes', 'Saturday' => 'Sábado'];
+            $meses = ['January' => 'Enero', 'February' => 'Febrero', 'March' => 'Marzo', 'April' => 'Abril', 'May' => 'Mayo', 'June' => 'Junio', 'July' => 'Julio', 'August' => 'Agosto', 'September' => 'Septiembre', 'October' => 'Octubre', 'November' => 'Noviembre', 'December' => 'Diciembre'];
+
+            $dia = $dias[$fecha_obj->format('l')];
+            $numero_dia = $fecha_obj->format('j');
+            $mes = $meses[$fecha_obj->format('F')];
+            $anio = $fecha_obj->format('Y');
+
+            $fecha_final = "$dia, $numero_dia de $mes, $anio " . strtoupper($hora);
+        }
+    }
+
+    $ciudad_inicio = get_field('ciudad_inicial_recorrido',$post_id);
+    $nomciu_inicio = get_field('ciudad_para_empresa', $ciudad_inicio->ID);
+    $barrio_inicio = get_field('barrio_inicial_recorrido',$post_id);
+    $ciudad_fin = get_field('ciudad_final_recorrido',$post_id);
+    $nomciu_fin = get_field('ciudad_para_empresa', $ciudad_fin->ID);
+    $barrio_fin = get_field('barrio_final_recorrido',$post_id);
+
+    $id_solicitante = get_field('id_solicitante_recorrido',$post_id)['ID'];
+
+    $first_name = get_user_meta($id_solicitante, 'first_name', true);
+    $last_name = get_user_meta($id_solicitante, 'last_name', true);
+
+    $ingresos_recorrido = get_field('costo_calculado_del_recorrido',$post_id);
+
+    $response = [
+        'fecha_inicio_recorrido' => $fecha_final,
+        'destino_inicio'         => "$nomciu_inicio - $barrio_inicio",
+        'destino_final'          => "$nomciu_fin - $barrio_fin",
+        'nomb_usuario'           => "$first_name $last_name",
+        'ingresos_recorrido'     => $ingresos_recorrido,
     ];
 
     // Devolver la respuesta en formato JSON

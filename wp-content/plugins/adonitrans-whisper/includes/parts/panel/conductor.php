@@ -34,10 +34,11 @@
                 $ciudad_inicial_recorrido = get_field('ciudad_inicial_recorrido', $post_id)->ID;
                 $ciudad_inicial_recorrido = get_field('ciudad_para_empresa', $ciudad_inicial_recorrido);
                 $barrio_inicial_recorrido = get_field('barrio_inicial_recorrido', $post_id);
+                $direccion_inicial_recorrido = get_field('direccion_inicial_recorrido', $post_id);
                 $ciudad_final_recorrido = get_field('ciudad_final_recorrido', $post_id)->ID;
                 $ciudad_final_recorrido = get_field('ciudad_para_empresa', $ciudad_final_recorrido);
                 $barrio_final_recorrido = get_field('barrio_final_recorrido', $post_id);
-                
+                $direccion_final_recorrido = get_field('direccion_final_recorrido', $post_id);                
                 $foto_de_usuario = $foto_de_usuario? $foto_de_usuario['url']: URL_ADONITRANSPLUG."assets/images/profile.jpg";
             ?>
             <form id="conductor-form" method="post" class="formplug" autocomplete="off">
@@ -69,12 +70,12 @@
                         <div class="wrap trayecto">
                             <div class="trayecto_user">
                                 <label for="user-destinoi"><i class="icofont-save"></i> Origen:</label>
-                                <p><?= $ciudad_inicial_recorrido." - ".$barrio_inicial_recorrido; ?></p>
+                                <p><?= $ciudad_inicial_recorrido." - ".$barrio_inicial_recorrido." - ".$direccion_inicial_recorrido; ?></p>
                                 <p><?= $hora_inicio_recorrido ?></p>
                             </div>
                             <div class="trayecto_user">
                                 <label for="user-destinoi"><i class="icofont-save"></i> Destino:</label>
-                                <p><?= $ciudad_final_recorrido." - ".$barrio_final_recorrido; ?></p>
+                                <p><?= $ciudad_final_recorrido." - ".$barrio_final_recorrido." - ".$direccion_final_recorrido; ?></p>
                             </div>
                         </div>
                     </div>
@@ -84,11 +85,6 @@
                             <div id="wrap-listadocheck" class="trayecto_bottons bmedio ocultar">
                                 <h5><strong>Seguimiento de Tiempo</strong></h5>
                                 <ul id="list-info-recorrido">
-                                    <!-- <li><strong>Hora Llegada (Conductor):</strong></strong> <span>8:30 a.m</span></li>
-                                    <li><strong>Hora Inicio Recorrido:</strong> <span>8:40 a.m</span></li>
-                                    <li><strong>Parada 1:</strong> <span>9:10 a.m</span></li>
-                                    <li><strong>Parada 2:</strong> <span>9:10 a.m</span></li>
-                                    <li><strong>Finalizacion Recorrido:</strong> <span>9:10 a.m</span></li> -->
                                 </ul>
                             </div>
                             <div class="trayecto_bottons binicio">
@@ -104,7 +100,8 @@
                 <?php
                 $usuarios_adicionales = get_field('usuarios_adicionales_recorrido', $post_id);
                 if ($usuarios_adicionales):?>
-                    <div id="wrap-usuarios-adicionales">                    
+                    <div id="wrap-usuarios-adicionales">
+                        <h4>Usuarios Adicionales</h4>
                         <?php
                         foreach ($usuarios_adicionales as $usuario):
                             // Obtener los valores de cada subcampo
@@ -176,11 +173,6 @@
                     <div id="wrap-total-calculo" class="trayecto_total ocultar">                        
                         <div class="trayecto_total_detail">
                             <ul>
-                                <!-- <li><strong>Recorrido Inicial:</strong> <span class="symbol">$<span class="price">35.000</span></span></li>
-                                <li><strong>Trayectos Adicionales:</strong> <span class="symbol">$<span class="price">55.000</span></span></li>
-                                <li><strong>Peajes:</strong> <span class="symbol">$<span class="price">55.000</span></span></li>
-                                <li><strong>Usuario(s) Adicional(es):</strong> <span class="symbol">$<span class="price">75.000</span></span></li>
-                                <li><strong>Tiempo de Espera:</strong> <span class="symbol">$<span class="price">15.000</span></span></li> -->
                             </ul>
                         </div>
                         <h4>Total servicio: <span></span></h4>

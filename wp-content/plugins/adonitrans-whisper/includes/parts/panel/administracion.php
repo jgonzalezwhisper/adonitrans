@@ -74,8 +74,8 @@
 				<!-- Tab 2 -->
 				<div id="tab2" class="tab-content">
 					<p>Gestiona las tarifas por defecto a aplicar a los conductores.</p>
-					<div id="wrap-tarifas-descuentos">
-						<div id="wrap-tarifas">
+					<div id="wrap-tarifas-descuentos" class="tarifas-dcto-main">
+                        <div id="wrap-tarifas" class="wrap-tarifas">
 							<?php
 								$tarifas_descuentos = get_field('tarifas_descuentos', 'option');
 								$tarifas_descuentos = $tarifas_descuentos;

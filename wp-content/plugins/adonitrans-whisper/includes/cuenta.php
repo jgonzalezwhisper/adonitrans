@@ -6,90 +6,69 @@ function formatear_fecha_pdf($fecha) {
         return ''; // Retornar vacío si no hay fecha válida
     }
 
-    $dateTime = new DateTime($fecha);
-    $formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
-    $formatter->setPattern('EEEE, d \'de\' MMMM \'de\' yyyy');
+    try {
+        $dateTime = new DateTime($fecha);
+        
+        // Verificar si la extensión Intl está habilitada
+        if (!class_exists('IntlDateFormatter')) {
+            return $dateTime->format('d/m/Y'); // Formato alternativo si Intl no está disponible
+        }
 
-    return ucfirst($formatter->format($dateTime));
+        // Intentar crear el formateador con 'es' en lugar de 'es_ES'
+        $locale = 'es';
+        $formatter = new IntlDateFormatter($locale, IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+        $formatter->setPattern('EEEE, d \'de\' MMMM \'de\' yyyy');
+
+        return ucfirst($formatter->format($dateTime));
+    } catch (Exception $e) {
+        return ''; // Manejo de error en caso de fecha inválida
+    }
 }
 
-if (!isset($_REQUEST['desde_formpdf']) || !isset($_REQUEST['hasta_formpdf']) || !isset($_REQUEST['sel_condpdf']) || !is_user_logged_in()) {
+
+if (!isset($_POST['tipo_consulta']) || !is_user_logged_in()) {
     echo "No tienes ACCESO a esta información.";
     return;
 }
 
-error_log( print_r($_REQUEST, true) );
+$dcto_motivo    = $_POST['descripcion'];
+$dcto_valor     = $_POST['valor'];
+$placa_movil    = "N/A";
 
-if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
-    $id_conductor = intval($_REQUEST['sel_condpdf']);
-    $desde = sanitize_text_field($_REQUEST['desde_formpdf']);
-    $hasta = sanitize_text_field($_REQUEST['hasta_formpdf']);
+if (!empty($_POST['tipo_consulta']) && $_POST['tipo_consulta'] === 'pdf-conductor') {
+    if ( !empty($_POST['sel_condpdf']) && is_user_logged_in() ) {
+        $id_conductor = intval($_POST['sel_condpdf']);
+        $desde = sanitize_text_field($_POST['desde_formpdf']);
+        $hasta = sanitize_text_field($_POST['hasta_formpdf']);
 
-    /*CONDUCTOR*/
-    $user_data = get_userdata($id_conductor);
-    $cond_nomb = "N/A";
-    $cond_mail = "N/A";
-    $cond_cedu = "N/A";
+        /*CONDUCTOR*/
+        $user_data = get_userdata($id_conductor);
+        $cond_nomb = "N/A";
+        $cond_mail = "N/A";
+        $cond_cedu = "N/A";
 
-    if ($user_data) {
-        // Obtener el correo, nombre y apellido
-        $cond_nomb = $user_data->first_name." ".$user_data->last_name;
-        $cond_mail = $user_data->user_email;
-        $cond_cedu = get_field('cedula_usuario', 'user_' . $id_conductor);
+        if ($user_data) {
+            // Obtener el correo, nombre y apellido
+            $cond_nomb = $user_data->first_name." ".$user_data->last_name;
+            $cond_mail = $user_data->user_email;
+            $cond_cedu = get_field('cedula_usuario', 'user_' . $id_conductor);
 
-        $informacion_pago = get_field('informacion_de_pago_usuario', 'user_' . $id_conductor);
+            $informacion_pago = get_field('informacion_de_pago_usuario', 'user_' . $id_conductor);
 
-        if (!empty($informacion_pago['datos_informacion_de_pago_usuario'])) {
-            $primer_dato = $informacion_pago['datos_informacion_de_pago_usuario'][0]; // Obtiene el primer repetidor
+            if (!empty($informacion_pago['datos_informacion_de_pago_usuario'])) {
+                $primer_dato = $informacion_pago['datos_informacion_de_pago_usuario'][0]; // Obtiene el primer repetidor
 
-            $nombre_banco = $primer_dato['nombre_banco'] ?? '';
-            $no_cuenta = $primer_dato['no_cuenta'] ?? '';
-            $tipo_de_cuenta = $primer_dato['tipo_de_cuenta'] ?? '';
-        }
-
-    } 
-
-    $args = [
-        'post_type'      => 'recorrido',
-        'posts_per_page' => -1,
-        'meta_query'     => [
-            'relation' => 'AND',
-            [
-                'key'     => 'id_conductor_recorrido',
-                'value'   => $id_conductor,
-                'compare' => '='
-            ],
-            [
-                'key'     => 'fecha_inicio_recorrido',
-                'value'   => [$desde, $hasta],
-                'compare' => 'BETWEEN',
-                'type'    => 'DATE'
-            ]
-        ]
-    ];
-
-    $query = new WP_Query($args);
-    $empresas = [];
-
-    if ($query->have_posts()) {
-        while ($query->have_posts()) {
-            $query->the_post();
-            $empresa = get_field('empresa_solicitante_recorrido');
-            if ($empresa) {
-                $empresas[] = $empresa->ID;
+                $nombre_banco = $primer_dato['nombre_banco'] ?? '';
+                $no_cuenta = $primer_dato['no_cuenta'] ?? '';
+                $tipo_de_cuenta = $primer_dato['tipo_de_cuenta'] ?? '';
             }
-        }
-        wp_reset_postdata();
-    }
+        } 
 
-    $empresas = array_unique($empresas);
-    $recorridos = [];
-
-    foreach ($empresas as $key => $val_emp) {
         $args = [
             'post_type'      => 'recorrido',
-            'posts_per_page' => -1,
-            'fields'         => 'ids', // Retorna solo los IDs de los posts
+            'posts_per_page' => -1, // Obtener todos los posts que cumplan con los criterios
+            'post_status'    => 'publish', // Solo posts publicados
+            'fields'         => 'ids', // Solo obtener los IDs de los posts
             'meta_query'     => [
                 'relation' => 'AND',
                 [
@@ -98,32 +77,142 @@ if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
                     'compare' => '='
                 ],
                 [
-                    'key'     => 'empresa_solicitante_recorrido',
-                    'value'   => $empresas,
-                    'compare' => 'IN'
+                    'key'     => 'fecha_inicio_recorrido',
+                    'value'   => [$desde, $hasta],
+                    'compare' => 'BETWEEN',
+                    'type'    => 'DATE'
+                ],
+                [
+                    'key'     => 'estado_del_recorrido',
+                    'value'   => 'Finalizado',
+                    'compare' => '='
                 ]
             ]
         ];
 
+        // Realizar la consulta
         $query = new WP_Query($args);
-        $recorridos = $query->posts; // Obtiene directamente los IDs de los posts
 
-        wp_reset_postdata();
+        $recorridos = $query->posts;
+        $recorridos = array_unique($recorridos);
     }
+}else{
 
-    error_log("Array recorridos ".print_r($recorridos,true));
+    $desde = sanitize_text_field($_POST['desde_formpdf_movil']);
+    $hasta = sanitize_text_field($_POST['hasta_formpdf_movil']);
+
+    $placa_movil = $_POST['sel_movilpdf'];
+
+    $args = [
+        'post_type'      => 'recorrido',
+        'posts_per_page' => -1, // Obtener todos los posts que cumplan con los criterios
+        'post_status'    => 'publish', // Solo posts publicados
+        'fields'         => 'ids', // Solo obtener los IDs de los posts
+        'meta_query'     => [
+            'relation' => 'AND',
+            [
+                'key'     => 'placa_vehiculo_recorrido',
+                'value'   => $placa_movil,
+                'compare' => '='
+            ],
+            [
+                'key'     => 'fecha_inicio_recorrido',
+                'value'   => [$desde, $hasta],
+                'compare' => 'BETWEEN',
+                'type'    => 'DATE'
+            ],
+            [
+                'key'     => 'estado_del_recorrido',
+                'value'   => 'Finalizado',
+                'compare' => '='
+            ]
+        ]
+    ];
+
+    $query = new WP_Query($args);
+    $recorridos = $query->posts;
+    $recorridos = array_unique($recorridos);
 }
-?>
-<?php foreach ($recorridos as $recorrido): ?>  
 
-<?php
-    $costo_calculado = get_field('costo_calculado_del_recorrido', $recorrido);
-    $nomb_empresa = get_field('empresa_solicitante_recorrido', $recorrido);
-    $placa_vehiculo = get_field('placa_vehiculo_recorrido', $recorrido);
-    $base_recorrido = get_field('valor_ruta_recorrido', $recorrido);
-    $fecha_inicio   = get_field('fecha_inicio_recorrido', $recorrido);
-    error_log("Array Costo Calculado ".print_r($costo_calculado,true));
-?> 
+    $recorrido_corporativo = 0;
+    $total_recorrido = 0;
+
+    $base = 0;
+    $peajes = 0;
+    $tiempo_espera = 0;
+    $pas_adicional = 0;
+    $transporte = 0;
+
+    $total_transporte =0;
+    $liquidacion20 = 0;
+    
+
+    foreach ($recorridos as $recorrido):
+        $costo_calculado = get_field('costo_calculado_del_recorrido', $recorrido);
+        $nomb_empresa = get_field('empresa_solicitante_recorrido', $recorrido);
+        $placa_vehiculo = get_field('placa_vehiculo_recorrido', $recorrido);
+        $base_recorrido = get_field('valor_ruta_recorrido', $recorrido);
+        $fecha_inicio   = get_field('fecha_inicio_recorrido', $recorrido);
+
+        if (!empty($costo_calculado)) {
+            // Recorrer el array $costo_calculado
+            foreach ($costo_calculado as $item) {
+                if (stripos($item['motivo'], 'Recorrido Inicial') !== false) {
+                    $base += $item['valor'];
+                }
+                if (stripos($item['motivo'], 'Tiempo') !== false) {
+                    $tiempo_espera += $item['valor'];
+                }
+                if (stripos($item['motivo'], 'Usuario') !== false) {
+                    $pas_adicional += $item['valor'];
+                }
+
+                if ($item['motivo'] !== 'Total Recorrido' && $item['motivo'] !== 'Peaje') {
+                    $recorrido_corporativo += $item['valor'];
+                }
+                if (stripos($item['motivo'], 'peaje') !== false) {
+                    $peajes += $item['valor'];
+                }
+                if ($item['motivo'] === 'Total Recorrido') {
+                    $total_recorrido += $item['valor'];
+                }
+            }
+        }
+        
+    endforeach;
+
+    $ultimo_recorrido = end($recorridos);
+    $total_transporte = $base+$tiempo_espera+$pas_adicional;
+    $descuento = $total_transporte * 0.20; 
+    $liquidacion20 = $total_transporte - $descuento;
+
+    if (!empty($_POST['tipo_consulta']) && $_POST['tipo_consulta'] === 'pdf-movil') {
+
+        /*CONDUCTOR*/
+        $id_conductor = get_field('id_conductor_recorrido', $ultimo_recorrido)['ID'];
+        $user_data = get_userdata($id_conductor);
+        $cond_nomb = "N/A";
+        $cond_mail = "N/A";
+        $cond_cedu = "N/A";
+
+        if ($user_data) {
+            // Obtener el correo, nombre y apellido
+            $cond_nomb = $user_data->first_name." ".$user_data->last_name;
+            $cond_mail = $user_data->user_email;
+            $cond_cedu = get_field('cedula_usuario', 'user_' . $id_conductor);
+
+            $informacion_pago = get_field('informacion_de_pago_usuario', 'user_' . $id_conductor);
+
+            if (!empty($informacion_pago['datos_informacion_de_pago_usuario'])) {
+                $primer_dato = $informacion_pago['datos_informacion_de_pago_usuario'][0]; // Obtiene el primer repetidor
+
+                $nombre_banco = $primer_dato['nombre_banco'] ?? '';
+                $no_cuenta = $primer_dato['no_cuenta'] ?? '';
+                $tipo_de_cuenta = $primer_dato['tipo_de_cuenta'] ?? '';
+            }
+        }
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -131,7 +220,8 @@ if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
-        <title>Cuenta de Cobro</title>
+        <title>Cuenta de Cobro - <?= (isset($_POST['tipo_consulta']) && $_POST['tipo_consulta'] === 'pdf-movil') ? esc_html($placa_movil) : esc_html($cond_nomb); ?>
+</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -140,7 +230,7 @@ if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
                 color: #333;
             }
             .container {
-                width: 80%;
+                width: 90%;
                 margin: auto;
                 background: white;
                 padding: 20px;
@@ -232,7 +322,7 @@ if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
                     <td>Servicio de Transporte:</td>
                     <td>(X)</td>
                     <td>Placa: </td>
-                    <td><?= $placa_vehiculo ?> </td>
+                    <td><?= $placa_movil; ?></td>
                 </tr>
                 <tr>
                     <td>Servicio de Mensajería: </td>
@@ -244,23 +334,23 @@ if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
                     <td>Servicio de Mantenimiento:</td>
                     <td>()</td>
                     <td>Servicios: </td>
-                    <td>FE3210 </td>
+                    <td> --- </td>
                 </tr>
             </table>
             <table class="header-table">    
                 <tr>
                     <td>LIQUIDACION PERIODO:</td>
                     <td>Transporte</td>
-                    <td>$ 1.782.186 </td>
+                    <td><?= formatear_moneda_colombia($total_transporte) ?></td>
                     <td>Total Periodo</td>
-                    <td>$ 1.922.186</td>
+                    <td><?= formatear_moneda_colombia($total_transporte+$peajes) ?></td>
                 </tr>
                 <tr>
                     <td></td>
                     <td>Peajes</td>
-                    <td>$ 138.700</td>
+                    <td><?= formatear_moneda_colombia($peajes) ?></td>
                     <td>Liquidación -20% </td>
-                    <td>$ 1.536.709</td>
+                    <td><?= formatear_moneda_colombia($liquidacion20) ?></td>
                 </tr>
             </table>
 
@@ -277,74 +367,69 @@ if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
                     <td>Base Liquidación</td>
                     <td>Valor Total</td>
                 </tr>
-                <?php foreach ($costo_calculado as $costo): ?>
-                    <?php if (strpos($costo['motivo'], 'Total Recorrido') === false) : ?>
-                        <tr>
-                            <td>1</td>
-                            <td>
-                                <?= $costo['motivo'] ?>
-                                <?php if (strpos($costo['motivo'], 'Recorrido Inicial') !== false) : ?>
-                                    <?= " ($fecha_inicio)" ?>
-                                <?php endif; ?>
-                            </td>
-                            <td><?= formatear_moneda_colombia($base_recorrido) ?></td>
-                            <td style="text-align: right;"><?= formatear_moneda_colombia($costo['valor']) ?></td>
-                        </tr>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="2"></td>
-                            <td>Subtotal</td>
-                            <td style="text-align: right;"><?= formatear_moneda_colombia($costo['valor']) ?></td>
-                        </tr>
-                    <?php endif ?>                    
-                <?php endforeach ?>                
+                <tr>
+                    <td>1</td>
+                    <td>Recorrido Corporativo</td>
+                    <td><?= formatear_moneda_colombia($liquidacion20) ?></td>
+                    <td style="text-align: right;"><?= formatear_moneda_colombia($liquidacion20) ?></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td>Subtotal</td>
+                    <td style="text-align: right;"><?= formatear_moneda_colombia($liquidacion20) ?></td>
+                </tr>
             </table>
 
-            <table class="header-table">    
-                <tr>
-                    <td colspan="6">DESCUENTOS:</td>
-                </tr>
-                <tr>
-                    <td class="bg-yellow" rowspan="6">NOTA OTROS DESCUENTOS: </td>
-                    <td>$ -</td>
-                    <td>Seguridad S.</td>
-                    <td></td>
-                    <td>Retención 3,5%</td>
-                    <td>$ 53.785</td>
-                </tr>
-                <tr>
-                    <td>$ 32.000</td>
-                    <td>Valeras</td>
-                    <td></td>
-                    <td>Gastos Bancarios</td>
-                    <td>$ 4.000</td>
-                </tr>
-                <tr>
-                    <td>$ -</td>
-                    <td>Emblemas</td>
-                    <td></td>
-                    <td>Anticipos</td>
-                    <td>$ -</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td></td>
-                    <td>ABONO E. CUENTA AFILIADO</td>
-                    <td> -</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td></td>
-                    <td>Otros</td>
-                    <td>$ 32.000</td>
-                </tr>
-                <tr>
-                    <td>$ 32.000</td>
-                    <td>Total Descuentos</td>
-                    <td></td>
-                    <td>Total a pagar</td>
-                    <td>$ 1.446.924</td>
-                </tr>
+            <!-- TABLA DE DESCUENTOS -->
+            <table class="header-table">
+               <tr>
+                  <td colspan="5">DESCUENTOS:</td>
+               </tr>
+               <tr>
+                  <td class="bg-yellw">NOTA OTROS DESCUENTOS: </td>
+                  <td>
+                     <table>
+                        <?php
+                            $total_dctos = 0;
+                            foreach ($dcto_motivo as $key => $motivo): ?>
+
+                                <?php $total_dctos += $dcto_valor[$key]; ?>
+
+                            <tr>
+                               <td><?= formatear_moneda_colombia($dcto_valor[$key]); ?></td>
+                               <td><?= $motivo ?></td>
+                            </tr>
+                            
+                        <?php endforeach ?>
+                        <tr>
+                           <td><?= formatear_moneda_colombia($total_dctos); ?></td>
+                           <td>Total Descuentos</td>
+                        </tr>
+                     </table>
+                  </td>
+                  <td></td>
+                  <td>
+                     <table>
+                        <?php
+                            
+                        $rete35 = ($liquidacion20 * 3.5) / 100;
+                        $total_pagar = $liquidacion20 - $rete35 - $total_dctos;
+                        ?>
+                        <tr>
+                           <td>Retención 3.5%</td>
+                           <td>- <?= formatear_moneda_colombia($rete35); ?></td>
+                        </tr>
+                        <tr>
+                           <td>Otros</td>
+                           <td>- <?= formatear_moneda_colombia($total_dctos); ?></td>
+                        </tr>
+                        <tr>
+                           <td>Total a pagar</td>
+                           <td><?= formatear_moneda_colombia($total_pagar); ?></td>
+                        </tr>
+                     </table>
+                  </td>
+               </tr>
             </table>
 
             <!-- Metodo de pago -->
@@ -438,4 +523,3 @@ if ( !empty($_REQUEST['sel_condpdf']) && is_user_logged_in() ) {
         </script> -->
     </body>
 </html>
-<?php endforeach ?>

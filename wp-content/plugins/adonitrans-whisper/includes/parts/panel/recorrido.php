@@ -41,6 +41,7 @@ function mostrar_razones($empresa_id) {
                     <tr>
                         <th>ID</th>
                         <th>Recorrido</th>
+                        <th>Fecha y Hr. Inicio</th>
                         <th>Empresa</th>
                         <th>Colaborador</th>
                         <th>Estado</th>
@@ -113,22 +114,22 @@ function mostrar_razones($empresa_id) {
                                     $email = $colaborador->user_email;
                                 }
                                 $estado_recorrido = get_field('estado_del_recorrido', get_the_ID());
+                                $fecha_inicio = get_field('fecha_inicio_recorrido', get_the_ID());
+                                $hora_inicio = get_field('hora_inicio_recorrido', get_the_ID());
                             ?>
                         <tr>
                             <td><?= get_the_ID(); ?></td>
                             <td><?= get_the_title( ) ?></td>
+                            <td><?= $fecha_inicio.' - '.$hora_inicio ?></td>
                             <td class="empresa"><?= get_the_title( $empresa_asociada ); ?></td>
                             <td class="colaborador"><?= $first_name ?> - <span class="email"><?= $email ?></span></td>
                             <td class="<?= str_replace(' ', '-', strtolower($estado_recorrido)); ?>"><?= $estado_recorrido; ?></td>
                             <td>
                                 <div class="acciones">
-                                    <?php if ( $user_role !== 'conductor' && $user_role !== 'colaborador' ): ?>
+                                    <?php if ( $user_role !== 'conductor' && $user_role !== 'colaborador' && $estado_recorrido !== 'Finalizado' ): ?>
                                         <button class="accion edit-recorrido" data-id="<?= get_the_ID(); ?>">Editar</button>
                                     <?php endif ?>
-                                    <?php if ($user_role !== 'conductor' && $user_role !== 'colaborador'): ?>
-                                        <button class="accion delete-recorrido" data-id="<?= get_the_ID(); ?>">Eliminar</button>
-                                    <?php endif ?>
-
+                                    
                                     <?php if ($user_role === 'conductor' && $estado_recorrido === 'Conductor Asignado'): ?>
                                         <button class="accion iniciar-recorrido" data-id="<?= get_the_ID(); ?>">Iniciar</button>
                                     <?php endif ?>
@@ -139,13 +140,18 @@ function mostrar_razones($empresa_id) {
 
                                     <?php
                                         $roles_cancelar = ['administrator', 'empresa', 'operaciones_1', 'operaciones_2', 'colaborador'];
-                                        $estad_cancelar = ['Por Asignar', 'Conductor Asignado'];
+                                        $estad_cancelar = ['Por Asignar'];
                                     ?>
                                     <?php if (in_array($user_role,  $roles_cancelar) && in_array($estado_recorrido,  $estad_cancelar)): ?>
                                         <button class="accion cancelar-recorrido" data-id="<?= get_the_ID(); ?>">Cancelar</button>
                                     <?php endif; ?>
                                     
-                                    <button class="accion ver-recorrido" data-id="<?= get_the_ID(); ?>">Ver</button>
+                                    <button class="accion ver-recorrido" data-id="<?= get_the_ID(); ?>">Ver Detalle</button>
+
+                                    <?php $rols_ver_ingr = ['administrator', 'operaciones_1', 'operaciones_2', 'conductor']; ?>
+                                    <?php if (in_array($user_role,  $rols_ver_ingr) && $estado_recorrido === 'Finalizado'): ?>
+                                        <button class="accion ver-ingresos" data-id="<?= get_the_ID(); ?>">Ver ingresos</button>
+                                    <?php endif ?>
                                 </div>
                             </td>
                         </tr>
@@ -560,7 +566,7 @@ function mostrar_razones($empresa_id) {
                             <select id="centro_de_costo" name="centro_de_costo">
                                 <option value="">Selecciona un Centro de Costo</option>
                                 <?php foreach ($centros_costo_empresa as $key => $value): ?>
-                                <option value="<?= $value['codigo']; ?>"><?= $value['nombre']; ?></option>
+                                <option value="<?= $value['codigo']; ?>"><?= '( '.$value['codigo'].' ) '.$value['nombre']; ?></option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -573,6 +579,7 @@ function mostrar_razones($empresa_id) {
             </form>
         </div>
     </div>
+
     <div id="modal-recorrido" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -581,15 +588,48 @@ function mostrar_razones($empresa_id) {
                 <div class="datos">
                     <p><strong>ID: </strong><span id="mod-idrec"></span></p>
                     <p><strong>Fecha y Hora: </strong><span id="mod-daterec"></span></p>
-                    <p class="inicio"><strong>Destino Inicio: </strong><span class="color"></span><span id="mod-desinirec"></span></p>
-                    <p class="fin"><strong>Destino Final: </strong><span class="color"></span><span id="mod-desfinrec"></span></p>
+                    <p class="inicio"><strong>Inicio: </strong><span class="color"></span><span id="mod-desinirec"></span></p>
+                    <p class="fin"><strong>Final: </strong><span class="color"></span><span id="mod-desfinrec"></span></p>
                 </div>
+                <div class="list-icons recorridos-adicionales" style="display:none">
+                    <h5>Paradas Adicionales</h5>
+                    <ul></ul>
+                </div>
+                <div class="list-icons usuarios-adicionales" style="display:none">
+                    <h5>Usuarios Adicionales</h5>
+                    <ul></ul>
+                </div>                
             </div>
             <div id="mod-datusurec" class="wrap wrap-2">
                 <h3>DATOS DEL USUARIO</h3>
                 <div class="datos">
                     <p><strong>Nombre: </strong><span id="mod-nombrec"></span></p>
                     <p><strong>Empresa: </strong><span id="mod-emprec"></span></p>
+                </div>
+            </div>
+            <p id="modal-text"></p>
+        </div>
+    </div>
+
+    <div id="modal-ingresos" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="mod-datosrec" class="wrap wrap-2">
+                <h3>DATOS DEL RECORRIDO</h3>
+                <div class="datos">
+                    <p><strong>ID: </strong><span class="mod-idrec"></span></p>
+                    <p><strong>Fecha y Hora: </strong><span class="mod-daterec"></span></p>
+                </div>
+                <div class="list-icons ingresos-recorrido" style="display:none">
+                    <h5>Paradas Adicionales</h5>
+                    <ul></ul>
+                </div>   
+            </div>
+            <div id="mod-datusurec" class="wrap wrap-2">
+                <h3>DATOS DEL USUARIO</h3>
+                <div class="datos">
+                    <p><strong>Nombre: </strong><span class="mod-nombrec"></span></p>
+                    <p><strong>Empresa: </strong><span class="mod-emprec"></span></p>
                 </div>
             </div>
             <p id="modal-text"></p>

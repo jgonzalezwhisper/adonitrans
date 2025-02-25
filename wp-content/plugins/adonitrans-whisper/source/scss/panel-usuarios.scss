@@ -345,12 +345,20 @@
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
-      input{
+      flex-direction: column;
+
+      h4 {
+        margin: 0;
+      }
+
+      input {
         cursor: pointer;
       }
-      .nombre-usuario{
+
+      .nombre-usuario {
         font-weight: 700;
       }
+
     }
 
     .trayecto_finalizar {

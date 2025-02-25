@@ -250,7 +250,7 @@ jQuery(document).ready(function($) {
                                 formData.append(key, dataRecorrido[key]);
                             }
                         }
-                        
+
                         $.ajax({
                             url: conductorAjax.ajaxurl,
                             type: 'POST',
@@ -275,13 +275,36 @@ jQuery(document).ready(function($) {
                                     });
 
                                     $('#wrap-total-calculo .trayecto_total_detail ul').empty().html(ulContent);
-
                                     $('#wrap-total-calculo h4 span').text('$' + formatoMonedaColombiana(totalRecorrido));
-
                                     $('#wrap-total-calculo').removeClass('ocultar');
                                 }
 
                                 $("#conductor-form .trayecto_bottons .btn").addClass('ocultar');
+
+                                // Reiniciar formulario
+                                $('#conductor-form')[0].reset();
+
+                                // Cargar nuevo contenido
+                                var fileUrl =
+                                    conductorAjax.plugin_url +
+                                    'includes/parts/panel/recorrido.php';
+
+                                $.ajax({
+                                    url: fileUrl,
+                                    method: "POST",
+                                    data: {
+                                        action: 'render_html_panel',
+                                    },
+                                    success: function(response) {
+                                        $('#informacion').html(response);
+                                        initRecorridos();
+                                    },
+                                    error: function() {
+                                        $('#informacion').html(
+                                            '<p>Error al cargar el contenido. Intenta nuevamente.</p>'
+                                        );
+                                    },
+                                });
 
                                 $('body').removeClass('actloader');
                                 Swal.fire(response.success ? "¡Guardado!" : "Error", response.success ? "Recorrido Finalizado." : "Hubo un problema al guardar los datos.", response.success ? "success" : "error");

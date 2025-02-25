@@ -994,6 +994,123 @@ function func_gen_reporte_excel() {
             wp_send_json_error('No se encontraron datos para generar el reporte.');
         }
     } 
+    else if ($tipo_consulta == 'nume_movil') {
+        if ( !isset($_POST['select_nume_movil']) || empty($_POST['select_nume_movil']) ) {
+            wp_send_json_error('Es necesario seleccionar un Número de Móvil.');
+        }
+
+        $num_movil = $_POST['select_nume_movil']; 
+
+        // Definir los argumentos principales de la consulta
+        $args = [
+            'post_type'      => 'recorrido', // Cambia esto al tipo de post que corresponda
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,          // Sin límite, para obtener todos los resultados
+            'fields'         => 'ids',       // Solo obtener IDs
+        ];
+
+        // Definir el meta_query por separado
+        $meta_query = [
+            'relation' => 'AND',
+            [
+                'key'     => 'placa_vehiculo_recorrido',
+                'value'   => $num_movil,
+                'compare' => 'LIKE',
+            ],
+            [
+                'key'     => 'fecha_inicio_recorrido',
+                'value'   => [$desde_formexcel, $hasta_formexcel],
+                'compare' => 'BETWEEN',
+                'type'    => 'DATE', // Especifica que las fechas son de tipo "DATE"
+            ],
+        ];        
+
+        // Combinar el meta_query con los argumentos principales
+        $args['meta_query'] = $meta_query;
+
+        // Ejecutar la consulta
+        $query = new WP_Query($args);
+
+        if ($query->have_posts()) {
+            $headers = ['ID Servicio', 'Nombre del Usuario', 'Nombre del Conductor', '# Móvil', 'Empresa', 'Estado', 'Hra Servicio', 'Hra Fin Servicio', 'Barrio', 'Observaciones - Razon de Uso', 'Centro de Costo', 'Autorizado Por', 'Ruta', 'T. Espera', 'Fecha Factura', 'Valor', 'Categoria'];
+            $filtpor = 'Número de Móvil: ' . $num_movil;
+            $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
+
+            // Recorrer los posts
+            foreach ($query->posts as $post_id) {
+
+                $id_solicitante_recorrido = get_field('id_solicitante_recorrido', $post_id)['ID'];
+                $costo_calculado_del_recorrido = get_field('costo_calculado_del_recorrido', $post_id);
+                $nombre_solicitante = get_user_meta($id_solicitante_recorrido, 'first_name', true)." ".get_user_meta($id_solicitante_recorrido, 'last_name', true);
+
+                $id_persona_autoriza = 0;
+
+                $id_persona_autoriza = get_field('persona_que_autoriza_el_recorrido', $post_id);
+                $nombre_autorizador_recorrido = "N/A";
+                if ($id_persona_autoriza) {
+                    $nombre_autorizador_recorrido = $id_persona_autoriza['user_firstname']." ".$id_persona_autoriza['user_lastname'];
+                }                
+
+                $nombre_conductor = "Sin Asignar";
+
+                if (get_field('id_conductor_recorrido', $post_id)) {
+                    $id_conductor_recorrido = get_field('id_conductor_recorrido', $post_id)['ID'];
+                    $nombre_conductor = get_user_meta($id_conductor_recorrido, 'first_name', true)." ".get_user_meta($id_conductor_recorrido, 'last_name', true);
+                }
+
+                $nombciu_inicio = get_field('ciudad_inicial_recorrido', $post_id)->ID;
+                $nombciu_inicio = get_field('ciudad_para_empresa', $nombciu_inicio);
+
+                $data[] = [
+                    $post_id,
+                    $nombre_solicitante,
+                    $nombre_conductor,
+                    get_field('placa_vehiculo_recorrido', $post_id),
+                    get_field('empresa_solicitante_recorrido', $post_id)->post_title,
+                    get_field('estado_del_recorrido', $post_id),
+                    get_field('hora_inicio_recorrido', $post_id),
+                    get_field('hora_final_recorrido', $post_id),
+                    get_field('barrio_inicial_recorrido', $post_id),
+                    get_field('razon_de_uso_del_recorrido', $post_id),
+                    get_field('centro_de_costo', $post_id),
+                    $nombre_autorizador_recorrido,
+                    get_field('nombre_ruta_recorrido', $post_id),
+                    get_field('tiempo_de_espera_recorrido', $post_id),
+                    date('d/m/Y'),    
+                    '--',
+                    '--',
+                ];
+
+                if ($costo_calculado_del_recorrido) {
+                    foreach ($costo_calculado_del_recorrido as $costo_calculado) {
+                        $data[] = [
+                            $post_id,
+                            $nombre_solicitante,
+                            $nombre_conductor,
+                            get_field('placa_vehiculo_recorrido', $post_id),
+                            get_field('empresa_solicitante_recorrido', $post_id)->post_title,
+                            get_field('estado_del_recorrido', $post_id),
+                            get_field('hora_inicio_recorrido', $post_id),
+                            get_field('hora_final_recorrido', $post_id),
+                            get_field('barrio_inicial_recorrido', $post_id),
+                            get_field('razon_de_uso_del_recorrido', $post_id),
+                            get_field('centro_de_costo', $post_id),
+                            $nombre_autorizador_recorrido,
+                            get_field('nombre_ruta_recorrido', $post_id),
+                            get_field('tiempo_de_espera_recorrido', $post_id),
+                            date('d/m/Y'),
+                            $costo_calculado['valor'],
+                            $costo_calculado['motivo'],                            
+                        ];
+                    }
+                }
+            }
+
+            wp_reset_postdata();
+        } else {
+            wp_send_json_error('No se encontraron datos para generar el reporte.');
+        }
+    } 
 
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();

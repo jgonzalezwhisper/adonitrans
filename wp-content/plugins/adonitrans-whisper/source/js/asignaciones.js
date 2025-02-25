@@ -476,6 +476,10 @@ jQuery(document).ready(function($) {
             $('#filt-excel-form .wrap-select[data-select="empresa"],#filt-excel-form .wrap-select[data-select="selexc_colaboradorxempresa"]').show();
             $('#selexc_colaboradorxempresa').prop('disabled', true);
         }
+        else if (checkedRadio === 'recorrido') {
+            $('#selexc_conductor, #selexc_empresa, #selexc_colaborador, #selexc_colaboradorxempresa').rules('remove', 'required');
+            $('#filt-excel-form .wrap-select[data-select="nume_movil"]').show();
+        }
     });
 
     // Manejar el cambio en el select de empresa
@@ -615,7 +619,29 @@ jQuery(document).ready(function($) {
         });
     });
 
+    /*GENERADOR PDF # MOVIL*/
+    $(document).on('submit', '#expor-pdf-movil', function(event) {
+        event.preventDefault();
 
+        var formData = new FormData(this); // Captura todos los datos del formulario
+        $('body').addClass('actloader');
 
+        $.ajax({
+            url: asignacionAjax.urlsite + '/generador-pdf',
+            type: 'POST',
+            data: formData,
+            processData: false, // No procesar los datos (necesario para FormData)
+            contentType: false, // No establecer el contentType (necesario para FormData)
+            success: function(response) {
+                $('body').removeClass('actloader');
+                var win = window.open();
+                win.document.write(response);
+            },
+            error: function(xhr) {
+                $('body').removeClass('actloader');
+                alert('Error al generar el PDF');
+            }
+        });
+    });
 
 });

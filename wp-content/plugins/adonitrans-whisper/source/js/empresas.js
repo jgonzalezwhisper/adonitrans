@@ -22,7 +22,7 @@ jQuery(document).ready(function($) {
     });
 
     $(document).on('click', '#wrap-empresas .wrap-listado-empresas .edit-empresa', function(event) {
-        $('#wrap-empresas .wrap-gestion-empresas button[type="submit"]').text('Editar Empresa');
+        $('#wrap-empresas .wrap-gestion-empresas button[type="submit"]').text('Guardar Cambios');
         $('#wrap-empresas .wrap-gestion-empresas .title').text('Editar Empresa');
         $("#wrap-empresas .wrap-listado-empresas").hide();
         $("#wrap-empresas .wrap-gestion-empresas").show();

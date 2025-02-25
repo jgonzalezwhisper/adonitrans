@@ -763,6 +763,54 @@
 				background-color: #fff;
 			}
 
+			.list-icons {
+				ul {
+					list-style: none;
+					padding: 0;
+
+					li {
+						position: relative;
+						padding-left: 20px;
+
+						&:before {
+							content: "\ed42";
+							font-family: 'IcoFont';
+							position: absolute;
+							left: 0;
+						}
+
+					}
+
+				}
+
+				&.usuarios-adicionales {
+					ul {
+						li {
+							&:before {
+								content: "\ec8e";
+							}
+
+						}
+
+					}
+
+				}
+
+				&.ingresos-recorrido {
+					ul {
+						li {
+							&:before {
+								content: "\eed9";
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+
 		}
 
 		.close {

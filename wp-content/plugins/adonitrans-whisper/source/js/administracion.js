@@ -45,20 +45,27 @@ jQuery(document).ready(function($) {
 
 
     /*TARIFAS DESCUENTOS*/
-    $(document).on('click', '#add-tarifa-row', function(e) {
+    $(document).on('click', '.tarifas-dcto-main .button-add', function (e) {
         e.preventDefault();
 
-        var franjaCount = $('#wrap-tarifas .row-tarifa').length;
+        var $wrapTarifas = $(this).closest('.tarifas-dcto-main').find('.wrap-tarifas'); // Contenedor principal
+        var franjaCount = $wrapTarifas.find('.row-tarifa').length; // Contador de filas actuales
 
-        var newRow = $('.row-tarifa').last().clone();
+        var newRow = $wrapTarifas.find('.row-tarifa').last().clone(); // Clonar la última fila
 
-        newRow.find('label').attr('for', 'franja-' + franjaCount);
-        newRow.find('input').val('').attr('id', 'franja-' + franjaCount);
+        // Limpiar valores de inputs y actualizar sus IDs y for en labels
+        newRow.find('input').each(function () {
+            var name = $(this).attr('name'); // Obtener el name original
+            $(this).val('').attr('id', name + '-' + franjaCount);
+        });
 
-        /*newRow.find('.remove-tarifa-row').remove();
-        newRow.append('<button type="button" class="button remove-tarifa-row">Eliminar Tarifa</button>');*/
+        newRow.find('label').each(function () {
+            var name = $(this).find('input').attr('name');
+            $(this).attr('for', name + '-' + franjaCount);
+        });
 
-        $('#wrap-tarifas').append(newRow);
+        // Agregar la nueva fila al contenedor
+        $wrapTarifas.append(newRow);
     });
 
     $(document).on('click', '.remove-tarifa-row', function(e) {

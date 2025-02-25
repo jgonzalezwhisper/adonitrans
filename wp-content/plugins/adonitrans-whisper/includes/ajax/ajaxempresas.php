@@ -22,6 +22,13 @@ function create_empresa_function() {
         $post_id = $_POST['empresa-id'];
         $accion1 = "Editar";   
         $accion2 = "Editada"; 
+
+        if (get_the_title($post_id) !== $nombre_empresa) {
+            wp_update_post([
+                'ID'         => $post_id,
+                'post_title' => $nombre_empresa
+            ]);
+        }
     } else {
         // Crear el post
         $post_data = array(

@@ -36,6 +36,9 @@
                 <div class="boton" data-action="exportar-pdf">
                     <i class="icofont-file-pdf"></i> <span>PDF Conductor</span>
                 </div>
+                <div class="boton" data-action="exportar-pdf-movil">
+                    <i class="icofont-file-pdf"></i> <span>PDF # Móvil</span>
+                </div>
             </div>
         </div>
 
@@ -421,6 +424,10 @@
                                 <input type="radio" id="radfiltexcel4" name="tipo-consulta" value="recorrido">
                                 <label for="radfiltexcel4" data-valor="recorrido">Recorrido</label>
                             </div>
+                            <div class="radio">
+                                <input type="radio" id="radfiltexcel6" name="tipo-consulta" value="nume_movil">
+                                <label for="radfiltexcel6" data-valor="nume_movil"># Móvil</label>
+                            </div>
                         </div>
                     </div>
                     <div class="wrap wrap-2">
@@ -486,6 +493,26 @@
                         </select>
                     </div>
 
+                    <div class="wrap wrap-select" data-select="nume_movil" style="display:none">
+                        <label for="select_nume_movil"># Móvil</label>
+                        <select id="select_nume_movil" name="select_nume_movil" >
+                            <option value="">Selecciona una Placa</option>
+                            <?php
+                                $titulos_vehiculos = get_posts([
+                                    'post_type'      => 'vehiculo',
+                                    'post_status'    => 'publish',
+                                    'posts_per_page' => -1, 
+                                    'fields'         => 'titles',
+                                ]);
+
+                                $placas_vehiculo = wp_list_pluck($titulos_vehiculos, 'post_title'); 
+                            ?>
+                            <?php foreach ($placas_vehiculo as $placa): ?>
+                                <option value="<?= $placa; ?>"><?= "$placa"; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
                     <div class="wrap">
                         <button class="button button-add" type="submit">Generar Reporte</button>
                     </div>  
@@ -496,6 +523,7 @@
         <div class="wrap wrap-gestion wrap-exportar-pdf" data-target="exportar-pdf" style="display:none">
             <div class="wrap">
                 <form id="expor-pdf-conductor" method="post" class="formplug" autocomplete="off">
+                    <input type="hidden" name="tipo_consulta" value="pdf-conductor">
                     <?php
                         $argscon = array(
                             'role'    => 'conductor',
@@ -533,7 +561,7 @@
                     </div>
                     <div class="wrap wrap-2 wrap-select" data-select="conductor">
                         <label for="sel_condpdf">Conductor</label>
-                        <select id="sel_condpdf" name="sel_condpdf" >
+                        <select id="sel_condpdf" name="sel_condpdf" required>
                             <option value="">Selecciona un Conductor</option>
                             <?php foreach ($conductores as $conductor): ?>
                             <?php
@@ -552,8 +580,74 @@
                     </div> 
 
                     <div class="wrap ">
-                        <div id="wrap-tarifas-descuentos">
-                            <div id="wrap-tarifas">
+                        <div id="wrap-tarifas-descuentos" class="tarifas-dcto-main">
+                            <div id="wrap-tarifas" class="wrap-tarifas">
+                                <?php
+                                $tarifas_descuentos = get_field('tarifas_descuentos', 'option');
+                                ?>
+                                <?php foreach ($tarifas_descuentos as $valtardesc):  ?>
+                                <div class="row-tarifa">
+                                    <div class="tarifa-item">
+                                        <label for="elm-tarifa-<?php echo $valtardesc['descripcion']; ?>">Descripcion
+                                            <input type="text" id="elm-tarifa-<?php echo $valtardesc['descripcion']; ?>" name="descripcion[]" value="<?php echo esc_attr($valtardesc['descripcion']); ?>"  />
+                                        </label>
+                                    </div>
+                                    <div class="tarifa-item">
+                                        <label for="elm-tarifa-<?php echo $valtardesc['valor']; ?>">Valor
+                                            <input type="text" id="elm-tarifa-<?php echo $valtardesc['valor']; ?>" name="valor[]" value="<?php echo esc_attr($valtardesc['valor']) ?>"  />
+                                        </label>
+                                    </div>
+                                    <button type="button" class="button button-remove remove-tarifa-row"><i class="icofont-info-circle"></i>Eliminar Tarifa</button>
+                                </div>
+                                <?php endforeach ?>
+                            </div>
+                            <button type="button" id="add-tarifa-row" class="button button-add"><i class="icofont-plus-circle"></i>Añadir Tarifa</button>
+                        </div>
+                    </div>
+
+                    <div class="wrap">
+                        <button class="button button-add" type="submit">Generar PDF</button>
+                    </div>  
+                </form>
+            </div>
+        </div>
+
+        <div class="wrap wrap-gestion exportar-pdf-movil" data-target="exportar-pdf-movil" style="display:none">
+            <div class="wrap">
+                <form id="expor-pdf-movil" method="post" class="formplug" autocomplete="off">
+                    <input type="hidden" name="tipo_consulta" value="pdf-movil">
+                    <?php
+                        $titulos_vehiculos = get_posts([
+                            'post_type'      => 'vehiculo',
+                            'post_status'    => 'publish',
+                            'posts_per_page' => -1, 
+                            'fields'         => 'titles',
+                        ]);
+
+                        $placas_vehiculo = wp_list_pluck($titulos_vehiculos, 'post_title'); 
+
+                    ?>
+                    <div class="wrap wrap-2">
+                        <label for="desde_formpdf_movil">Desde: </label>
+                        <input type="date" id="desde_formpdf_movil" name="desde_formpdf_movil" value="" placeholder="dd/mm/yyyy" required>
+                    </div>
+                    <div class="wrap wrap-2">
+                        <label for="hasta_formpdf_movil">Hasta: </label>
+                        <input type="date" id="hasta_formpdf_movil" name="hasta_formpdf_movil" value="" placeholder="dd/mm/yyyy" required>
+                    </div>
+                    <div class="wrap wrap-2 wrap-select" data-select="conductor">
+                        <label for="sel_movilpdf"># Móvil</label>
+                        <select id="sel_movilpdf" name="sel_movilpdf" required >
+                            <option value="">Selecciona un # Móvil</option>
+                            <?php foreach ($placas_vehiculo as $placa): ?>
+                                <option value="<?= $placa; ?>"> <?= $placa; ?>  </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div> 
+
+                    <div class="wrap ">
+                        <div id="wrap-tarifas-descuentos" class="tarifas-dcto-main">
+                            <div id="wrap-tarifas" class="wrap-tarifas">
                                 <?php
                                 $tarifas_descuentos = get_field('tarifas_descuentos', 'option');
                                 ?>

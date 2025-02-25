@@ -50,6 +50,11 @@ jQuery(document).ready(function($) {
         });
     }
 
+    function formatoMonedaColombiana(valor) {
+        valor = valor.toString().split('.')[0];
+        return valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
     // Registro de listeners iniciales
     handleCityChange('.ciudad_adicional_recorrido', '.barrio_adicional_recorrido');
     handleCityChange('.ciudad_origen_pasajero_adicional', '.barrio_origen_pasajero_adi');
@@ -646,8 +651,8 @@ jQuery(document).ready(function($) {
 
     $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .edit-recorrido', function(event) {
         // Configuración inicial del formulario
-        $('#wrap-recorridos .wrap-gestion-recorridos button[type="submit"]').text('Editar Solicitud');
-        $('#wrap-recorridos .wrap-gestion-recorridos .title').text('Editar Solicitud');
+        $('#wrap-recorridos .wrap-gestion-recorridos button[type="submit"]').text('Guardar Solicitud');
+        $('#wrap-recorridos .wrap-gestion-recorridos .title').text('Editar Información Solicitud');
         $("#wrap-recorridos .wrap-listado-recorridos").hide();
         $("#wrap-recorridos .wrap-gestion-recorridos").show();
 
@@ -715,7 +720,7 @@ jQuery(document).ready(function($) {
                     $("#tarifaxempresa").empty().append('<option value="">Seleccione una Opción</option>');
 
                     response.data.rutas_empresa.forEach(ruta => {
-                        $("#tarifaxempresa").append(`<option data-valor="${ruta.valor}" data-nombre="${ruta.nombre_de_ruta}" value="${ruta.codigo}">${ruta.nombre_de_ruta}</option>`);
+                        $("#tarifaxempresa").append(`<option data-valor="${ruta.valor}" data-nombre="${ruta.nombre_de_ruta}" value="${ruta.codigo}">${ruta.codigo} - ${ruta.nombre_de_ruta}</option>`);
                     });
                     if (response.data.codigo_de_ruta_recorrido && $('#tarifaxempresa').length) {
                         $("#tarifaxempresa").val(response.data.codigo_de_ruta_recorrido).trigger('change');
@@ -791,7 +796,7 @@ jQuery(document).ready(function($) {
                         $("#centro_de_costo").empty().append('<option value="">Seleccione una Opción</option>').prop('disabled', false);
 
                         response.data.centros_de_costos_empresa.forEach(cce => {
-                            $("#centro_de_costo").append(`<option value="${cce.codigo}">${cce.nombre}</option>`);
+                            $("#centro_de_costo").append(`<option value="${cce.codigo}">${cce.codigo} - ${cce.nombre} </option>`);
                         });
                         if (response.data.centro_de_costo && $('#centro_de_costo').length) {
                             $("#centro_de_costo").val(response.data.centro_de_costo).trigger('change');
@@ -1000,6 +1005,14 @@ jQuery(document).ready(function($) {
         let recorridoid = $(this).data('id');
         let empresa = $(this).closest('tr').find('.empresa').text();
 
+        $("#modal-recorrido .recorridos-adicionales").hide();
+        let $ul = $('#modal-recorrido .recorridos-adicionales ul');
+        $ul.empty();
+
+        $("#modal-recorrido .usuarios-adicionales").hide();
+        let $ulusuadi = $('#modal-recorrido .usuarios-adicionales ul');
+        $ulusuadi.empty();
+
         $('body').addClass('actloader');
 
         $('#mod-idrec').text(recorridoid);
@@ -1020,6 +1033,85 @@ jQuery(document).ready(function($) {
                     $("#mod-desfinrec").text(response.data.destino_final);
                     $("#mod-nombrec").text(response.data.nomb_usuario);
                     $("#mod-emprec").text(empresa);
+
+                    if (response.data.ptos_recorrido) {
+                        $("#modal-recorrido .recorridos-adicionales").show();
+                        response.data.ptos_recorrido.forEach(punto => {
+                            let li = `<li>${punto.ciudad} - ${punto.barrio} - ${punto.direccion}</li>`;
+                            $ul.append(li);
+                        });
+                    }
+
+                    if (response.data.usuarios_adi) {
+                        $("#modal-recorrido .usuarios-adicionales").show();
+                        response.data.usuarios_adi.forEach(usuarios => {
+                            let li = `<li><strong>${usuarios.id_usuario_adicional}:</strong> <strong>Inicio:</strong> ( ${usuarios.ciudad_origen} - ${usuarios.origen} - ${usuarios.direccion_origen} ) <strong>Destino:</strong> ( ${usuarios.ciudad_destino} - ${usuarios.destino} - ${usuarios.direccion_destino} )</li>`;
+                            $ulusuadi.append(li);
+                        });
+                    }
+
+                    $('body').removeClass('actloader');
+
+                } else {
+                    $('body').removeClass('actloader');
+                    Swal.fire({
+                        title: 'Algo ha ocurrido!',
+                        text: response.data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function() {
+                $('body').removeClass('actloader');
+                Swal.fire({
+                    title: '¡Error!',
+                    text: 'Hubo un problema al procesar la solicitud. Por favor intenta nuevamente.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                });
+            },
+        });
+    });
+
+    $(document).on('click', '#wrap-recorridos .wrap-listado-recorridos .ver-ingresos', function(event) {
+        event.preventDefault();
+        let recorridoid = $(this).data('id');
+        let empresa = $(this).closest('tr').find('.empresa').text();
+
+        $("#modal-ingresos .ingresos-recorrido").hide();
+        let $ul = $('#modal-ingresos .ingresos-recorrido ul');
+        $ul.empty();
+
+        $('body').addClass('actloader');
+
+        $('#modal-ingresos .mod-idrec').text(recorridoid);
+        $('#modal-ingresos').fadeIn().css('display', 'flex');
+
+        $.ajax({
+            url: recorridoAjax.ajaxurl,
+            method: 'POST',
+            data: {
+                action: 'ingresos_recorrido_data',
+                post_id: recorridoid
+            },
+            success: function(response) {
+                if (response.success) {
+
+                    $("#modal-ingresos .mod-daterec").text(response.data.fecha_inicio_recorrido);
+                    $("#modal-ingresos .mod-desinirec").text(response.data.destino_inicio);
+                    $("#modal-ingresos .mod-desfinrec").text(response.data.destino_final);
+                    $("#modal-ingresos .mod-nombrec").text(response.data.nomb_usuario);
+                    $("#modal-ingresos .mod-emprec").text(empresa);
+
+                    if (response.data.ingresos_recorrido) {
+                        $("#modal-ingresos .ingresos-recorrido").show();
+                        response.data.ingresos_recorrido.forEach(ingreso => {
+                            let valor = formatoMonedaColombiana(parseFloat(ingreso.valor) || 0);
+                            let li = `<li><strong>${ingreso.motivo}</strong> $${valor}</li>`;
+                            $ul.append(li);
+                        });
+                    }
 
                     $('body').removeClass('actloader');
 

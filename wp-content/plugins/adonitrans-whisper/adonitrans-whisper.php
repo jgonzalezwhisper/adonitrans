@@ -10,7 +10,7 @@
  */
 define('PATH_ADONITRANSPLUG',plugin_dir_path(__FILE__));
 define('URL_ADONITRANSPLUG',plugin_dir_url(__FILE__));
-define('PLUG_VERSION', '0.0.143');
+define('PLUG_VERSION', '0.0.145');
 
 include 'includes/roles.php';
 include 'includes/redirecciones.php';
@@ -24,6 +24,23 @@ foreach (scandir($ajaxPath) as $file) {
         include $ajaxPath . $file;
     }
 }
+
+function custom_rewrite_rule() {
+    add_rewrite_rule(
+        '^generador-pdf/?$', // URL amigable sin "generador-pdf"
+        'wp-content/plugins/adonitrans-whisper/includes/cuenta.php', // Ruta interna
+        'top' // Prioridad
+    );
+}
+add_action('init', 'custom_rewrite_rule');
+
+function custom_flush_rewrite_rules() {
+    flush_rewrite_rules();
+}
+register_activation_hook(__FILE__, 'custom_flush_rewrite_rules');
+register_deactivation_hook(__FILE__, 'custom_flush_rewrite_rules');
+
+
 
 function custom_class_body($classes) {
     $classes[] = 'adonitrans-plug';
