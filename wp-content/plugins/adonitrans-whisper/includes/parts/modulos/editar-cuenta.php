@@ -7,11 +7,11 @@
         <?php wp_nonce_field('create_user_action', 'create_user_nonce'); ?>
         <div class="wrap wrap-2">
             <label for="first_name">Nombres</label>
-            <input type="text" id="first_name" name="first_name" value="">
+            <input type="text" id="first_name" name="first_name" value="" <?= $disabled_attribute ?>>
         </div>
         <div class="wrap wrap-2">
             <label for="last_name">Apellidos</label>
-            <input type="text" id="last_name" name="last_name" value="">
+            <input type="text" id="last_name" name="last_name" value="" <?= $disabled_attribute ?>>
         </div>
         <div class="wrap wrap-2">
             <label for="user_email">Correo</label>
@@ -64,14 +64,14 @@
         <div class="wrap" id="extra-fields-container">
             <div class="wrap">
                 <label for="user_state">Estado</label>
-                <select id="user_state" name="user-state">
+                <select id="user_state" name="user-state" <?= $disabled_attribute ?>>
                     <option value="Activo">Activo</option>
                     <option value="Inactivo">Inactivo</option>
                 </select>
             </div>
             <div class="wrap wrap-2">
                 <label for="user-cedula">Cédula</label>
-                <input type="text" id="user-cedula" name="user-cedula">
+                <input type="text" id="user-cedula" name="user-cedula" <?= $disabled_attribute ?>>
             </div>
             <div class="wrap wrap-2">
                 <label for="user-telefono">Teléfono</label>
@@ -79,7 +79,7 @@
             </div>
             <div class="wrap">
                 <label for="user-direccion">Dirección</label>
-                <input type="text" id="user-direccion" name="user-direccion">
+                <input type="text" id="user-direccion" name="user-direccion" <?= $disabled_attribute ?>>
             </div>
             <div class="wrap">
                 <label for="user-foto">Foto Usuario</label>

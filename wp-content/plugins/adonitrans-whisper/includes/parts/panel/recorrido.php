@@ -42,8 +42,10 @@ function mostrar_razones($empresa_id) {
                         <th>ID</th>
                         <th>Recorrido</th>
                         <th>Fecha y Hr. Inicio</th>
+                        <?php if ($user_role !== 'colaborador'): ?>
                         <th>Empresa</th>
                         <th>Colaborador</th>
+                        <?php endif ?>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -121,8 +123,10 @@ function mostrar_razones($empresa_id) {
                             <td><?= get_the_ID(); ?></td>
                             <td><?= get_the_title( ) ?></td>
                             <td><?= $fecha_inicio.' - '.$hora_inicio ?></td>
+                            <?php if ($user_role !== 'colaborador'): ?>
                             <td class="empresa"><?= get_the_title( $empresa_asociada ); ?></td>
                             <td class="colaborador"><?= $first_name ?> - <span class="email"><?= $email ?></span></td>
+                            <?php endif ?>
                             <td class="<?= str_replace(' ', '-', strtolower($estado_recorrido)); ?>"><?= $estado_recorrido; ?></td>
                             <td>
                                 <div class="acciones">

@@ -7,8 +7,8 @@
 <div id="wrap-usuarios">
     <div class="tarjeta">
         <div class="wrap-titulo">
-            <h3 class="titulo">USUARIOS</h3>
-            <h4 class="subtitulo">Gestiona los usuarios adscritos a la empresa</h4>
+            <h3 class="titulo">PAGOS</h3>
+            <h4 class="subtitulo">Gestiona los pagos realizados a los Conductores</h4>
         </div>
         <p>Administra y gestiona fácilmente los usuarios registrados en tu empresa desde este panel. Mantén toda la información organizada y actualizada.</p>
 

@@ -98,6 +98,9 @@ jQuery(document).ready(function($) {
                 if (data_action == 'asignacion') {
                     initAsignacion()
                 }
+                if (data_action == 'pagos') {
+                    initPagos()
+                }
             },
             error: function() {
                 $('body').removeClass('actloader');

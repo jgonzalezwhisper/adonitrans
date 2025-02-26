@@ -3,7 +3,15 @@
     if (!isset($_POST['action']) || empty($_POST['action'])) {
         exit('Acceso no autorizado');
     }
+	if (is_user_logged_in()) {
+		$current_user = wp_get_current_user();
+		$user_roles = $current_user->roles;
+		$restricted_roles = ['colaborador', 'conductor'];
+		$is_restricted = array_intersect($restricted_roles, $user_roles) ? true : false;
+		$disabled_attribute = $is_restricted ? 'disabled="disabled"' : '';
+	}
 ?>
+<?php error_log($disabled_attribute) ?>
 <div class="tarjeta" id="wrap-cuenta">
 	<div class="wrap-titulo">
 		<h3 class="titulo">Gestionar Mis Datos</h3>
@@ -43,10 +51,10 @@
 					<?php wp_nonce_field('create_user_action', 'create_user_nonce'); ?>
 					<div class="wrap">
 						<label for="first_name">Nombres</label>
-						<input type="text" id="first_name" name="first_name" value="<?= esc_attr(get_user_meta($user_id, 'first_name', true)); ?>">
+						<input type="text" id="first_name" name="first_name" value="<?= esc_attr(get_user_meta($user_id, 'first_name', true)); ?>" <?= $disabled_attribute ?>>
 
 						<label for="last_name">Apellidos</label>
-						<input type="text" id="last_name" name="last_name" value="<?= esc_attr(get_user_meta($user_id, 'last_name', true)); ?>">
+						<input type="text" id="last_name" name="last_name" value="<?= esc_attr(get_user_meta($user_id, 'last_name', true)); ?>" <?= $disabled_attribute ?>>
 					</div>
 				</div>
 			</div>

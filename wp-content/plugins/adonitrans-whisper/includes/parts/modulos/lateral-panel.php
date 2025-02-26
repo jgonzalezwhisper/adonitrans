@@ -6,6 +6,7 @@
 
     // Array de roles permitidos
     $roles_admins = ['administrator', 'operaciones_1', 'operaciones_2'];
+    $roles_factur = ['facturacion', 'tesoreria'];
 ?>
 <aside id="lateral">
     <ul>
@@ -15,6 +16,12 @@
         <li data-action="recorrido">
             <i class="icofont-map-pins"></i> Recorridos
         </li>   
+
+        <?php if ( in_array($user_role, $roles_admins) || in_array($user_role, $roles_factur) ): ?>
+            <li data-action="pagos">
+                <i class="icofont-coins"></i> Pagos
+            </li>
+        <?php endif ?>
 
         <?php if (in_array($user_role, $roles_admins)): ?>
             <li data-action="asignacion">
