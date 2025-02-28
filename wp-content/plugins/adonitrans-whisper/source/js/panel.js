@@ -45,6 +45,18 @@ jQuery(document).ready(function($) {
         minScrollbarLength: 20
     });
 
+
+
+    $(document).on('click', '#franja #menu-mov', function(event) {
+        event.preventDefault();
+        $('body').toggleClass('open-lateral');
+    });
+
+    $(document).on('click', '#lateral #menu-mov-close', function(event) {
+        event.preventDefault();
+        $('body').toggleClass('open-lateral');
+    });
+
     $(document).on('click', '.acordeon-header', function(event) {
         event.preventDefault();
         let body = $(this).next('.acordeon-body');
@@ -59,6 +71,8 @@ jQuery(document).ready(function($) {
     });
 
     $(document).on('click', '#lateral ul li[data-action]', function(event) {
+
+        $('body').removeClass('open-lateral');
 
         $("#lateral ul li").removeClass('active');
         $(this).addClass('active');
@@ -110,6 +124,8 @@ jQuery(document).ready(function($) {
     });
 
     $(document).on('click', '#wrap-panel .wrap-acciones .boton[data-action]', function(event) {
+
+        $('body').removeClass('open-lateral');
 
         $("#wrap-panel .wrap-acciones .boton").removeClass('active');
         $(this).addClass('active');
@@ -179,6 +195,9 @@ function checkPassword(value) {
 
 window.initUsuarios = function initUsuarios() {
     jQuery('#table-usuarios').DataTable({
+        responsive: true, // Activa la opción responsive
+        autoWidth: false, // Evita problemas con el ancho
+        scrollX: true, // Habilita el desplazamiento horizontal si es necesario
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
@@ -195,6 +214,9 @@ window.initUsuarios = function initUsuarios() {
 
 window.initRecorridos = function initRecorridos() {
     jQuery('#table-recorridos').DataTable({
+        responsive: true, // Activa la opción responsive
+        autoWidth: false, // Evita problemas con el ancho
+        scrollX: true, // Habilita el desplazamiento horizontal si es necesario
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
@@ -233,6 +255,9 @@ window.initRecorridos = function initRecorridos() {
 
 window.initVehiculos = function initVehiculos() {
     jQuery('#table-vehiculos').DataTable({
+        responsive: true, // Activa la opción responsive
+        autoWidth: false, // Evita problemas con el ancho
+        scrollX: true, // Habilita el desplazamiento horizontal si es necesario
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
@@ -250,6 +275,9 @@ window.initVehiculos = function initVehiculos() {
 
 window.initEmpresas = function initEmpresas() {
     jQuery('#table-empresas').DataTable({
+        responsive: true, // Activa la opción responsive
+        autoWidth: false, // Evita problemas con el ancho
+        scrollX: true, // Habilita el desplazamiento horizontal si es necesario
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
@@ -267,6 +295,9 @@ window.initEmpresas = function initEmpresas() {
 
 window.initAsignacion = function initAsignacion() {
     jQuery('#table-asignaciones').DataTable({
+        responsive: true, // Activa la opción responsive
+        autoWidth: false, // Evita problemas con el ancho
+        scrollX: true, // Habilita el desplazamiento horizontal si es necesario
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },

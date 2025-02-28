@@ -6,7 +6,12 @@
     </div>
     <div class="continfo">
         <div class="continfo_bread">
-            <a href="#">ADONI-Go!</a> <span>></span> <span class="nombsecc">Panel</span>
+            <div id="menu-mov">
+                <i class="icofont-navigation-menu"></i>
+            </div>
+            <div class="bread">
+                <a href="#">ADONI-Go!</a> <span>></span> <span class="nombsecc">Panel</span>
+            </div>            
         </div>
         <div class="continfo-right">
             <div class="continfo_noti">

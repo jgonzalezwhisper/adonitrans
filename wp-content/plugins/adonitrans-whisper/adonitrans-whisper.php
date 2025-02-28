@@ -10,7 +10,7 @@
  */
 define('PATH_ADONITRANSPLUG',plugin_dir_path(__FILE__));
 define('URL_ADONITRANSPLUG',plugin_dir_url(__FILE__));
-define('PLUG_VERSION', '0.0.145');
+define('PLUG_VERSION', '0.0.146');
 
 include 'includes/roles.php';
 include 'includes/redirecciones.php';
@@ -129,6 +129,7 @@ function enqueue_custom_login_scripts() {
             wp_enqueue_style( 'perfect-scrollbar', 'https://cdn.jsdelivr.net/npm/perfect-scrollbar@1.5.0/css/perfect-scrollbar.min.css' );
             wp_enqueue_script( 'perfect-scrollbar', 'https://cdn.jsdelivr.net/npm/perfect-scrollbar@1.5.0/dist/perfect-scrollbar.min.js', array('jquery'), PLUG_VERSION, true );
             wp_enqueue_style('datatable-css', 'https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css');
+            wp_enqueue_style('datatableR-css', 'https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css');
             wp_enqueue_script('datatable-js', 'https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js', array('jquery'), PLUG_VERSION, true);
             wp_enqueue_style('select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css');
             wp_enqueue_script('select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js', array('jquery'), PLUG_VERSION, true);

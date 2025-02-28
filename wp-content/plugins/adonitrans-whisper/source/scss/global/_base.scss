@@ -708,6 +708,7 @@
 			border-radius: 10px;
 			text-align: center;
 			min-width: 650px;
+			max-width: 760px;
 			position: relative;
 			display: flex;
 			flex-wrap: wrap;
@@ -937,4 +938,33 @@
 
 	}
 
+}
+
+// Ajustes para tablet
+@media (max-width:$laptop) {
+	.adonitrans-plug {
+		.wrap-fanjas {
+			.franja {
+				.wrap {
+					display: flex;
+					gap: 15px;
+					flex-wrap: wrap;
+				}
+
+				.franja_item {
+					max-width: 50%;
+					width: calc(50% - 15px);
+					flex: auto;
+				}
+
+			}
+
+		}
+
+	}
+
+}
+
+// Ajustes para pantallas pequeñas
+@media (max-width:$mobile) {
 }

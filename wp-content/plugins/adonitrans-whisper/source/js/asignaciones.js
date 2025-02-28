@@ -456,13 +456,14 @@ jQuery(document).ready(function($) {
                     required: "Por favor, selecciona un conductor." // Mensaje personalizado para conductor
                 }
             });
-        } else if (checkedRadio === 'empresa') {
+        } else if (checkedRadio === 'empresa' || checkedRadio === 'tirilla') {
             $('#selexc_empresa').rules('add', {
                 required: true,
                 messages: {
                     required: "Por favor, selecciona una empresa." // Mensaje personalizado para empresa
                 }
             });
+            $('#filt-excel-form .wrap-select[data-select="empresa"]').show();
         } else if (checkedRadio === 'colaborador') {
             $('#selexc_colaborador').rules('add', {
                 required: true,
@@ -475,8 +476,7 @@ jQuery(document).ready(function($) {
             $('#selexc_conductor, #selexc_empresa, #selexc_colaborador, #selexc_colaboradorxempresa').rules('remove', 'required');
             $('#filt-excel-form .wrap-select[data-select="empresa"],#filt-excel-form .wrap-select[data-select="selexc_colaboradorxempresa"]').show();
             $('#selexc_colaboradorxempresa').prop('disabled', true);
-        }
-        else if (checkedRadio === 'recorrido') {
+        } else if (checkedRadio === 'nume_movil') {
             $('#selexc_conductor, #selexc_empresa, #selexc_colaborador, #selexc_colaboradorxempresa').rules('remove', 'required');
             $('#filt-excel-form .wrap-select[data-select="nume_movil"]').show();
         }
@@ -555,22 +555,79 @@ jQuery(document).ready(function($) {
                         event.preventDefault();
 
                         var formData = new FormData(form);
-                        formData.append('action', 'gen_reporte_excel');
+                        var selectedValue = $('#filt-excel-form .radio input[type="radio"]:checked').val();
 
-                        $.ajax({
-                            url: asignacionAjax.ajaxurl,
-                            type: 'POST',
-                            data: formData,
-                            contentType: false,
-                            processData: false,
-                            beforeSend: function() {
-                                $('body').addClass('actloader');
-                            },
-                            success: function(response) {
-                                $('body').removeClass('actloader');
-                                if (response.success && response.data.file_url) {
-                                    window.location.href = response.data.file_url;
-                                } else {
+                        if (selectedValue === 'tirilla') {
+                            formData.append('action', 'gen_reporte_tirilla'); // Nuevo action para tirilla
+                            $.ajax({
+                                url: asignacionAjax.ajaxurl, // Variable con la URL de admin-ajax.php
+                                type: 'POST',
+                                data: formData,
+                                contentType: false,
+                                processData: false,
+                                xhrFields: {
+                                    responseType: 'blob' // Importante para manejar archivos
+                                },
+                                beforeSend: function() {
+                                    $('body').addClass('actloader');
+                                },
+                                success: function(response, status, xhr) {
+                                    $('body').removeClass('actloader');
+
+                                    let filename = "reporte_tirilla.xlsx"; // Nombre por defecto
+                                    let disposition = xhr.getResponseHeader('Content-Disposition');
+                                    if (disposition && disposition.indexOf('filename=') !== -1) {
+                                        filename = disposition.split('filename=')[1].replace(/"/g, '');
+                                    }
+
+                                    let blob = new Blob([response], {
+                                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                    });
+                                    let link = document.createElement('a');
+                                    link.href = window.URL.createObjectURL(blob);
+                                    link.download = filename;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                },
+                                error: function() {
+                                    $('body').removeClass('actloader');
+                                    Swal.fire({
+                                        title: '¡Error!',
+                                        text: 'Ocurrió un problema al generar el reporte.',
+                                        icon: 'error',
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            });
+
+                        } else {
+                            console.log('Generar reporte excel....');
+                            formData.append('action', 'gen_reporte_excel'); // Action por defecto
+                            $.ajax({
+                                url: asignacionAjax.ajaxurl,
+                                type: 'POST',
+                                data: formData,
+                                contentType: false,
+                                processData: false,
+                                beforeSend: function() {
+                                    $('body').addClass('actloader');
+                                },
+                                success: function(response) {
+                                    $('body').removeClass('actloader');
+                                    if (response.success && response.data.file_url) {
+                                        window.location.href = response.data.file_url;
+                                    } else {
+                                        Swal.fire({
+                                            title: '¡Error!',
+                                            text: response.data,
+                                            icon: 'error',
+                                            confirmButtonText: 'Aceptar'
+                                        });
+                                    }
+                                },
+                                error: function(response) {
+                                    $('body').removeClass('actloader');
                                     Swal.fire({
                                         title: '¡Error!',
                                         text: response.data,
@@ -578,17 +635,8 @@ jQuery(document).ready(function($) {
                                         confirmButtonText: 'Aceptar'
                                     });
                                 }
-                            },
-                            error: function(response) {
-                                $('body').removeClass('actloader');
-                                Swal.fire({
-                                    title: '¡Error!',
-                                    text: response.data,
-                                    icon: 'error',
-                                    confirmButtonText: 'Aceptar'
-                                });
-                            }
-                        });
+                            });
+                        }
                     }
                 });
             }, 500); // Pequeña espera para asegurarse de que el formulario esté listo

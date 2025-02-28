@@ -529,6 +529,9 @@ require PATH_ADONITRANSPLUG . 'includes/librerias/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 /* GENERAR EXCEL PARA EL REPORTE */
 function func_gen_reporte_excel() {
@@ -1208,36 +1211,6 @@ function func_gen_reporte_excel() {
         $col++;
     }
 
-    // Encabezados de columnas para los datos
-    /*$sheet->setCellValue('A13', 'Fecha Inicio')
-          ->setCellValue('B13', 'Fecha Final')
-          ->setCellValue('C13', 'Franja');
-    $sheet->getStyle('A13:C13')->applyFromArray([
-        'alignment' => [
-            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-        ],
-        'font' => [
-            'bold' => true,
-            'size' => 16,
-        ],
-        'borders' => [
-            'allBorders' => [
-                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-            ],
-        ],
-    ]);*/
-
-    // Datos del reporte
-    /*$data = $asignaciones;
-    $row = 14;
-    foreach ($data as $item) {
-        $sheet->setCellValue('A' . $row, $item['dia_inicio_de_asignacion'])
-              ->setCellValue('B' . $row, $item['dia_fin_de_asignacion'])
-              ->setCellValue('C' . $row, $item['franja_horaria_asignacion']);
-        $row++;
-    }*/
-
     $row = 14;
     foreach ($data as $rowData) {
         $col = 'A';
@@ -1275,3 +1248,161 @@ function download_image_to_temp($image_url) {
 
     return $tmp_file_path;
 }
+
+function func_gen_reporte_tirilla() {
+    $tipo_consulta      = $_POST['tipo-consulta'];
+    $desde_formexcel    = $_POST['desde_formexcel'];
+    $hasta_formexcel    = $_POST['hasta_formexcel'];
+    $empresa            = $_POST['selexc_empresa'];
+
+    $args = [
+        'post_type'      => 'recorrido',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'meta_query'     => [
+            [
+                'key'     => 'empresa_solicitante_recorrido',
+                'value'   => $empresa,
+                'compare' => '='
+            ],
+            [
+                'key'     => 'estado_del_recorrido',
+                'value'   => 'Finalizado',
+                'compare' => 'LIKE'
+            ],
+            [
+                'key'     => 'fecha_inicio_recorrido',
+                'value'   => [$desde_formexcel, $hasta_formexcel],
+                'compare' => 'BETWEEN',
+                'type'    => 'DATE'
+            ]
+        ]
+    ];
+
+    $query = new WP_Query($args);
+    $recorridos = $query->posts;
+
+    $array1 = [];
+    $array2 = [];
+
+    foreach ($recorridos as $recorrido_id) {
+        $nombre_conductor = get_field('id_conductor_recorrido', $recorrido_id); 
+        $nombre_completo  = $nombre_conductor['user_firstname'].' '.$nombre_conductor['user_lastname'];
+        $num_vale = $recorrido_id;
+        
+        $costo_repetidor = get_field('costo_calculado_del_recorrido', $recorrido_id);
+        $suma = 0;
+        if (!empty($costo_repetidor) && is_array($costo_repetidor)) {
+            $ultima_fila = end($costo_repetidor);
+            $suma = isset($ultima_fila['valor']) ? floatval($ultima_fila['valor']) : 0;
+        }
+        
+        $array1[] = [
+            'nombre_conductor' => $nombre_completo,
+            'num_vale'         => $num_vale,
+            'suma'             => $suma
+        ];
+        
+        if (!isset($array2[$nombre_conductor['ID']])) {
+            $array2[$nombre_conductor['ID']] = [
+                'nombre_conductor' => $nombre_completo,
+                'suma'             => 0
+            ];
+        }
+        
+        $array2[$nombre_conductor['ID']]['suma'] += $suma;
+    }
+    
+    $array2 = array_values($array2);
+    
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Combinar celdas A1:D4 y centrar
+    $sheet->mergeCells('A1:D4');
+    $sheet->getStyle('A1:D4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    
+    // Filas 5-8: combinar A-D y agregar bordes
+    for ($i = 5; $i <= 8; $i++) {
+        $sheet->mergeCells("A$i:D$i");
+        $sheet->getStyle("A$i:D$i")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+    }
+    $boldStyle = ['font' => ['bold' => true]];
+    $sheet->setCellValue("A5", "2160991 ADONITRANS SAS")->getStyle("A5")->applyFromArray($boldStyle);
+    $sheet->setCellValue("A6", "ORDEN DE PEDIDO")->getStyle("A6")->applyFromArray($boldStyle);
+    $sheet->setCellValue("A7", "PERIODO")->getStyle("A7")->applyFromArray($boldStyle);
+    $sheet->setCellValue("A8", "CORTE DEL " . date('dm', strtotime($desde_formexcel)) . " AL " . date('dm', strtotime($hasta_formexcel)))->getStyle("A8")->applyFromArray($boldStyle);
+    
+    // Fila 9: combinar E-G y agregar texto "Total"
+    $sheet->mergeCells("E9:G9");
+    $sheet->setCellValue("E9", "Total")->getStyle("E9")->applyFromArray($boldStyle);
+    $sheet->getStyle("E9:G9")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    // Fila 10: combinar A-B, agregar bordes A-D y E-G, colocar sumatoria
+    $sheet->mergeCells("A10:B10");
+    $sheet->mergeCells("E10:G10");
+    $sheet->setCellValue("E10", formatear_moneda_colombia(array_sum(array_column($array2, 'suma'))));
+    $sheet->setCellValue("A10", "Nombre del Conductor")->getStyle("A10:B10")->applyFromArray($boldStyle);
+    $sheet->setCellValue("C10", "# Vale")->getStyle("C10")->applyFromArray($boldStyle);
+    $sheet->setCellValue("D10", "Suma de Valor")->getStyle("D10")->applyFromArray($boldStyle);
+    
+    /*foreach (['A10:D10', 'E10:G10'] as $range) {
+        $sheet->getStyle($range)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+    }*/
+    $sheet->getStyle("E10:G10")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle("E10:G10")->applyFromArray($boldStyle);
+
+    // Llenar $array1 desde fila 11
+    $row = 11;
+    foreach ($array1 as $item) {
+        $sheet->mergeCells("A$row:B$row");
+        $sheet->setCellValue("A$row", $item['nombre_conductor']);
+        $sheet->setCellValue("C$row", $item['num_vale']);
+        $sheet->setCellValue("D$row", formatear_moneda_colombia($item['suma']));
+        $row++;
+    }
+
+    // Fila 12: encabezados en negrita
+    $sheet->mergeCells("H12:I12");
+    $sheet->setCellValue("H12", "Nombre del conductor")->getStyle("H12")->applyFromArray($boldStyle);
+    $sheet->setCellValue("J12", "Valor")->getStyle("J12")->applyFromArray($boldStyle);
+    $sheet->setCellValue("K11", "Servicios")->getStyle("K11")->applyFromArray($boldStyle);
+    
+    // Llenar $array2 desde fila 13
+    $row = 13;
+    foreach ($array2 as $item) {
+        $sheet->mergeCells("H$row:I$row");
+        $sheet->setCellValue("H$row", $item['nombre_conductor']);
+        $sheet->setCellValue("J$row", formatear_moneda_colombia($item['suma']));
+        $row++;
+    }
+
+    // Ruta del logo
+    $image_url = 'https://jagonzalez.org/wp-content/uploads/2025/02/adt-1-blue.png'; // Cambia por tu logo
+    $tmp_image_path = download_image_to_temp($image_url);
+
+    if ($tmp_image_path) {
+        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Logo de la Empresa');
+        $drawing->setPath($tmp_image_path);
+        $drawing->setHeight(70); // Ajusta la altura de la imagen
+        $drawing->setCoordinates('A1'); // Coordenada inicial
+        $drawing->setOffsetX(5); // Centrar el logo horizontalmente
+        $drawing->setOffsetY(5); // Ajustar el espacio vertical
+        $drawing->setWorksheet($sheet);
+    }
+
+    $fecha_hora = date('Y_m_d_H_i_s');
+
+    // Descargar archivo Excel
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="Reporte_Tirilla_'.$fecha_hora.'.xlsx"');
+    header('Cache-Control: max-age=0');
+    
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
+add_action('wp_ajax_gen_reporte_tirilla', 'func_gen_reporte_tirilla');
+add_action('wp_ajax_nopriv_gen_reporte_tirilla', 'func_gen_reporte_tirilla');

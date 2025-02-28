@@ -9,6 +9,9 @@
     $roles_factur = ['facturacion', 'tesoreria'];
 ?>
 <aside id="lateral">
+    <div id="menu-mov-close">
+        <i class="icofont-close"></i>
+    </div>
     <ul>
         <li data-action="panel">
             <i class="icofont-dashboard-web"></i> Panel

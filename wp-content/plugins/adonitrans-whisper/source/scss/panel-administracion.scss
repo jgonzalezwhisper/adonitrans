@@ -50,6 +50,31 @@ body.adonitrans-plug {
       justify-content: space-between;
       align-items: center;
 
+      .continfo_bread {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+
+        #menu-mov {
+          margin-right: 20px;
+          background-color: #0095e8;
+          color: #fff;
+          font-size: 22px;
+          display: none;
+          line-height: 1;
+          padding: 14px;
+          border-radius: 5px;
+          box-shadow: 0 0 4px 2px rgba(0, 0, 0, .25);
+          transition: 0.5s;
+
+          &:hover {
+            background-color: $primary-color;
+          }
+
+        }
+
+      }
+
       .continfo-right {
         display: flex;
         align-content: center;
@@ -212,6 +237,10 @@ body.adonitrans-plug {
   width: 15%;
   padding: 0;
   height: calc(100vh - 120px);
+
+  #menu-mov-close{
+    display: none;
+  }
 
   ul {
     list-style: none;
@@ -692,4 +721,89 @@ form {
 
   }
 
+}
+
+/*RESPONSIVE*/
+
+// Ajustes para tablet
+@media (max-width:$laptop) {
+  html {
+    margin: 0 !important;
+  }
+
+  #wpadminbar {
+    display: none !important;
+  }
+
+  #panel-administracion {
+    #franja {
+      .continfo {
+        .continfo_bread {
+          #menu-mov {
+            display: flex;
+          }
+
+        }
+
+      }
+
+    }
+
+    #lateral {
+      opacity: 1;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 50%;
+      z-index: 9;
+      height: 100%;
+      transform: translateX(-110%);
+      transition: .5s;
+
+      body.open-lateral & {
+        transform: translateX(0);
+      }
+
+      ul {
+        li {
+          padding: 20px;
+        }
+
+      }
+
+      #menu-mov-close {
+        margin-right: 20px;
+        background-color: #fcd722;
+        color: #086acf;
+        font-size: 22px;
+        display: flex;
+        line-height: 1;
+        padding: 14px;
+        border-radius: 5px;
+        box-shadow: 0 0 4px 2px rgba(0, 0, 0, .25);
+        transition: .5s;
+        width: auto;
+        position: absolute;
+        right: 0;
+        top: 20px;
+
+        &:hover {
+          background-color: $color4;
+        }
+
+      }
+
+    }
+
+    #informacion {
+      width: 100%;
+      padding-top: 30px;
+    }
+
+  }
+
+}
+
+// Ajustes para pantallas pequeñas
+@media (max-width:$mobile) {
 }

@@ -428,6 +428,11 @@
                                 <input type="radio" id="radfiltexcel6" name="tipo-consulta" value="nume_movil">
                                 <label for="radfiltexcel6" data-valor="nume_movil"># Móvil</label>
                             </div>
+
+                            <div class="radio">
+                                <input type="radio" id="radfiltexcel7" name="tipo-consulta" value="tirilla">
+                                <label for="radfiltexcel7" data-valor="tirilla">Tirilla</label>
+                            </div>
                         </div>
                     </div>
                     <div class="wrap wrap-2">

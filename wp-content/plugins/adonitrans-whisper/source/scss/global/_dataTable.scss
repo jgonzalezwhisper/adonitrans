@@ -98,12 +98,14 @@
 			}
 
 			.inactivo,
-			.inactiva, .rechazado {
+			.inactiva,
+			.rechazado {
 				color: red;
 				font-weight: 700;
 			}
 
-			.conductor-asignado, .pendiente {
+			.conductor-asignado,
+			.pendiente {
 				color: #ff8100;
 				font-weight: 700;
 			}
@@ -118,7 +120,8 @@
 				font-weight: 700;
 			}
 
-			.finalizado, .pagado {
+			.finalizado,
+			.pagado {
 				color: #28a745;
 				font-weight: 700;
 			}
@@ -131,6 +134,7 @@
 			.acciones {
 				display: flex;
 				gap: 10px;
+
 				.accion {
 					background-color: #FDE261;
 					color: #4d4d4d;
@@ -219,4 +223,18 @@
 
 	}
 
+}
+
+/*RESPONSIVE*/
+
+// Ajustes para tablet
+@media (max-width:$laptop) {
+	/*.dataTables_wrapper {
+		overflow-x: scroll;
+	}*/
+
+}
+
+// Ajustes para pantallas pequeñas
+@media (max-width:$mobile) {
 }
