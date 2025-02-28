@@ -149,6 +149,9 @@ jQuery(document).ready(function($) {
                 if (data_action == 'asignacion') {
                     initAsignacion()
                 }
+                if (data_action == 'pagos') {
+                    initPagos()
+                }
             },
             error: function() {
                 $('body').removeClass('actloader');
@@ -315,4 +318,20 @@ window.initAsignacion = function initAsignacion() {
     });
     calendar.render();
     calendar.updateSize();
+}
+
+window.initPagos = function initPagos() {
+    jQuery('#table-pagos').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
+        },
+        order: [
+            [0, 'desc']
+        ]
+    });
+
+    jQuery('#estado_del_pago, #usuario_asociado_al_pago').select2({
+        placeholder: "Selecciona un Valor",
+        width: '100%'
+    });
 }

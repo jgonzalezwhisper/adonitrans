@@ -19,11 +19,18 @@
 
                 // Array de roles permitidos
                 $roles_admins = ['administrator', 'empresa', 'operaciones_1'];
+                $roles_factur = ['facturacion', 'tesoreria'];
                 ?>
 
                 <div class="boton" data-action="recorrido">
                     <i class="icofont-map-pins"></i> <span>Recorridos</span>
                 </div>
+
+                <?php if ( in_array($user_role, $roles_admins) || in_array($user_role, $roles_factur) ): ?>
+                    <div class="boton" data-action="pagos">
+                        <i class="icofont-coins"></i> <span>Pagos</span>
+                    </div>
+                <?php endif ?>
 
                 <?php if (in_array($user_role, $roles_admins)): ?>
                     <div class="boton" data-action="asignacion">

@@ -188,7 +188,7 @@ function handle_delete_empresa() {
     if ( $deleted ) {
         wp_send_json_success( array( 'message' => 'Empresa y sus documentos eliminados exitosamente.', 'post_id' => $post_id ) );
     } else {
-        wp_send_json_error( array( 'message' => 'Error al eliminar el empresa.' ) );
+        wp_send_json_error( array( 'message' => 'Error al eliminar la empresa.' ) );
     }
 }
 add_action( 'wp_ajax_delete_empresa', 'handle_delete_empresa' );

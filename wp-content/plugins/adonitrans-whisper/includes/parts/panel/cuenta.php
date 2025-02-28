@@ -11,7 +11,6 @@
 		$disabled_attribute = $is_restricted ? 'disabled="disabled"' : '';
 	}
 ?>
-<?php error_log($disabled_attribute) ?>
 <div class="tarjeta" id="wrap-cuenta">
 	<div class="wrap-titulo">
 		<h3 class="titulo">Gestionar Mis Datos</h3>

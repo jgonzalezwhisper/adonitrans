@@ -131,7 +131,7 @@ jQuery(document).ready(function($) {
                             // Mostrar mensaje de éxito
                             Swal.fire(
                                 '¡Eliminado!',
-                                'El empresa ha sido eliminado exitosamente.',
+                                'La empresa ha sido eliminada exitosamente.',
                                 'success'
                             ).then(() => {
                                 var fileUrl = empresaAjax.plugin_url + "includes/parts/panel/empresa.php";
@@ -156,7 +156,7 @@ jQuery(document).ready(function($) {
                             // Mostrar mensaje de error
                             Swal.fire(
                                 'Error',
-                                response.data.message || 'No se pudo eliminar el vehículo.',
+                                response.data.message || 'No se pudo eliminar la Empresa.',
                                 'error'
                             );
                         }
@@ -165,7 +165,7 @@ jQuery(document).ready(function($) {
                         // Mostrar mensaje de error si AJAX falla
                         Swal.fire(
                             'Error',
-                            'Hubo un problema al intentar eliminar el vehículo.',
+                            'Hubo un problema al intentar eliminar la Empresa.',
                             'error'
                         );
                     }

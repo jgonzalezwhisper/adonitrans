@@ -98,12 +98,12 @@
 			}
 
 			.inactivo,
-			.inactiva {
+			.inactiva, .rechazado {
 				color: red;
 				font-weight: 700;
 			}
 
-			.conductor-asignado {
+			.conductor-asignado, .pendiente {
 				color: #ff8100;
 				font-weight: 700;
 			}
@@ -118,7 +118,7 @@
 				font-weight: 700;
 			}
 
-			.finalizado {
+			.finalizado, .pagado {
 				color: #28a745;
 				font-weight: 700;
 			}

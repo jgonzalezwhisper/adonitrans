@@ -25,6 +25,49 @@ foreach (scandir($ajaxPath) as $file) {
     }
 }
 
+function subir_archivo($archivo, $post_id, $campo) {
+    if (!empty($archivo['name'])) {
+        // Obtener el archivo actualmente almacenado en el campo
+        $archivo_actual_id = get_field($campo, $post_id);
+
+        // Comprobar si el archivo ya ha sido cargado (comparando el nombre del archivo)
+        if ($archivo_actual_id) {
+            $archivo_actual = get_attached_file($archivo_actual_id);
+            if ($archivo_actual && basename($archivo_actual) === basename($archivo['name'])) {
+                // Si el archivo ya existe con el mismo nombre, no hacemos nada
+                return $archivo_actual_id;
+            } else {
+                // Si el archivo es diferente, eliminar el anterior antes de subir el nuevo
+                wp_delete_attachment($archivo_actual_id, true);
+            }
+        }
+
+        // Subir el nuevo archivo
+        $upload = wp_handle_upload($archivo, ['test_form' => false]);
+
+        if (!isset($upload['error']) && isset($upload['url'])) {
+            $attachment = [
+                'guid'           => $upload['url'],
+                'post_mime_type' => $upload['type'],
+                'post_title'     => sanitize_file_name($archivo['name']),
+                'post_content'   => '',
+                'post_status'    => 'inherit',
+            ];
+
+            $attachment_id = wp_insert_attachment($attachment, $upload['file']);
+
+            if (!is_wp_error($attachment_id)) {
+                require_once(ABSPATH . 'wp-admin/includes/image.php');
+                $attachment_data = wp_generate_attachment_metadata($attachment_id, $upload['file']);
+                wp_update_attachment_metadata($attachment_id, $attachment_data);
+
+                return $attachment_id;
+            }
+        }
+    }
+    return false;
+}
+
 function custom_rewrite_rule() {
     add_rewrite_rule(
         '^generador-pdf/?$', // URL amigable sin "generador-pdf"
@@ -108,6 +151,7 @@ function enqueue_custom_login_scripts() {
             wp_enqueue_style( 'adoni-empresa-css', URL_ADONITRANSPLUG.'assets/css/panel-empresa.css', array(), PLUG_VERSION );
             wp_enqueue_style( 'adoni-usuarios-css', URL_ADONITRANSPLUG.'assets/css/panel-usuarios.css', array(), PLUG_VERSION );
             wp_enqueue_style( 'adoni-vehiculos-css', URL_ADONITRANSPLUG.'assets/css/panel-vehiculos.css', array(), PLUG_VERSION );
+            wp_enqueue_style( 'adoni-pagos-css', URL_ADONITRANSPLUG.'assets/css/panel-pagos.css', array(), PLUG_VERSION );
 
             wp_enqueue_script('adoni-asignaciones-js', URL_ADONITRANSPLUG . 'assets/js/asignaciones.js', array('jquery'), PLUG_VERSION, true);
             wp_localize_script('adoni-asignaciones-js', 'asignacionAjax', array(
@@ -136,6 +180,12 @@ function enqueue_custom_login_scripts() {
 
             wp_enqueue_script('adoni-usuarios-js', URL_ADONITRANSPLUG . '/assets/js/usuarios.js', array('jquery'), PLUG_VERSION, true);
             wp_localize_script('adoni-usuarios-js', 'usuarioAjax', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'plugin_url' => URL_ADONITRANSPLUG,
+            ));
+
+            wp_enqueue_script('adoni-pagos-js', URL_ADONITRANSPLUG . '/assets/js/pagos.js', array('jquery'), PLUG_VERSION, true);
+            wp_localize_script('adoni-pagos-js', 'pagosAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'plugin_url' => URL_ADONITRANSPLUG,
             ));
