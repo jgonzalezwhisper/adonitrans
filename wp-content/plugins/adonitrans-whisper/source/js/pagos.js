@@ -179,6 +179,8 @@ jQuery(document).ready(function($) {
                     }
 
                     if (response.data.documentos_pago && response.data.documentos_pago.cuenta_de_cobro) {
+
+
                         let cuentaCobro = response.data.documentos_pago.cuenta_de_cobro;
                         let fileUrl = cuentaCobro.url; // URL del archivo
                         let fileId = cuentaCobro.id; // ID del archivo en WordPress
@@ -186,9 +188,9 @@ jQuery(document).ready(function($) {
                         fileContainer.append(`
                             <div class="archivo-previo" id="archivo_cuenta_de_cobro">
                                 <a href="${fileUrl}" target="_blank" class="file-link">📂 Ver Archivo</a>
-                                <a href="#" class="remove-file" data-id="${fileId}">❌ Eliminar</a>
                             </div>
                         `);
+                        $("#cuenta_de_cobro").removeAttr('required');
                     }
 
                     if (response.data.documentos_pago && response.data.documentos_pago.foto_del_pago) {
@@ -199,7 +201,6 @@ jQuery(document).ready(function($) {
                         fileContainer.append(`
                             <div class="archivo-previo" id="archivo_cuenta_de_cobro">
                                 <a href="${fileUrl}" target="_blank" class="file-link">📂 Ver Archivo</a>
-                                <a href="#" class="remove-file" data-id="${fileId}">❌ Eliminar</a>
                             </div>
                         `);
                     }
@@ -227,16 +228,12 @@ jQuery(document).ready(function($) {
                 usuario_asociado_al_pago: {
                     required: true,
                 },
-                cuenta_de_cobro: {
-                    required: true,
-                },
                 estado_del_pago: {
                     required: true,
                 },
             },
             messages: {
                 usuario_asociado_al_pago: "Esta información es necesaria",
-                cuenta_de_cobro: "Esta información es necesaria",
                 estado_del_pago: "Esta información es necesaria",
             },
             submitHandler: function(form) {
@@ -312,4 +309,6 @@ jQuery(document).ready(function($) {
             },
         });
     });
+
+    
 });

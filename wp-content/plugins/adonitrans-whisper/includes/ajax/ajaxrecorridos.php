@@ -260,12 +260,6 @@ function create_recorrido_function() {
         wp_die();
     }
 
-    /*if ($ciudad_inicio === $ciudad_fin) {
-	    $titulo = "Recorrido $nombre_inicio [$barrio_inicio - $barrio_fin]";
-	} else {
-	    $titulo = "Recorrido $nombre_inicio - $nombre_fin [$barrio_inicio - $barrio_fin]";
-	}*/
-
     $titulo = "Recorrido ($nombre_inicio - $barrio_inicio) a ($nombre_fin - $barrio_fin)";
 
     $accion1 = "Crear";   

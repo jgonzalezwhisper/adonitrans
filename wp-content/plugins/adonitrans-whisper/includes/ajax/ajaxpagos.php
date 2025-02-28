@@ -1,5 +1,4 @@
 <?php
-
 /* CREAR O EDITAR PAGOS */
 add_action('wp_ajax_gestionar_pago', 'func_gestionar_pago');
 add_action('wp_ajax_nopriv_gestionar_pago', 'func_gestionar_pago');
@@ -20,14 +19,10 @@ function func_gestionar_pago() {
 
     // Verificar si el usuario existe
     if ($user_data) {
-        // Obtener el nombre y apellido
         $first_name = $user_data->first_name;
         $last_name  = $user_data->last_name;
 
-        // Combinar nombre y apellido
         $nombre_completo = trim("$first_name $last_name");
-
-        // Retornar el nombre completo (o un mensaje si está vacío)
         $nombre_completo = !empty($nombre_completo) ? $nombre_completo : 'N/A '.$usuario_asociado_al_pago;
     }
 
@@ -108,6 +103,36 @@ function func_gestionar_pago() {
             }
         }
     }
+
+    // Obtener correos
+    $roles = ['administrator', 'operaciones_1', 'operaciones_2'];
+    $adonicc = get_mails_role($roles);
+    $mail_conductor = get_userdata($usuario_asociado_al_pago)->user_email ?? false;
+
+    // Asunto y mensaje
+    $subject_conductor = 'Estado de Pago '.$accion2;
+    $message_conductor = [
+        '<h2>Notificación de Pago</h2>',
+        '<p>Se ha ' . strtolower($accion2) . ' un pago asociado al conductor ' . esc_html($nombre_completo) . ' con los siguientes detalles:</p>',
+        sprintf('<p><strong>Estado del Pago:</strong> %s</p>', esc_html($estado_del_pago)),
+        sprintf('<p><strong>Fecha del Pago:</strong> %s</p>', esc_html($fecha_del_pago)),
+        sprintf('<p><strong>Comentario:</strong> %s</p>', esc_html(wp_strip_all_tags($comentario_del_pago))),
+        '<br>',
+        '<p><strong>Adjuntos disponibles: </strong></p>',
+    ];
+
+    foreach ($campos as $campo) {
+
+        $archivo_id = get_field($campo, $post_id)['ID'];
+
+        if ($archivo_id) {
+            $archivo_url = wp_get_attachment_url($archivo_id);
+            $campo_formateado = ucwords(str_replace('_', ' ', $campo));
+            $message_conductor[] = sprintf('<p><a href="%s" target="_blank">%s</a></p>', esc_url($archivo_url), "Ver ".esc_html($campo_formateado));
+        }
+    }
+
+    send_email_notification($subject_conductor, $message_conductor, $mail_conductor, $adonicc);
 
     // Devolver respuesta de éxito
     wp_send_json_success(['message' => 'Pago '.$accion2.' exitosamente']);
