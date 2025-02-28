@@ -1,0 +1,1 @@
+{"version":3,"file":"pago.js","sources":["pago.js"],"sourcesContent":["jQuery(document).ready(function($) {\r\n\t\r\n});"],"names":["jQuery","document","ready","$"],"mappings":"AAAAA,OAAOC,QAAQ,EAAEC,MAAM,SAASC,IAE/B"}
