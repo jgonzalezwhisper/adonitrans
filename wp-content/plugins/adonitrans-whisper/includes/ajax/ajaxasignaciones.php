@@ -920,7 +920,37 @@ function func_gen_reporte_excel() {
         $query = new WP_Query($args);
 
         if ($query->have_posts()) {
-            $headers = ['ID Servicio', 'Nombre del Usuario', 'Nombre del Conductor', '# Móvil', 'Estado', 'Hra Servicio', 'Hra Fin Servicio', 'Barrio', 'Observaciones - Razon de Uso', 'Centro de Costo', 'Autorizado Por', 'Ruta', 'T. Espera', 'Fecha Factura', 'Valor', 'Categoria'];
+            $headers = [
+                'Pedido',
+                'Posicion del pedido',
+                'Linea',
+                'Numero de servicio',
+                'CECOS - Personal',
+                'PUC - Personal',
+                'Ruta',
+                'Valor Ruta',
+                'Centro de Costo',
+                'Cuenta PUC',
+                'Fecha Factura',
+                'T. Espera', 
+                '# Vale',
+                '# Factura',
+                'HI. Servicio',
+                'HF. Servicio',
+                'Servicio Transmilenio (Horas)',
+                'Barrio',
+                '# Móvil',
+                'Nombre del Conductor',
+                'Observaciones - RAZON DE USO',
+                'Autorizado Por',
+                'Ficha - CENTRO DE COSTOS',
+                'Nombre del Usuario',  
+                'J.O.Tercer Nivel',      
+                'J.O.Cuarto Nivel',                     
+                'Estado', 
+                'Valor',
+                'Categoria'
+            ];
             $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
             $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
 
@@ -949,21 +979,38 @@ function func_gen_reporte_excel() {
                 $nombciu_inicio = get_field('ciudad_inicial_recorrido', $post_id)->ID;
                 $nombciu_inicio = get_field('ciudad_para_empresa', $nombciu_inicio);
 
+                $valor_ruta_recorrido = is_numeric(get_field('valor_ruta_recorrido', $post_id)) ? get_field('valor_ruta_recorrido', $post_id) : '';
+
+
+
                 $data[] = [
-                    $post_id,
-                    $nombre_solicitante,
-                    $nombre_conductor,
-                    get_field('placa_vehiculo_recorrido', $post_id),
-                    get_field('estado_del_recorrido', $post_id),
+                    '--',
+                    '--',
+                    '--',
+                    '--',
+                    '--',
+                    '--',
+                    get_field('nombre_ruta_recorrido', $post_id),
+                    $valor_ruta_recorrido,
+                    '--',
+                    '--',
+                    date('d/m/Y'), 
+                    get_field('tiempo_de_espera_recorrido', $post_id),
+                    $post_id, //# Vale
+                    '--',
                     get_field('hora_inicio_recorrido', $post_id),
                     get_field('hora_final_recorrido', $post_id),
+                    '--',
                     get_field('barrio_inicial_recorrido', $post_id),
+                    get_field('placa_vehiculo_recorrido', $post_id),
+                    $nombre_conductor,
                     get_field('razon_de_uso_del_recorrido', $post_id),
-                    get_field('centro_de_costo', $post_id),
                     $nombre_autorizador_recorrido,
-                    get_field('nombre_ruta_recorrido', $post_id),
-                    get_field('tiempo_de_espera_recorrido', $post_id),
-                    date('d/m/Y'),    
+                    get_field('centro_de_costo', $post_id),
+                    $nombre_solicitante,  
+                    '--',
+                    '--',                                      
+                    get_field('estado_del_recorrido', $post_id),
                     '--',
                     '--',
                 ];
@@ -971,20 +1018,33 @@ function func_gen_reporte_excel() {
                 if ($costo_calculado_del_recorrido) {
                     foreach ($costo_calculado_del_recorrido as $costo_calculado) {
                         $data[] = [
-                            $post_id,
-                            $nombre_solicitante,
-                            $nombre_conductor,
-                            get_field('placa_vehiculo_recorrido', $post_id),
-                            get_field('estado_del_recorrido', $post_id),
+                            '--',
+                            '--',
+                            '--',
+                            '--',
+                            '--',
+                            '--',
+                            get_field('nombre_ruta_recorrido', $post_id),
+                            $valor_ruta_recorrido,
+                            '--',
+                            '--',
+                            date('d/m/Y'),
+                            get_field('tiempo_de_espera_recorrido', $post_id),
+                            $post_id, //# Vale
+                            '--',
                             get_field('hora_inicio_recorrido', $post_id),
                             get_field('hora_final_recorrido', $post_id),
+                            '--',
                             get_field('barrio_inicial_recorrido', $post_id),
+                            get_field('placa_vehiculo_recorrido', $post_id),
+                            $nombre_conductor,
                             get_field('razon_de_uso_del_recorrido', $post_id),
-                            get_field('centro_de_costo', $post_id),
                             $nombre_autorizador_recorrido,
-                            get_field('nombre_ruta_recorrido', $post_id),
-                            get_field('tiempo_de_espera_recorrido', $post_id),
-                            date('d/m/Y'),
+                            get_field('centro_de_costo', $post_id),
+                            $nombre_solicitante, 
+                            '--',
+                            '--',                                                       
+                            get_field('estado_del_recorrido', $post_id),
                             $costo_calculado['valor'],
                             $costo_calculado['motivo'],                            
                         ];
