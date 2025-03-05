@@ -506,4 +506,31 @@
 
   }
 
+  // Ajustes para tablet
+  @media (max-width:$laptop) {
+    #conductor-form {
+      .trayecto_info {
+        flex-wrap: wrap;
+
+        .column {
+          width: 100%;
+          flex: auto;
+
+          &.column-2,
+          &.column-3 {
+            width: 48%;
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  // Ajustes para pantallas pequeñas
+  @media (max-width:$mobile) {
+  }
+
 }

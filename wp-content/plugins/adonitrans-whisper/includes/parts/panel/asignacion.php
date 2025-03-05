@@ -34,10 +34,10 @@
                     <i class="icofont-file-excel"></i> <span>Reportes</span>
                 </div>
                 <div class="boton" data-action="exportar-pdf">
-                    <i class="icofont-file-pdf"></i> <span>PDF Conductor</span>
+                    <i class="icofont-file-pdf"></i> <span>CUENTA DE COBRO Conductor</span>
                 </div>
                 <div class="boton" data-action="exportar-pdf-movil">
-                    <i class="icofont-file-pdf"></i> <span>PDF # Móvil</span>
+                    <i class="icofont-file-pdf"></i> <span>CUENTA DE COBRO # Móvil</span>
                 </div>
             </div>
         </div>

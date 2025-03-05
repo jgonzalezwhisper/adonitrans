@@ -1,3 +1,5 @@
+@use "global/variables";
+@use "global/variables" as *;
 #panel-administracion {
   .wrap-gestion-usuarios {
     width: 100%;
@@ -36,7 +38,9 @@
               color: #086ACF;
               z-index: 9;
             }
+
           }
+
         }
 
         .profile_info {
@@ -57,7 +61,9 @@
             margin-bottom: 15px;
             padding: 0;
           }
+
         }
+
       }
 
       .column-2 {
@@ -93,7 +99,9 @@
             margin-bottom: 15px;
             padding: 0;
           }
+
         }
+
       }
 
       .cont_password {
@@ -109,7 +117,38 @@
           font-size: 16px;
           font-weight: 600;
         }
+
       }
+
     }
+
+    // Ajustes para tablet
+    @media (max-width:$laptop) {
+      #user-form {
+        .column-1 {
+          width: 100%;
+        }
+
+        .column-2 {
+          width: 48%;
+        }
+
+        .wrap {
+          input:not([type="radio"]):not([type="checkbox"]) {
+
+            padding: 10px 15px;
+
+          }
+        }
+
+      }
+
+    }
+
+    // Ajustes para pantallas pequeñas
+    @media (max-width:$mobile) {
+    }
+
   }
+
 }

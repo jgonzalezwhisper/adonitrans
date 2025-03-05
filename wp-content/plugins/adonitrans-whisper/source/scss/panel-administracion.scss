@@ -755,7 +755,7 @@ form {
       left: 0;
       top: 0;
       width: 50%;
-      z-index: 9;
+      z-index: 9999;
       height: 100%;
       transform: translateX(-110%);
       transition: .5s;
@@ -767,6 +767,7 @@ form {
       ul {
         li {
           padding: 20px;
+          font-size: 22px;
         }
 
       }

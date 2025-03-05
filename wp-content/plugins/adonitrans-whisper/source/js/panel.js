@@ -295,9 +295,7 @@ window.initEmpresas = function initEmpresas() {
 
 window.initAsignacion = function initAsignacion() {
     jQuery('#table-asignaciones').DataTable({
-        responsive: true, // Activa la opción responsive
-        autoWidth: false, // Evita problemas con el ancho
-        scrollX: true, // Habilita el desplazamiento horizontal si es necesario
+        responsive: true,
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
@@ -306,7 +304,7 @@ window.initAsignacion = function initAsignacion() {
         ]
     });
 
-    jQuery('#id_conductor_asignado, #selexc_colaborador, #selexc_empresa, #selexc_conductor, .select_vehiculo, #sel_condpdf').select2({
+    jQuery('#id_conductor_asignado_filtcal, #id_conductor_asignado, #selexc_colaborador, #selexc_empresa, #selexc_conductor, .select_vehiculo, #sel_condpdf').select2({
         placeholder: "Selecciona un Valor",
         allowClear: true,
         width: '100%'

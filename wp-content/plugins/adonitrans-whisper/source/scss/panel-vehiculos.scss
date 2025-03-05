@@ -4,6 +4,7 @@
     display: flex;
     flex-wrap: wrap;
     row-gap: 20px;
+
     .wrap-listado-vehiculos,
     .wrap-gestion-vehiculos {
         width: 100%;
@@ -23,13 +24,16 @@
                 text-shadow: none;
                 margin-bottom: 5px;
             }
-            a{
+
+            a {
                 color: $primary-color;
                 text-decoration: underline;
                 transition: all .5s;
-                &:hover{
+
+                &:hover {
                     color: $color4;
                 }
+
             }
 
             .select2-container {
@@ -50,6 +54,24 @@
 
         }
 
+    }
+
+    /*REPONSIVE*/
+    // Ajustes para tablet
+    @media (max-width:$laptop) {
+        form {
+            .wrap {
+                &.wrap-2 {
+                    width: 48%;
+                }
+
+            }
+
+        }
+
+    }
+
+    @media (max-width:$mobile) {
     }
 
 }

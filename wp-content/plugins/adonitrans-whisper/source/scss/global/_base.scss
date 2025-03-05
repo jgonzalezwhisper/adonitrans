@@ -951,12 +951,36 @@
 					flex-wrap: wrap;
 				}
 
+				.wrap-2 {
+					width: 48%;
+				}
+
 				.franja_item {
 					max-width: 50%;
 					width: calc(50% - 15px);
 					flex: auto;
 				}
 
+			}
+
+		}
+
+		.formplug {
+			.wrap{
+				input{
+					width: 100%;
+				}
+			}
+			.wrap-2 {
+				width: 48%;
+			}
+
+		}
+
+		.botones {
+			.boton {
+				width: 170px;
+				height: 170px;
 			}
 
 		}
