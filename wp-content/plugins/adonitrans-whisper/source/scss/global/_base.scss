@@ -966,11 +966,13 @@
 		}
 
 		.formplug {
-			.wrap{
-				input{
+			.wrap {
+				input {
 					width: 100%;
 				}
+
 			}
+
 			.wrap-2 {
 				width: 48%;
 			}
@@ -991,4 +993,30 @@
 
 // Ajustes para pantallas pequeñas
 @media (max-width:$mobile) {
+	.adonitrans-plug {
+		.tarjeta {
+			padding: 25px 15px;
+			margin: 0 10px;
+		}
+
+		.modal {
+			z-index: 999;
+
+			.modal-content {
+				min-width: 90%;
+				max-width: 96%;
+
+				.wrap {
+					&.wrap-2 {
+						width: 100%;
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
 }

@@ -27,7 +27,7 @@
                     $foto_de_usuario = get_field('foto_de_usuario', $user_key);
                     $foto_de_usuario = $foto_de_usuario? $foto_de_usuario['url']: URL_ADONITRANSPLUG."assets/images/profile.jpg";
                 ?>
-                Hola, <?= $first_name.' '.$last_name ?>
+                Hola, <?= $first_name ?>
                 <?php endif ?>
                 <img class="img_user" src="<?= $foto_de_usuario; ?>" alt="<?= $first_name ?>">
                 <ul class="dropdown">

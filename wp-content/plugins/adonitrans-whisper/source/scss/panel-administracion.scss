@@ -238,7 +238,7 @@ body.adonitrans-plug {
   padding: 0;
   height: calc(100vh - 120px);
 
-  #menu-mov-close{
+  #menu-mov-close {
     display: none;
   }
 
@@ -786,7 +786,7 @@ form {
         width: auto;
         position: absolute;
         right: 0;
-        top: 20px;
+        top: 10px;
 
         &:hover {
           background-color: $color4;
@@ -807,4 +807,75 @@ form {
 
 // Ajustes para pantallas pequeñas
 @media (max-width:$mobile) {
+  body.adonitrans-plug {
+    overflow: auto;
+  }
+
+  #panel-administracion {
+    padding: 0;
+
+    #franja {
+      flex-wrap: wrap;
+
+      .contimg,
+      .continfo {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .contimg {
+        justify-content: center;
+        border: none;
+        padding: 20px 0;
+
+        img {
+          max-height: 95px
+        }
+
+      }
+
+      .continfo {
+        gap: 25px;
+
+        > div {
+          width: 100%;
+        }
+
+      }
+
+    }
+
+    #lateral {
+      width: 100%;
+
+      ul {
+        li {
+          font-size: 19px;
+        }
+
+      }
+
+    }
+
+    .wrap-gestion-usuarios {
+      #user-form {
+        .column-1 {
+          width: 100%;
+          flex-wrap: wrap;
+          gap: 30px;
+          border: none!important ;
+        }
+
+        .column-2 {
+          width: 100% !important;
+          padding: 0 !important;
+          border: none !important;
+        }
+
+      }
+
+    }
+
+  }
+
 }

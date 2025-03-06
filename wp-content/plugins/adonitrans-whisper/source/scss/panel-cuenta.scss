@@ -1,5 +1,6 @@
 @use "global/variables";
 @use "global/variables" as *;
+
 #panel-administracion {
   .wrap-gestion-usuarios {
     width: 100%;
@@ -135,10 +136,9 @@
 
         .wrap {
           input:not([type="radio"]):not([type="checkbox"]) {
-
             padding: 10px 15px;
-
           }
+
         }
 
       }
@@ -147,6 +147,30 @@
 
     // Ajustes para pantallas pequeñas
     @media (max-width:$mobile) {
+      #panel-administracion {
+        padding: 0;
+
+        .wrap-gestion-usuarios {
+          #user-form {
+            .column-1 {
+              width: 100%;
+              flex-wrap: wrap;
+              gap: 30px;
+              border: none!important;
+            }
+
+            .column-2 {
+              width: 100%;
+              padding: 0;
+              border: none!important;
+            }
+
+          }
+
+        }
+
+      }
+
     }
 
   }
