@@ -23,14 +23,18 @@
         &:hover {
           background-color: red;
         }
+
       }
 
       &:first-child {
         .button {
           display: none;
         }
+
       }
+
     }
+
   }
 
   > .button {
@@ -41,10 +45,30 @@
     font-size: 15px;
     font-weight: 600;
   }
+
 }
 
 #wrap-empresas {
   .wrap-listado-empresas {
     width: 100%;
   }
+
+}
+
+// Ajustes para pantallas pequeñas
+@media (max-width:$mobile) {
+  .wrap-centro-costos {
+    .wrap-datos {
+      .centro-costo {
+        label {
+          width: 100%;
+          font-size: 15px;
+        }
+
+      }
+
+    }
+
+  }
+
 }

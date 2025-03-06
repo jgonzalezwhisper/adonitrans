@@ -39,12 +39,13 @@ jQuery(document).ready(function($) {
         'Por favor, ingrese una hora válida en formato 24 horas (HH:mm).'
     );
 
-    var ps = new PerfectScrollbar('#informacion', {
-        wheelSpeed: 2,
-        wheelPropagation: true,
-        minScrollbarLength: 20
-    });
-
+    if (window.matchMedia("(min-width: 1025px)").matches) {
+        var ps = new PerfectScrollbar('#informacion', {
+            wheelSpeed: 2,
+            wheelPropagation: true,
+            minScrollbarLength: 20
+        });
+    }
 
 
     $(document).on('click', '#franja #menu-mov', function(event) {
@@ -256,8 +257,6 @@ window.initRecorridos = function initRecorridos() {
 window.initVehiculos = function initVehiculos() {
     jQuery('#table-vehiculos').DataTable({
         responsive: true, // Activa la opción responsive
-        autoWidth: false, // Evita problemas con el ancho
-        scrollX: true, // Habilita el desplazamiento horizontal si es necesario
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },
@@ -276,8 +275,6 @@ window.initVehiculos = function initVehiculos() {
 window.initEmpresas = function initEmpresas() {
     jQuery('#table-empresas').DataTable({
         responsive: true, // Activa la opción responsive
-        autoWidth: false, // Evita problemas con el ancho
-        scrollX: true, // Habilita el desplazamiento horizontal si es necesario
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
         },

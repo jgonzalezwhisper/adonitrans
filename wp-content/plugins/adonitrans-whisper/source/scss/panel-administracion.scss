@@ -813,6 +813,7 @@ form {
 
   #panel-administracion {
     padding: 0;
+    height: auto;
 
     #franja {
       flex-wrap: wrap;
@@ -857,13 +858,17 @@ form {
 
     }
 
+    #informacion {
+      height: auto;
+    }
+
     .wrap-gestion-usuarios {
       #user-form {
         .column-1 {
           width: 100%;
           flex-wrap: wrap;
           gap: 30px;
-          border: none!important ;
+          border: none !important;
         }
 
         .column-2 {
@@ -874,6 +879,15 @@ form {
 
       }
 
+    }
+
+  }
+
+  .wrap-title {
+    .title {
+      line-height: 1.4;
+      padding: 13px 18px;
+      font-size: 20px;
     }
 
   }

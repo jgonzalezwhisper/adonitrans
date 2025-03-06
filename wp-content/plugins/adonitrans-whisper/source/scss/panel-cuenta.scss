@@ -149,6 +149,7 @@
     @media (max-width:$mobile) {
       #panel-administracion {
         padding: 0;
+        height: auto;
 
         .wrap-gestion-usuarios {
           #user-form {
@@ -156,17 +157,21 @@
               width: 100%;
               flex-wrap: wrap;
               gap: 30px;
-              border: none!important;
+              border: none !important;
             }
 
             .column-2 {
               width: 100%;
               padding: 0;
-              border: none!important;
+              border: none !important;
             }
 
           }
 
+        }
+
+        #informacion {
+          height: auto;
         }
 
       }

@@ -228,13 +228,13 @@
 /*RESPONSIVE*/
 
 // Ajustes para tablet
-@media (max-width:$laptop) {
-	/*.dataTables_wrapper {
-		overflow-x: scroll;
-	}*/
+@media (max-width:$laptop) {	
 
 }
 
 // Ajustes para pantallas pequeñas
 @media (max-width:$mobile) {
+	.dataTables_wrapper {
+		overflow-x: scroll;
+	}
 }

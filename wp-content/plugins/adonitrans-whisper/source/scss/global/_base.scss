@@ -1017,6 +1017,34 @@
 
 		}
 
+		.formplug {
+			.wrap {
+				.radio-button{
+					gap: 20px;
+				}
+				select, input:not([type="radio"]):not([type="checkbox"]){
+					width: 100%;;
+				}
+			}
+			.wrap-2 {
+				width: 100%;
+			}
+
+		}
+
+		.wrap-fanjas {
+			.franja {
+				padding: 25px 18px 10px;
+
+				.franja_item {
+					max-width: 100%;
+					width: 100%;
+				}
+
+			}
+
+		}
+
 	}
 
 }

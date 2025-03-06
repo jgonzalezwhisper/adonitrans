@@ -72,6 +72,16 @@
     }
 
     @media (max-width:$mobile) {
+
+        form {
+            .wrap {
+                &.wrap-2 {
+                    width: 100%;
+                }
+
+            }
+
+        }
     }
 
 }
