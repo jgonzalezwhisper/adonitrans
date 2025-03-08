@@ -71,9 +71,22 @@ function obtener_conductores_asignados_base($id_recorrido) {
         $hora_inicio_franja = convertir_a_24h($franja['hora_inicio']);
         $hora_fin_franja = convertir_a_24h($franja['hora_fin']);
 
-        if ($hora_solicitud_24h >= $hora_inicio_franja && $hora_solicitud_24h < $hora_fin_franja) {
-            $franja_consulta = $franja['nombre'];
-            break;
+        // Omitimos la franja "Descanso"
+        if ($franja['nombre'] === 'Descanso') {
+            continue;
+        }
+
+        // Si la franja cruza la medianoche
+        if ($hora_inicio_franja > $hora_fin_franja) {
+            if (($hora_solicitud_24h >= $hora_inicio_franja) || ($hora_solicitud_24h < $hora_fin_franja)) {
+                $franja_consulta = $franja['nombre'];
+                break;
+            }
+        } else {
+            if ($hora_solicitud_24h >= $hora_inicio_franja && $hora_solicitud_24h < $hora_fin_franja) {
+                $franja_consulta = $franja['nombre'];
+                break;
+            }
         }
     }
 
@@ -902,6 +915,11 @@ function func_gen_reporte_excel() {
                 'compare' => 'BETWEEN',
                 'type'    => 'DATE', // Especifica que las fechas son de tipo "DATE"
             ],
+            [
+                'key'     => 'estado_del_recorrido',
+                'value'   => 'Finalizado',
+                'compare' => 'LIKE',
+            ],
         ];
 
         // Agregar filtro por colaborador si se recibe un valor en selexc_colaboradorxempresa
@@ -925,6 +943,7 @@ function func_gen_reporte_excel() {
                 'Posicion del pedido',
                 'Linea',
                 'Numero de servicio',
+                'Vlr. Total',
                 'CECOS - Personal',
                 'PUC - Personal',
                 'Ruta',
@@ -954,6 +973,37 @@ function func_gen_reporte_excel() {
             $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
             $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
 
+            // Consulta para obtener el ID del post de tarifa más reciente
+            $args_tarifa_empresa = [
+                'post_type'      => 'tarifa',
+                'posts_per_page' => 1,
+                'fields'         => 'ids', // Obtener solo los IDs de los posts
+                'orderby'        => 'date',
+                'order'          => 'DESC',
+                'meta_query'     => [
+                    'relation' => 'AND',
+                    [
+                        'key'     => 'ano_aplicar_tarifa',
+                        'value'   => date('Y'),
+                        'compare' => '='
+                    ],
+                    [
+                        'key'     => 'empresa_aplicar_tarifa',
+                        'value'   => $id_empresa,
+                        'compare' => '='
+                    ]
+                ]
+            ];
+
+            $tarifa_ids = get_posts($args_tarifa_empresa);
+
+            $tarifas_base_empresa = [];
+
+            if (!empty($tarifa_ids)) {
+                $id_tarifa = $tarifa_ids[0];
+                $tarifas_base_empresa = get_field('tarifas_base_empresa', $id_tarifa) ?: [];
+            }
+
             // Recorrer los posts
             foreach ($query->posts as $post_id) {
 
@@ -981,23 +1031,38 @@ function func_gen_reporte_excel() {
 
                 $valor_ruta_recorrido = is_numeric(get_field('valor_ruta_recorrido', $post_id)) ? get_field('valor_ruta_recorrido', $post_id) : '';
 
+                $pedido_empresa = get_field('pedido_empresa', $id_empresa) ?? '';
+                $posicion_del_pedido_empresa = get_field('posicion_del_pedido_empresa', $id_empresa) ?? '';
+                $cecos_personal_empresa = get_field('cecos_personal_empresa', $id_empresa) ?? '';
+                $puc_personal_empresa = get_field('puc_personal_empresa', $id_empresa) ?? '';
+                $cuenta_puc_empresa = get_field('cuenta_puc_empresa', $id_empresa) ?? '';
 
+                $linea_costo = '10';
+                $numero_servicio = '';
 
-                $data[] = [
-                    '--',
-                    '--',
-                    '--',
-                    '--',
-                    '--',
-                    '--',
+                $vlr_total = '';
+
+                if (!empty($costo_calculado_del_recorrido)) {
+                    $ultimo_elemento = end($costo_calculado_del_recorrido);
+                    $vlr_total = formatear_moneda_colombia($ultimo_elemento['valor']) ?? '';
+                }
+
+                /*$data[] = [
+                    $pedido_empresa,
+                    $posicion_del_pedido_empresa,
+                    $linea_costo,
+                    $numero_servicio,
+                    $vlr_total,
+                    $cecos_personal_empresa,
+                    $puc_personal_empresa,
                     get_field('nombre_ruta_recorrido', $post_id),
                     $valor_ruta_recorrido,
                     '--',
-                    '--',
+                    $cuenta_puc_empresa,
                     date('d/m/Y'), 
                     get_field('tiempo_de_espera_recorrido', $post_id),
                     $post_id, //# Vale
-                    '--',
+                    '1',
                     get_field('hora_inicio_recorrido', $post_id),
                     get_field('hora_final_recorrido', $post_id),
                     '--',
@@ -1013,25 +1078,42 @@ function func_gen_reporte_excel() {
                     get_field('estado_del_recorrido', $post_id),
                     '--',
                     '--',
-                ];
+                ];*/
 
                 if ($costo_calculado_del_recorrido) {
                     foreach ($costo_calculado_del_recorrido as $costo_calculado) {
+
+                        $linea_costo = '10';
+                        $numero_servicio = '';
+
+                        $codigo_buscar = $costo_calculado['codigo'] ?? '';
+
+                        $datos = array_filter($tarifas_base_empresa, fn($item) => $item['codigo'] === $codigo_buscar);
+
+                        if (!empty($datos)) {
+                            $dato = reset($datos);
+                            $linea_costo = $dato['linea'] ?? '';
+                            $numero_servicio = $dato['numero_de_servicio'] ?? '';
+
+                            error_log("Costos Calculados ".$numero_servicio." ".$linea_costo);
+                        }
+
                         $data[] = [
-                            '--',
-                            '--',
-                            '--',
-                            '--',
-                            '--',
-                            '--',
-                            get_field('nombre_ruta_recorrido', $post_id),
+                            $pedido_empresa,
+                            $posicion_del_pedido_empresa,
+                            $linea_costo,
+                            $numero_servicio,
+                            $vlr_total,
+                            $cecos_personal_empresa,
+                            $puc_personal_empresa,
+                            $costo_calculado['motivo'],/* get_field('nombre_ruta_recorrido', $post_id) ?? '',*/
                             $valor_ruta_recorrido,
                             '--',
-                            '--',
+                            $cuenta_puc_empresa,
                             date('d/m/Y'),
                             get_field('tiempo_de_espera_recorrido', $post_id),
                             $post_id, //# Vale
-                            '--',
+                            '1',
                             get_field('hora_inicio_recorrido', $post_id),
                             get_field('hora_final_recorrido', $post_id),
                             '--',
@@ -1045,8 +1127,8 @@ function func_gen_reporte_excel() {
                             '--',
                             '--',                                                       
                             get_field('estado_del_recorrido', $post_id),
-                            $costo_calculado['valor'],
-                            $costo_calculado['motivo'],                            
+                            formatear_moneda_colombia($costo_calculado['valor']),
+                            $costo_calculado['motivo'],
                         ];
                     }
                 }

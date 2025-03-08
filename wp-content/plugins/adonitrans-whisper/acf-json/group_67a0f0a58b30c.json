@@ -97,6 +97,50 @@
                     "parent_repeater": "field_67b22d1b8db70"
                 },
                 {
+                    "key": "field_67cb05b12be5f",
+                    "label": "Linea",
+                    "name": "linea",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67b22d1b8db70"
+                },
+                {
+                    "key": "field_67cb05c72be60",
+                    "label": "Numero de servicio",
+                    "name": "numero_de_servicio",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_67b22d1b8db70"
+                },
+                {
                     "key": "field_67b22d4c8db71",
                     "label": "Nombre",
                     "name": "nombre",
@@ -253,5 +297,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1739730708
+    "modified": 1741358550
 }

@@ -62,14 +62,23 @@ jQuery(document).ready(function($) {
         event.preventDefault();
         let body = $(this).next('.acordeon-body');
         let icon = $(this).find('i');
+
+        // Cierra todos los acordeones y restablece los íconos
+        $('.acordeon-body').not(body).slideUp().removeClass('show');
+        $('.acordeon-header i').not(icon).removeClass('icofont-minus').addClass('icofont-plus');
+
+        // Alternar el acordeón actual
         body.slideToggle(function() {
             if (body.is(':visible')) {
+                body.addClass('show');
                 icon.removeClass('icofont-plus').addClass('icofont-minus');
             } else {
+                body.removeClass('show');
                 icon.removeClass('icofont-minus').addClass('icofont-plus');
             }
         });
     });
+
 
     $(document).on('click', '#lateral ul li[data-action]', function(event) {
 

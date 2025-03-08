@@ -68,6 +68,14 @@ jQuery(document).ready(function($) {
                                 .val(centro.nombre)
                                 .attr('id', 'nombre-' + index)
                                 .attr('name', 'nombre_centro[]');
+                            newRow.find('input[name="jo_tercer_nivel[]"]')
+                                .val(centro.jo_tercer_nivel)
+                                .attr('id', 'nombre-' + index)
+                                .attr('name', 'jo_tercer_nivel[]');
+                            newRow.find('input[name="jo_cuarto_nivel[]"]')
+                                .val(centro.jo_cuarto_nivel)
+                                .attr('id', 'nombre-' + index)
+                                .attr('name', 'jo_cuarto_nivel[]');
                             $('.wrap-datos').append(newRow);
                         });
                     }
@@ -83,6 +91,22 @@ jQuery(document).ready(function($) {
                             `;
                             $('#documentos-container').append(newRow);
                         });
+                    }
+
+                    if (response.data.pedido_empresa && $('#pedido_empresa').length) {
+                        $('#pedido_empresa').val(response.data.pedido_empresa);
+                    }
+                    if (response.data.posicion_del_pedido_empresa && $('#posicion_del_pedido_empresa').length) {
+                        $('#posicion_del_pedido_empresa').val(response.data.posicion_del_pedido_empresa);
+                    }
+                    if (response.data.cecos_personal_empresa && $('#cecos_personal_empresa').length) {
+                        $('#cecos_personal_empresa').val(response.data.cecos_personal_empresa);
+                    }
+                    if (response.data.puc_personal_empresa && $('#puc_personal_empresa').length) {
+                        $('#puc_personal_empresa').val(response.data.puc_personal_empresa);
+                    }
+                    if (response.data.cuenta_puc_empresa && $('#cuenta_puc_empresa').length) {
+                        $('#cuenta_puc_empresa').val(response.data.cuenta_puc_empresa);
                     }
 
                     $('.centro-costo').first().remove();

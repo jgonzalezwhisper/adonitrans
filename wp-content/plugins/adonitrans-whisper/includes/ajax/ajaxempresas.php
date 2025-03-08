@@ -55,6 +55,8 @@ function create_empresa_function() {
         // Limpia los datos enviados
         $codigos_centro = array_map('sanitize_text_field', $_POST['codigo_centro']);
         $nombres_centro = array_map('sanitize_text_field', $_POST['nombre_centro']);
+        $joterni_centro = array_map('sanitize_text_field', $_POST['jo_tercer_nivel']);
+        $jocuani_centro = array_map('sanitize_text_field', $_POST['jo_cuarto_nivel']);
 
         // Asegúrate de que ambos arrays tengan la misma longitud
         $centros_de_costos = [];
@@ -64,6 +66,8 @@ function create_empresa_function() {
             $centros_de_costos[] = [
                 'codigo' => $codigos_centro[$i],
                 'nombre' => $nombres_centro[$i],
+                'jo_tercer_nivel' => $joterni_centro[$i],
+                'jo_cuarto_nivel' => $jocuani_centro[$i],
             ];
         }
 
@@ -145,6 +149,22 @@ function create_empresa_function() {
         }
     }
 
+    if (!empty( $_POST['pedido_empresa'] )) {
+        update_field('pedido_empresa', $_POST['pedido_empresa'], $post_id);
+    }
+    if (!empty( $_POST['posicion_del_pedido_empresa'] )) {
+        update_field('posicion_del_pedido_empresa', $_POST['posicion_del_pedido_empresa'], $post_id);
+    }
+    if (!empty( $_POST['cecos_personal_empresa'] )) {
+        update_field('cecos_personal_empresa', $_POST['cecos_personal_empresa'], $post_id);
+    }
+    if (!empty( $_POST['puc_personal_empresa'] )) {
+        update_field('puc_personal_empresa', $_POST['puc_personal_empresa'], $post_id);
+    }
+    if (!empty( $_POST['cuenta_puc_empresa'] )) {
+        update_field('cuenta_puc_empresa', $_POST['cuenta_puc_empresa'], $post_id);
+    }
+
     // Devolver respuesta de éxito
     wp_send_json_success(['message' => 'Empresa '.$accion2.' exitosamente']);
 }
@@ -221,13 +241,29 @@ function load_empresa_data_function() {
     }
 
 
-    wp_send_json_success([
+    $user = wp_get_current_user();
+    $rol_usuario_actual = !empty($user->roles) ? $user->roles[0] : ''; 
+    $roles_permitidos = ['administrator', 'contributor'];
+
+    $response = [
         'administradores_empresa'      => get_field('usuarios_administradores_empresa', $post_id), 
         'estado_de_la_empresa'         => get_field('estado_de_la_empresa', $post_id),
         'nombre_empresa'               => get_the_title($post_id),        
         'centros_de_costos_empresa'    => get_field("centros_de_costos_empresa", $post_id),
         'documentos_de_la_empresa'     => $documentos_data, 
-    ]);
+    ];
+
+    if (validar_rol_usuario($roles_permitidos, $rol_usuario_actual)) {
+        $response = array_merge($response, [
+            'pedido_empresa'               => get_field("pedido_empresa", $post_id),
+            'posicion_del_pedido_empresa'  => get_field("posicion_del_pedido_empresa", $post_id),
+            'cecos_personal_empresa'       => get_field("cecos_personal_empresa", $post_id),
+            'puc_personal_empresa'         => get_field("puc_personal_empresa", $post_id),
+            'cuenta_puc_empresa'           => get_field("cuenta_puc_empresa", $post_id),
+        ]);
+    }
+
+    wp_send_json_success($response);
 }
 
 // Obtener lista de empresas

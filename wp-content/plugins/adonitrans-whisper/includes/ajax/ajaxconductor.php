@@ -222,18 +222,18 @@ function func_finalizar_recorrido_conductor() {
         $nombre_tarifa_normalizado = strtolower($value['nombre']);
 
         if (strpos($nombre_tarifa_normalizado, 'pasajero adicional') !== false && $contador_no_coincidencias > 0) {
-            $costos[] = ['motivo' => 'Usuario(s) Adicional(es)', 'valor' => intval($contador_no_coincidencias * $value['valor']) ];
+            $costos[] = ['codigo' => $value['codigo'], 'motivo' => 'Usuario(s) Adicional(es)', 'valor' => intval($contador_no_coincidencias * $value['valor']) ];
             $total_recorrido += intval($contrecogidos * $value['valor']);
         }
         if (strpos($nombre_tarifa_normalizado, 'peajes') !== false ) {
             $total_peajes = array_sum($valores);
 
             $nume_peajes = $contpeajes * $value['valor'];
-            $costos[] = ['motivo' => 'Peajes', 'valor' => intval($total_peajes + $nume_peajes) ];
+            $costos[] = ['codigo' => $value['codigo'], 'motivo' => 'Peajes', 'valor' => intval($total_peajes + $nume_peajes) ];
             $total_recorrido += intval($total_peajes + $nume_peajes);
         }
         if (strpos($nombre_tarifa_normalizado, 'tiempo espera') !== false) {
-            $costos[] = ['motivo' => 'Tiempo de Espera', 'valor' => intval($_POST['minutosExtras'] * $value['valor']) ];
+            $costos[] = ['codigo' => $value['codigo'], 'motivo' => 'Tiempo de Espera', 'valor' => intval($_POST['minutosExtras'] * $value['valor']) ];
             $total_recorrido += intval($_POST['minutosExtras'] * $value['valor']);
         }
     }
@@ -247,18 +247,19 @@ function func_finalizar_recorrido_conductor() {
         // Si la hora está en el rango de 7 PM a 5 AM
         if ($horaInicio >= $hora_7pm || $horaInicio < $hora_5am) {
             $recargo_nocturno = 5527;
-            $costos[] = ['motivo' => 'Recargo Nocturno', 'valor' => $recargo_nocturno];
+            $costos[] = ['codigo' => $value['codigo'], 'motivo' => 'Recargo Nocturno', 'valor' => $recargo_nocturno];
             $total_recorrido += $recargo_nocturno;
         }
     }
 
-    $costos[] = ['motivo' => 'Total Recorrido', 'valor' => intval($total_recorrido) ];
+    $costos[] = ['codigo' => '0', 'motivo' => 'Total Recorrido', 'valor' => intval($total_recorrido) ];
 
     $arr_costos_calculados = [];
 
     // Recorrer los datos y agregarlos al array
     foreach ($costos as $dato) {
         $arr_costos_calculados[] = [
+            'codigo' => $dato['codigo'],
             'motivo' => $dato['motivo'],
             'valor' => $dato['valor']
         ];

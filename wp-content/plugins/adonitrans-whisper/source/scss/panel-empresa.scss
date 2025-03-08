@@ -3,12 +3,15 @@
 .wrap-centro-costos {
   .wrap-datos {
     padding: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 20px;
 
     .centro-costo {
       display: flex;
       flex-wrap: wrap;
       justify-content: start;
-      column-gap: 35px;
+      row-gap: 30px;
 
       label {
         width: 25%;
@@ -51,6 +54,12 @@
 #wrap-empresas {
   .wrap-listado-empresas {
     width: 100%;
+  }
+
+  .wrap-rep-excel {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 20px;
   }
 
 }

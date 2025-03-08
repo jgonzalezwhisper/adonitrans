@@ -473,3 +473,11 @@ function send_email_notification($subject, $message_content, $recipient_email = 
 
     return $sent;
 }
+
+function validar_rol_usuario($roles_validos = [], $rol_actual = '') {
+    if (empty($roles_validos) || empty($rol_actual)) {
+        return false;
+    }
+
+    return in_array($rol_actual, $roles_validos);
+}

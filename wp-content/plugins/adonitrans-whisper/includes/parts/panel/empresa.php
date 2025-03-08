@@ -92,9 +92,9 @@
                         // Obtén todos los usuarios con roles específicos
                         $roles = ['empresa'];
                         $args = [
-                        'role__in' => $roles,
-                        'orderby'  => 'display_name',
-                        'order'    => 'ASC',
+                            'role__in' => $roles,
+                            'orderby'  => 'display_name',
+                            'order'    => 'ASC',
                         ];
                         $usuarios = get_users($args);
                         ?>
@@ -135,6 +135,12 @@
                                             </label>
                                             <label for="nombre-0">Nombre
                                                 <input type="text" id="nombre-0" name="nombre_centro[]">
+                                            </label>                                            
+                                            <label for="jo_tercer_nivel-0">J.O.Tercer Nivel
+                                                <input type="text" id="jo_tercer_nivel-0" name="jo_tercer_nivel[]">
+                                            </label>
+                                            <label for="jo_cuarto_nivel-0">J.O.Cuarto Nivel
+                                                <input type="text" id="jo_cuarto_nivel-0" name="jo_cuarto_nivel[]">
                                             </label>
                                             <button type="button" class="button remove-centro-row"><i class="icofont-info-circle"></i>Eliminar Información</button>
                                         </div>
@@ -144,6 +150,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="acordeon-item">
                             <div class="acordeon-header">Documentos de la Empresa <i class="icofont-plus"></i></div>
                             <div class="acordeon-body">
@@ -156,6 +163,45 @@
                                 </div>
                             </div>
                         </div>
+
+                        <?php
+                            $user = wp_get_current_user();
+                            $rol_usuario_actual = !empty($user->roles) ? $user->roles[0] : '';
+
+                            $roles_permitidos = ['administrator', 'contributor'];
+                        ?>
+
+                        <?php if (validar_rol_usuario($roles_permitidos, $rol_usuario_actual)): ?>   
+
+                        <div class="acordeon-item">
+                            <div class="acordeon-header">Información Reporte Excel <i class="icofont-plus"></i></div>
+                            <div class="acordeon-body">
+                                <div class="wrap-rep-excel">                                
+                                    <div class="wrap wrap-2">
+                                        <label for="pedido_empresa">Pedido</label>
+                                        <input type="text" id="pedido_empresa" name="pedido_empresa" value="">
+                                    </div>
+                                    <div class="wrap wrap-2">
+                                        <label for="posicion_del_pedido_empresa">Posición del Pedido</label>
+                                        <input type="text" id="posicion_del_pedido_empresa" name="posicion_del_pedido_empresa" value="">
+                                    </div>
+                                    <div class="wrap wrap-2">
+                                        <label for="cecos_personal_empresa">CECOS - Personal</label>
+                                        <input type="text" id="cecos_personal_empresa" name="cecos_personal_empresa" value="">
+                                    </div>
+                                    <div class="wrap wrap-2">
+                                        <label for="puc_personal_empresa">PUC Personal</label>
+                                        <input type="text" id="puc_personal_empresa" name="puc_personal_empresa" value="">
+                                    </div>
+                                    <div class="wrap wrap-2">
+                                        <label for="cuenta_puc_empresa">Cuenta PUC</label>
+                                        <input type="text" id="cuenta_puc_empresa" name="cuenta_puc_empresa" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <?php endif ?>
                     </div>
                 </div>
                 

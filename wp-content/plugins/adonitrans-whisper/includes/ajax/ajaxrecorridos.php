@@ -822,8 +822,11 @@ function load_recorrido_data_function() {
         $response['centro_de_costo']          = get_field('centro_de_costo', $post_id);
         $response['razon_de_uso_del_recorrido'] = get_field('razon_de_uso_del_recorrido', $post_id);
         $response['codigo_de_ruta_recorrido'] = get_field('codigo_de_ruta_recorrido', $post_id);
-        $response['quien_autoriza_recorrido'] = get_field('persona_que_autoriza_el_recorrido', $post_id)['ID'];   
-        $response['id_conductor_recorrido']   = get_field('id_conductor_recorrido',$post_id)['ID'];
+        $response['quien_autoriza_recorrido'] = get_field('persona_que_autoriza_el_recorrido', $post_id)['ID'];
+
+        if ( get_field('id_conductor_recorrido',$post_id) ) {
+            $response['id_conductor_recorrido']   = get_field('id_conductor_recorrido',$post_id)['ID'];
+        }          
 
         $empresa_solicitante = get_field('empresa_solicitante_recorrido', $post_id);
 
