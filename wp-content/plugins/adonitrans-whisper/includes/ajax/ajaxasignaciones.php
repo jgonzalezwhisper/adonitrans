@@ -965,10 +965,7 @@ function func_gen_reporte_excel() {
                 'Ficha - CENTRO DE COSTOS',
                 'Nombre del Usuario',  
                 'J.O.Tercer Nivel',      
-                'J.O.Cuarto Nivel',                     
-                'Estado', 
-                'Valor',
-                'Categoria'
+                'J.O.Cuarto Nivel',   
             ];
             $filtpor = 'Empresa: ' . get_the_title( $id_empresa );
             $data = []; // Inicializar fuera del foreach para agrupar todas las asignaciones
@@ -1003,6 +1000,8 @@ function func_gen_reporte_excel() {
                 $id_tarifa = $tarifa_ids[0];
                 $tarifas_base_empresa = get_field('tarifas_base_empresa', $id_tarifa) ?: [];
             }
+
+            $centros_de_costos_empresa = get_field('centros_de_costos_empresa', $id_empresa);
 
             // Recorrer los posts
             foreach ($query->posts as $post_id) {
@@ -1081,10 +1080,20 @@ function func_gen_reporte_excel() {
                 ];*/
 
                 if ($costo_calculado_del_recorrido) {
-                    foreach ($costo_calculado_del_recorrido as $costo_calculado) {
+                    foreach ($costo_calculado_del_recorrido as $index => $costo_calculado) {
 
-                        $linea_costo = '10';
-                        $numero_servicio = '';
+                        if ($index === array_key_last($costo_calculado_del_recorrido)) {
+                            continue;
+                        }
+
+                        $ruta_motivo = $costo_calculado['motivo'];
+
+                        if ($index === 0) {
+                            $ruta_motivo = get_field('nombre_ruta_recorrido', $post_id);
+                        }
+
+                        $linea_costo = $tarifas_base_empresa[0]['linea'];
+                        $numero_servicio = $tarifas_base_empresa[0]['numero_de_servicio'];
 
                         $codigo_buscar = $costo_calculado['codigo'] ?? '';
 
@@ -1094,8 +1103,16 @@ function func_gen_reporte_excel() {
                             $dato = reset($datos);
                             $linea_costo = $dato['linea'] ?? '';
                             $numero_servicio = $dato['numero_de_servicio'] ?? '';
+                        }
 
-                            error_log("Costos Calculados ".$numero_servicio." ".$linea_costo);
+                        $cod_bus_cc = get_field('centro_de_costo', $post_id) ?? '';
+
+                        $datos_centro_costo = array_filter($centros_de_costos_empresa, fn($item) => $item['codigo'] === $cod_bus_cc);
+
+                        if (!empty($datos_centro_costo)) {
+                            $dato = reset($datos_centro_costo);
+                            $jo_tercer_nivel = $dato['jo_tercer_nivel'] ?? '';
+                            $jo_cuarto_nivel = $dato['jo_cuarto_nivel'] ?? '';
                         }
 
                         $data[] = [
@@ -1106,8 +1123,8 @@ function func_gen_reporte_excel() {
                             $vlr_total,
                             $cecos_personal_empresa,
                             $puc_personal_empresa,
-                            $costo_calculado['motivo'],/* get_field('nombre_ruta_recorrido', $post_id) ?? '',*/
-                            $valor_ruta_recorrido,
+                            $ruta_motivo, /*$costo_calculado['motivo'],*//* get_field('nombre_ruta_recorrido', $post_id) ?? '',*/
+                            formatear_moneda_colombia($costo_calculado['valor']),
                             '--',
                             $cuenta_puc_empresa,
                             date('d/m/Y'),
@@ -1124,11 +1141,8 @@ function func_gen_reporte_excel() {
                             $nombre_autorizador_recorrido,
                             get_field('centro_de_costo', $post_id),
                             $nombre_solicitante, 
-                            '--',
-                            '--',                                                       
-                            get_field('estado_del_recorrido', $post_id),
-                            formatear_moneda_colombia($costo_calculado['valor']),
-                            $costo_calculado['motivo'],
+                            $jo_tercer_nivel,
+                            $jo_cuarto_nivel,               
                         ];
                     }
                 }

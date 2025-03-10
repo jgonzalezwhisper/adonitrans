@@ -53,6 +53,24 @@
             "bidirectional_target": []
         },
         {
+            "key": "field_67ceef0098f04",
+            "label": "Tarifas Base",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
             "key": "field_67b22d1b8db70",
             "label": "Tarifas Base",
             "name": "tarifas_base_empresa",
@@ -189,6 +207,24 @@
             ]
         },
         {
+            "key": "field_67ceef1798f05",
+            "label": "Tarifas Ruta",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
             "key": "field_67a0f0f80f2c8",
             "label": "Repetidor de Tarifas",
             "name": "repetidor_de_tarifas",
@@ -297,5 +333,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1741358550
+    "modified": 1741614886
 }

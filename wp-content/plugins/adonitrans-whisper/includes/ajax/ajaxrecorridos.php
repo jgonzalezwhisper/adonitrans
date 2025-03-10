@@ -39,7 +39,6 @@ function func_get_rutas() {
 
     $tarifa_id = $tarifa_ids[0]; // Obtener el primer ID
     $repetidor = get_field('repetidor_de_tarifas', $tarifa_id);
-
     
     if ($repetidor) {
         foreach ($repetidor as $item) {
