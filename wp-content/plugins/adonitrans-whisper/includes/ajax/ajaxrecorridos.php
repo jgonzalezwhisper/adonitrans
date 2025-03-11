@@ -352,6 +352,7 @@ function create_recorrido_function() {
             sprintf('<p style="text-align:left;">Ciudad Inicio: <strong>%s</strong></p>', esc_html($nombre_inicio)),
             sprintf('<p style="text-align:left;">Barrio Inicio: <strong>%s</strong></p>', esc_html($barrio_inicio)),
             sprintf('<p style="text-align:left;">Placa Vehículo: <strong>%s</strong></p>', esc_html($dato_vehiculo['placa_vehiculo'])),
+            '<br>',
             sprintf('<p style="text-align:left;">Solicitante: <strong>%s</strong></p>', esc_html($nomb_usuario)),
             sprintf('<p style="text-align:left;">Empresa Solicitante: <strong>%s</strong></p>', esc_html($nomb_empresa)),
             '<br><br>',
@@ -741,7 +742,7 @@ function handle_iniciar_recorrido() {
     // Definir el asunto y cuerpo del mensaje
     $subject = 'Recorrido Iniciado en AdoniGo';
     $message = [
-        '<h2>El conductor ha llegado</h2>',
+        '<h2>El conductor ha llegado.</h2>',
         '<p>El conductor ha llegado al punto de inicio:</p>',
         sprintf('<p>ID Servicio: <strong>%s</strong></p>', esc_html($post_id)),
         sprintf('<p>Nombre Conductor: <strong>%s</strong></p>', esc_html($nomb_conductor)),

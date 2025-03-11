@@ -68,6 +68,18 @@ function func_finalizar_recorrido_conductor() {
         return;
     }
 
+    $empresa_solicitante = get_field('empresa_solicitante_recorrido', $_POST['post_id']);
+    $nombre_empresa = $empresa_solicitante->post_title;
+    $barrio_inicial = get_field('barrio_inicial_recorrido', $_POST['post_id']);
+
+    $minutosExtras = $_POST['minutosExtras'];
+
+    /*error_log("Datos recibidos ".print_r($_POST, true));
+    error_log("Datos ruta ".get_field('barrio_inicial_recorrido', $_POST['post_id']));
+    error_log("Empresa Solicitante ".print_r($nombre_empresa,true));
+    error_log("Barrio Inicial ".$barrio_inicial);*/   
+    
+
     $post_id = intval($_POST['post_id']);
 
     $contpeajes     = 0; /*Peajes*/
@@ -232,10 +244,35 @@ function func_finalizar_recorrido_conductor() {
             $costos[] = ['codigo' => $value['codigo'], 'motivo' => 'Peajes', 'valor' => intval($total_peajes + $nume_peajes) ];
             $total_recorrido += intval($total_peajes + $nume_peajes);
         }
-        if (strpos($nombre_tarifa_normalizado, 'tiempo espera') !== false) {
+        /*if (strpos($nombre_tarifa_normalizado, 'tiempo espera') !== false) {
             $costos[] = ['codigo' => $value['codigo'], 'motivo' => 'Tiempo de Espera', 'valor' => intval($_POST['minutosExtras'] * $value['valor']) ];
             $total_recorrido += intval($_POST['minutosExtras'] * $value['valor']);
+        }*/
+        if (strpos($nombre_tarifa_normalizado, 'tiempo espera') !== false) {
+            $minutosExtras = intval($_POST['minutosExtras']);
+            $valorPorMinuto = intval($value['valor']);
+
+            // Convertir a minúsculas para comparación insensible a mayúsculas
+            $nombre_empresa_lower = strtolower($nombre_empresa);
+            $barrio_inicial_lower = strtolower($barrio_inicial);
+
+            if (strpos($nombre_empresa_lower, 'whisper') !== false) {
+                if (strpos($barrio_inicial_lower, 'planta') !== false) {
+                    // Si el servicio inicia en Planta y la espera es menor a 15 minutos, es gratis
+                    if ($minutosExtras < 15) {
+                        $minutosExtras = 0;
+                    }
+                } else {
+                    // Si el servicio inicia en otro lugar, el tiempo de espera se cobra por mitad
+                    $minutosExtras = ceil($minutosExtras / 2); // Redondeo hacia arriba
+                }
+            }
+
+            $costos[] = ['codigo' => $value['codigo'], 'motivo' => 'Tiempo de Espera', 'valor' => $minutosExtras * $valorPorMinuto];
+            $total_recorrido += $minutosExtras * $valorPorMinuto;
         }
+
+
     }
 
     // Evaluar si se aplica el Recargo Nocturno
