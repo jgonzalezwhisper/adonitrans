@@ -46,6 +46,23 @@ jQuery(document).ready(function($) {
                             $('#' + key).val(value);
                         }
                     });
+
+                    // ✅ Si hay archivos en el repetidor, agregarlos dinámicamente
+                    if (response.data.repetidor_archivos_vehi && response.data.repetidor_archivos_vehi.length > 0) {
+                        $('#wrap-archivos-vehiculo').empty(); // Limpiar archivos previos
+                        $.each(response.data.repetidor_archivos_vehi, function(index, archivo) {
+                            addFileVehiculo(archivo.nombre, archivo.archivo.url);
+                        });
+                    }
+
+                    // ✅ Si hay imagenes en el repetidor, agregarlos dinámicamente
+                    if (response.data.repetidor_imagenes_vehi && response.data.repetidor_imagenes_vehi.length > 0) {
+                        $('#wrap-imagenes-vehiculo').empty(); // Limpiar archivos previos
+                        $.each(response.data.repetidor_imagenes_vehi, function(index, archivo) {
+                            addImagenVehiculo(archivo.nombre, archivo.archivo);
+                        });
+                    }
+
                     $('body').removeClass('actloader');
                 } else {
                     $('body').removeClass('actloader');
@@ -60,6 +77,85 @@ jQuery(document).ready(function($) {
 
         });
     });
+
+    // ✅ Función para agregar dinámicamente archivos
+    function addFileVehiculo(nombre, url) {
+        let uniqueID = Date.now(); // Genera un ID único basado en el tiempo
+        let $clone = $('.clonar .archivo-vehiculo').clone().removeClass('clonar').show(); // Clonar y mostrar
+
+        // Modificar los atributos for e id de los inputs para que sean únicos
+        $clone.find('label').each(function() {
+            let $label = $(this);
+            let $input = $label.siblings('input'); // Buscar el input dentro del label
+
+            if ($input.length) {
+                let name = $input.attr('name').replace('[]', '');
+                let newID = name + '_' + uniqueID;
+
+                $input.attr('id', newID);
+                $label.attr('for', newID);
+            }
+        });
+
+        // 🔹 Eliminar el input file
+        $clone.find('.wrap-file input[type="file"]').remove();
+
+        // 🔹 Añadir enlace con la URL del archivo
+        let linkElement = $('<a>', {
+            class: 'url-archivo',
+            href: url,
+            html: '<i class="icofont-search-document"></i> Ver archivo',
+            target: '_blank'
+        });
+
+        $clone.find('.wrap-file').append(linkElement); // Agregar el enlace dentro del div .wrap-file
+
+        // 🔹 Asignar el nombre del archivo en el input correspondiente
+        $clone.find('input.nombre-archivo').val(nombre);
+
+        // Agregar al contenedor
+        $('#wrap-archivos-vehiculo').append($clone);
+    }
+
+    // ✅ Función para agregar dinámicamente archivos
+    function addImagenVehiculo(nombre, url) {
+        let uniqueID = Date.now(); // Genera un ID único basado en el tiempo
+        let $clone = $('.clonar .imagen-vehiculo').clone(); // Clonar y mostrar
+
+        // Modificar los atributos for e id de los inputs para que sean únicos
+        $clone.find('label').each(function() {
+            let $label = $(this);
+            let $input = $label.siblings('input'); // Buscar el input dentro del label
+
+            if ($input.length) {
+                let name = $input.attr('name').replace('[]', '');
+                let newID = name + '_' + uniqueID;
+
+                $input.attr('id', newID);
+                $label.attr('for', newID);
+            }
+        });
+
+        // 🔹 Eliminar el input file
+        $clone.find('.wrap-file input[type="file"]').remove();
+
+        // 🔹 Añadir enlace con la URL del archivo
+        let linkElement = $('<a>', {
+            class: 'url-archivo',
+            href: url,
+            html: '<i class="icofont-search-document"></i> Ver archivo',
+            target: '_blank'
+        });
+
+        $clone.find('.wrap-file').append(linkElement); // Agregar el enlace dentro del div .wrap-file
+
+        // 🔹 Asignar el nombre del archivo en el input correspondiente
+        $clone.find('input.nombre-archivo').val(nombre);
+
+        // Agregar al contenedor
+        $('#wrap-imagenes-vehiculo').append($clone);
+    }
+
 
     $(document).on('click', '#wrap-vehiculos .wrap-listado-vehiculos .delete-vehiculo', function(event) {
         event.preventDefault();
@@ -265,4 +361,68 @@ jQuery(document).ready(function($) {
             },
         });
     });
+
+    /*Archivos Vehiculo*/
+
+    $(document).on('click', '#add-file-vehiculo', function(event) {
+        event.preventDefault();
+
+        let uniqueID = Date.now(); // Genera un ID único basado en el tiempo
+        let $clone = $('.clonar .archivo-vehiculo').clone(); // Clonar y mostrar
+
+        // Modificar los atributos for e id de los inputs para que sean únicos
+        $clone.find('label').each(function() {
+            let $label = $(this);
+            let $input = $label.find('input');
+
+            if ($input.length) {
+                let name = $input.attr('name').replace('[]', '');
+                let newID = name + '_' + uniqueID;
+
+                $input.attr('id', newID);
+                $label.attr('for', newID);
+            }
+        });
+
+        // Agregar la clonación al contenedor
+        $('#wrap-archivos-vehiculo').append($clone);
+    });
+
+    $(document).on('click', '#wrap-archivos-vehiculo .archivo-vehiculo .icofont-trash', function(event) {
+        event.preventDefault();
+        $(this).closest('.archivo-vehiculo').remove();
+    });
+
+    /*Imagenes Vehiculo*/
+
+    $(document).on('click', '#add-imagen-vehiculo', function(event) {
+        event.preventDefault();
+
+        let uniqueID = Date.now(); // Genera un ID único basado en el tiempo
+        let $clone = $('.clonar .imagen-vehiculo').clone(); // Clonar y mostrar
+
+        // Modificar los atributos for e id de los inputs para que sean únicos
+        $clone.find('label').each(function() {
+            let $label = $(this);
+            let $input = $label.find('input');
+
+            if ($input.length) {
+                let name = $input.attr('name').replace('[]', '');
+                let newID = name + '_' + uniqueID;
+
+                $input.attr('id', newID);
+                $label.attr('for', newID);
+            }
+        });
+
+        // Agregar la clonación al contenedor
+        $('#wrap-imagenes-vehiculo').append($clone);
+    });
+
+    $(document).on('click', '#wrap-imagenes-vehiculo .imagen-vehiculo .icofont-trash', function(event) {
+        event.preventDefault();
+        $(this).closest('.imagen-vehiculo').remove();
+    });
+
+
 });

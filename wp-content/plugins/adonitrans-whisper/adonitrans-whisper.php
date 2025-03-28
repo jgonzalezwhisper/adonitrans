@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Adonitrans Whisper MKT
  * Description: Modulo a la medida para el flujo de funciones internas de roles y areas encargadas.
- * Version: 1.0.0
+ * Version: 0.0.148
  * Author: Whisper MKT
  * Text Domain: adonitrans-whisper
  * Domain Path: /languages
@@ -10,7 +10,7 @@
  */
 define('PATH_ADONITRANSPLUG',plugin_dir_path(__FILE__));
 define('URL_ADONITRANSPLUG',plugin_dir_url(__FILE__));
-define('PLUG_VERSION', '0.0.146');
+define('PLUG_VERSION', '0.0.148');
 
 include 'includes/roles.php';
 include 'includes/redirecciones.php';
@@ -68,6 +68,41 @@ function subir_archivo($archivo, $post_id, $campo) {
     return false;
 }
 
+function subir_archivo_vehiculo($files, $index) {
+    if (!empty($files['name'][$index])) {
+        $archivo = [
+            'name'     => $files['name'][$index],
+            'type'     => $files['type'][$index],
+            'tmp_name' => $files['tmp_name'][$index],
+            'error'    => $files['error'][$index],
+            'size'     => $files['size'][$index],
+        ];
+
+        $upload = wp_handle_upload($archivo, ['test_form' => false]);
+
+        if (!isset($upload['error']) && isset($upload['url'])) {
+            $attachment = [
+                'guid'           => $upload['url'],
+                'post_mime_type' => $upload['type'],
+                'post_title'     => sanitize_file_name($archivo['name']),
+                'post_content'   => '',
+                'post_status'    => 'inherit',
+            ];
+
+            $attachment_id = wp_insert_attachment($attachment, $upload['file']);
+
+            if (!is_wp_error($attachment_id)) {
+                require_once(ABSPATH . 'wp-admin/includes/image.php');
+                $attachment_data = wp_generate_attachment_metadata($attachment_id, $upload['file']);
+                wp_update_attachment_metadata($attachment_id, $attachment_data);
+
+                return $attachment_id; // Retorna el ID del adjunto
+            }
+        }
+    }
+    return false;
+}
+
 function custom_rewrite_rule() {
     add_rewrite_rule(
         '^generador-pdf/?$', // URL amigable sin "generador-pdf"
@@ -82,8 +117,6 @@ function custom_flush_rewrite_rules() {
 }
 register_activation_hook(__FILE__, 'custom_flush_rewrite_rules');
 register_deactivation_hook(__FILE__, 'custom_flush_rewrite_rules');
-
-
 
 function custom_class_body($classes) {
     $classes[] = 'adonitrans-plug';
@@ -480,4 +513,78 @@ function validar_rol_usuario($roles_validos = [], $rol_actual = '') {
     }
 
     return in_array($rol_actual, $roles_validos);
+}
+
+function render_fields($fields) {
+    foreach ($fields as $field) : ?>
+        <div class="<?= esc_attr($field['class']); ?>">
+            <label for="<?= esc_attr($field['id']); ?>"><?= esc_html($field['label']); ?></label>
+            
+            <?php if ($field['type'] === 'select') : ?>
+                <select id="<?= esc_attr($field['id']); ?>" name="<?= esc_attr($field['id']); ?>">
+                    <?php if ($field['options'] === 'users') : ?>
+                        <?php
+                        $roles = ['conductor', 'propietario_vehiculo', 'administrador'];
+                        $args = ['role__in' => $roles, 'orderby' => 'display_name', 'order' => 'ASC'];
+                        $usuarios = get_users($args);
+                        ?>
+                        <?php foreach ($usuarios as $usuario) : ?>
+                            <?php $first_name = get_user_meta($usuario->ID, 'first_name', true); ?>
+                            <option value="<?= esc_attr($usuario->ID); ?>">
+                                <?= esc_html($first_name . ' - ' . $usuario->user_email); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <?php foreach ($field['options'] as $option) : ?>
+                            <option value="<?= esc_attr($option); ?>">
+                                <?= esc_html($option); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            <?php elseif ($field['type'] === 'text' || $field['type'] === 'date') : ?>
+                <input type="<?= esc_attr($field['type']); ?>" id="<?= esc_attr($field['id']); ?>" name="<?= esc_attr($field['id']); ?>" value="">
+            <?php endif; ?>
+        </div>
+    <?php endforeach;
+}
+
+function render_fields_group($fieldsets) {
+    foreach ($fieldsets as $fieldset) : ?>
+        <fieldset class="<?= esc_attr($fieldset['class']); ?>">
+            <legend><?= esc_html($fieldset['legend']); ?></legend>
+            
+            <?php foreach ($fieldset['fields'] as $field) : ?>
+                <div class="<?= esc_attr($field['class']); ?>">
+                    <label for="<?= esc_attr($field['id']); ?>"><?= esc_html($field['label']); ?></label>
+                    
+                    <?php if ($field['type'] === 'select') : ?>
+                        <select id="<?= esc_attr($field['id']); ?>" name="<?= esc_attr($field['id']); ?>">
+                            <?php if ($field['options'] === 'users') : ?>
+                                <?php
+                                $roles = ['conductor', 'propietario_vehiculo', 'administrador'];
+                                $args = ['role__in' => $roles, 'orderby' => 'display_name', 'order' => 'ASC'];
+                                $usuarios = get_users($args);
+                                ?>
+                                <?php foreach ($usuarios as $usuario) : ?>
+                                    <?php $first_name = get_user_meta($usuario->ID, 'first_name', true); ?>
+                                    <option value="<?= esc_attr($usuario->ID); ?>">
+                                        <?= esc_html($first_name . ' - ' . $usuario->user_email); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <?php foreach ($field['options'] as $option) : ?>
+                                    <option value="<?= esc_attr($option); ?>">
+                                        <?= esc_html($option); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    <?php elseif (in_array($field['type'], ['text', 'date', 'radio'])) : ?>
+                        <input type="<?= esc_attr($field['type']); ?>" id="<?= esc_attr($field['id']); ?>" name="<?= esc_attr($field['id']); ?>" value="">
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </fieldset>
+    <?php endforeach;
 }

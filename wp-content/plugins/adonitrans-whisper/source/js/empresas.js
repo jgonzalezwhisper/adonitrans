@@ -290,14 +290,10 @@ jQuery(document).ready(function($) {
                 nombre_empresa: {
                     required: true,
                 },
-                administradores_empresa: {
-                    required: true,
-                },
             },
             messages: {
                 estado_de_la_empresa: "Esta información es necesaria",
                 nombre_empresa: "Esta información es necesaria",
-                administradores_empresa: "Esta información es necesaria",
             },
             submitHandler: function(form) {
 

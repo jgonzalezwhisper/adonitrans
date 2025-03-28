@@ -958,6 +958,130 @@ function load_recorrido_data_function() {
     wp_send_json_success($response);
 }
 
+/*ACCION AJAX PARA OBTENER RELACIONADOS A UN USUARIO AL CREAR UN RECORRIDO COMO ADMINISTRADOR U OPERADOR*/
+add_action('wp_ajax_load_usuario_data', 'load_usuario_data_function');
+add_action('wp_ajax_nopriv_load_usuario_data', 'load_usuario_data_function');
+function load_usuario_data_function() {
+
+    // Validar si se recibió el ID del colaborador
+    if (!isset($_POST['id_colaborador']) || empty($_POST['id_colaborador'])) {
+        wp_send_json_error(['message' => 'El ID del colaborador es obligatorio.']);
+        wp_die();
+    }
+
+    // Saneamos el dato recibido
+    $id_colaborador = sanitize_text_field($_POST['id_colaborador']);
+
+    // Verificar que sea un número entero positivo
+    if (!ctype_digit($id_colaborador) || intval($id_colaborador) <= 0) {
+        wp_send_json_error(['message' => 'El ID del colaborador no es válido.']);
+        wp_die();
+    }
+
+    // Convertir a entero seguro
+    $id_colaborador = intval($id_colaborador);
+
+    $empresa_asociada = get_field('empresa_asociada_usuario', 'user_' . $id_colaborador)->ID;
+
+    // Buscar IDs de posts tipo 'ciudad' donde empresa_asociada_a_ciudad sea igual a $empresa_solicitante
+    $ciudades = get_posts([
+        'post_type'      => 'ciudad',
+        'meta_query'     => [
+            [
+                'key'   => 'empresa_asociada_a_ciudad',
+                'value' => $empresa_asociada,
+            ]
+        ],
+        'fields'         => 'ids',
+        'posts_per_page' => -1,
+    ]);
+
+    $barrios_empresa = [];
+
+    // Iterar sobre las ciudades encontradas
+    foreach ($ciudades as $ciudad_id) {
+        $ciudad_nombre      = get_field('ciudad_para_empresa', $ciudad_id);
+        $repetidor_barrios  = get_field('repetidor_de_barrios', $ciudad_id);
+
+        $barrios = [];
+
+        // Si hay barrios, recorrerlos
+        if (!empty($repetidor_barrios)) {
+            foreach ($repetidor_barrios as $barrio) {
+                $zona          = $barrio['zona'] ?? '';
+                $barrio_nombre = $barrio['barrio'] ?? '';
+
+                // Si la zona está vacía, usar el nombre del barrio
+                $barrios[] = [
+                    'zona'   => !empty($zona) ? $zona : $barrio_nombre,
+                    'barrio' => $barrio_nombre,
+                ];
+            }
+        }
+
+        // Agregar a la lista de barrios por ciudad
+        $barrios_empresa[] = [
+            'id'      => $ciudad_id,
+            'ciudad'  => $ciudad_nombre,
+            'barrios' => $barrios,
+        ];
+    }
+
+    /* OBTENER TARIFAS PARA RUTAS */
+    $rutas = [];
+
+    $args = [
+        'post_type'      => 'tarifa',
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'posts_per_page' => 1,
+        'meta_query'     => [
+            'relation' => 'AND',
+            [
+                'key'     => 'empresa_aplicar_tarifa',
+                'value'   => $empresa_asociada,
+                'compare' => '='
+            ],
+            [
+                'key'     => 'ano_aplicar_tarifa',
+                'value'   => date('Y'),
+                'compare' => '='
+            ]
+        ]
+    ];
+
+    $tarifa_ids = get_posts($args);
+
+    if (!empty($tarifa_ids)) {
+        $tarifa_id = $tarifa_ids[0];
+        $repetidor = get_field('repetidor_de_tarifas', $tarifa_id);
+
+        if (!empty($repetidor)) {
+            foreach ($repetidor as $item) {
+                $rutas[] = [
+                    'codigo'        => $item['codigo'] ?? '',
+                    'nombre_de_ruta' => $item['nombre_de_ruta'] ?? '',
+                    'valor'         => $item['valor'] ?? '',
+                ];
+            }
+        }
+    }
+
+    $colegas_empresa = obtener_colegas_por_colaborador($id_colaborador);
+
+    $response = [
+        'barrios_empresa'                   => $barrios_empresa,
+        'colegas_empresa'                   => $colegas_empresa,
+        'razon_de_uso_para_el_recorrido'    => get_field('razon_de_uso_para_el_recorrido',$empresa_asociada),
+        'centros_de_costos_empresa'         => get_field('centros_de_costos_empresa', $empresa_asociada),
+        'rutas_empresa'                     => $rutas,
+        'usuarios_administradores_empresa'  => get_field('usuarios_administradores_empresa', $empresa_asociada),
+    ];
+
+    // Devolver la respuesta en formato JSON
+    wp_send_json_success($response);
+}
+
 function validar_tiempo_cancelacion($post_id) {
     // Obtener los valores de ACF para la fecha y hora de inicio del recorrido
     $fecha_inicio = get_field('fecha_inicio_recorrido', $post_id);
@@ -1167,24 +1291,40 @@ add_action('wp_ajax_nopriv_get_colegas_empresa', 'get_colegas_empresa');
 function get_colegas_empresa() {
 
     $col_id = intval($_POST['colaborador_id']);
-    $empresa_id = get_field('empresa_asociada_usuario', 'user_' . $col_id)->ID; 
+
+    $response = obtener_colegas_por_colaborador($col_id);
+
+    wp_send_json_success($response);
+}
+
+function obtener_colegas_por_colaborador($col_id) {
+    if (!$col_id) {
+        return [];
+    }
+
+    $empresa_id = get_field('empresa_asociada_usuario', 'user_' . $col_id);
+    if (!$empresa_id || !isset($empresa_id->ID)) {
+        return [];
+    }
+
+    $empresa_id = $empresa_id->ID;
 
     $argscol = [
         'role' => 'colaborador',
         'orderby' => 'display_name',
         'order'   => 'ASC',
-        'meta_query' => array(
-            array(
+        'meta_query' => [
+            [
                 'key'   => 'estado_usuario',
                 'value' => 'Activo',
                 'compare' => '='
-            ),
-            array(
+            ],
+            [
                 'key'   => 'empresa_asociada_usuario',
                 'value' => $empresa_id,
                 'compare' => '='
-            )
-        ),
+            ]
+        ],
         'exclude'   => [$col_id],
         'fields' => ['ID', 'user_email'],
     ];
@@ -1192,18 +1332,18 @@ function get_colegas_empresa() {
     $user_query_col = new WP_User_Query($argscol);
     $colaboradores = $user_query_col->get_results();
 
-    $response = array();
+    $response = [];
     foreach ($colaboradores as $colaborador) {
         $first_name = get_user_meta($colaborador->ID, 'first_name', true);
         $last_name = get_user_meta($colaborador->ID, 'last_name', true);
-        $user_email = $colaborador->user_email; // El correo electrónico ya está disponible en el objeto
+        $user_email = $colaborador->user_email;
 
-        $response[] = array(
+        $response[] = [
             'ID' => $colaborador->ID,
             'display_name' => trim($first_name . ' ' . $last_name) ?: $colaborador->display_name,
             'user_email' => $user_email
-        );
+        ];
     }
 
-    wp_send_json_success($response);
+    return $response;
 }

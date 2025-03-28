@@ -241,8 +241,9 @@ window.initRecorridos = function initRecorridos() {
     });
     if (jQuery('#id_solicitante_recorrido').length > 0) {
         jQuery('#id_solicitante_recorrido').select2({
-            placeholder: "Selecciona un Valor",
-            width: '100%'
+            placeholder: "Selecciona un Usuario",
+            allowClear: true,
+            width: '100%',
         });
     }
 
@@ -274,7 +275,7 @@ window.initVehiculos = function initVehiculos() {
         ]
     });
 
-    jQuery('#tipo_de_vehiculo, #propietario_de_vehiculo, #conductor_del_vehiculo').select2({
+    jQuery('#tipo_de_vehiculo').select2({
         placeholder: "Selecciona un Valor",
         allowClear: true,
         width: '100%'

@@ -55,12 +55,239 @@ jQuery(document).ready(function($) {
         return valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
+    function actualizarSelects(selects, datos) {
+        selects.each(function() {
+            let select = $(this);
+
+            let valorSeleccionado = select.val();
+
+            select.empty().append('<option value="">Selecciona un barrio</option>');
+
+            $.each(datos, function(index, barrio) {
+                let dataZona = barrio.zona ? ' data-zona="' + barrio.zona + '"' : '';
+                let option = '<option' + dataZona + ' value="' + barrio.barrio + '">' + barrio.barrio + '</option>';
+                select.append(option);
+            });
+
+            if (valorSeleccionado && select.find('option[value="' + valorSeleccionado + '"]').length) {
+                select.val(valorSeleccionado);
+            }
+
+            if (select.hasClass('select2-hidden-accessible')) {
+                select.trigger('change');
+            }
+        });
+    }
+
+    function llenarSelects(barriosEmpresa, data) {
+        let selectCiudadInicio = $('#ciudad_inicio');
+        let selectCiudadFin = $('#ciudad_fin');
+        let selectBarrioInicio = $('#barrio_inicio');
+        let selectBarrioFin = $('#barrio_fin');
+
+        // Vaciar selects antes de llenarlos
+        selectCiudadInicio.empty().append('<option value="">Seleccione una ciudad</option>');
+        selectCiudadFin.empty().append('<option value="">Seleccione una ciudad</option>');
+        selectBarrioInicio.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
+        selectBarrioFin.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
+
+        // Iterar sobre las ciudades y agregarlas a los selects
+        barriosEmpresa.forEach(ciudad => {
+            selectCiudadInicio.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
+            selectCiudadFin.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
+        });
+
+        // Función para llenar barrios según la ciudad seleccionada
+        function llenarBarrios(ciudadId, selectBarrio, barrioSeleccionado = '') {
+            let ciudad = barriosEmpresa.find(c => c.id == ciudadId);
+            selectBarrio.empty().append('<option value="">Seleccione un barrio</option>');
+
+            if (ciudad && ciudad.barrios.length > 0) {
+                ciudad.barrios.forEach(barrio => {
+                    let value = barrio.zona;
+                    let text = barrio.barrio || barrio.zona; // Usar zona si existe, si no el barrio
+                    let isSelected = barrioSeleccionado == value ? 'selected' : '';
+                    selectBarrio.append(`<option value="${value}" ${isSelected}>${text}</option>`);
+                });
+            }
+        }
+
+        // Agregar evento onchange para actualizar barrios dinámicamente
+        selectCiudadInicio.on('change', function() {
+            let ciudadId = $(this).val();
+            llenarBarrios(ciudadId, selectBarrioInicio);
+        });
+
+        selectCiudadFin.on('change', function() {
+            let ciudadId = $(this).val();
+            llenarBarrios(ciudadId, selectBarrioFin);
+        });
+
+        // Seleccionar la ciudad y llenar barrios de inicio si existen
+        if (data.ciudad_inicio) {
+            selectCiudadInicio.val(data.ciudad_inicio).trigger('change');
+            llenarBarrios(data.ciudad_inicio, selectBarrioInicio, data.barrio_inicio);
+        }
+
+        // Seleccionar la ciudad y llenar barrios de fin si existen
+        if (data.ciudad_fin) {
+            selectCiudadFin.val(data.ciudad_fin).trigger('change');
+            llenarBarrios(data.ciudad_fin, selectBarrioFin, data.barrio_fin);
+        }
+    }
+
+    function llenarSelect(barriosEmpresa, data, selectCiudad, selectBarrio) {
+        let $selectCiudad = typeof selectCiudad === 'string' ? $(selectCiudad) : $(selectCiudad);
+        let $selectBarrio = typeof selectBarrio === 'string' ? $(selectBarrio) : $(selectBarrio);
+
+        // Inicializar selects con opción por defecto
+        function inicializarSelect($select, placeholder) {
+            $select.empty().append(`<option value="">${placeholder}</option>`).prop('disabled', false);
+        }
+
+        inicializarSelect($selectCiudad, 'Seleccione una ciudad');
+        inicializarSelect($selectBarrio, 'Seleccione un barrio');
+
+        // Llenar select de ciudades
+        barriosEmpresa.forEach(({
+            id,
+            ciudad
+        }) => {
+            $selectCiudad.append(`<option value="${id}">${ciudad}</option>`);
+        });
+
+        // Función para llenar barrios según la ciudad seleccionada
+        function llenarBarrios(ciudadId, $selectBarrio, barrioSeleccionado = '') {
+            let ciudad = barriosEmpresa.find(c => c.id == ciudadId);
+            inicializarSelect($selectBarrio, 'Seleccione un barrio');
+
+            if (ciudad ? .barrios.length) {
+                ciudad.barrios.forEach(({
+                    zona,
+                    barrio
+                }) => {
+                    let value = zona;
+                    let text = barrio || zona;
+                    let isSelected = barrioSeleccionado == value ? 'selected' : '';
+                    $selectBarrio.append(`<option value="${value}" ${isSelected}>${text}</option>`);
+                });
+            }
+        }
+
+        // Evento onchange para actualizar barrios dinámicamente
+        $selectCiudad.on('change', function() {
+            llenarBarrios($(this).val(), $selectBarrio);
+        });
+    }
+
+    function llenarSelectsRepetidor(barriosEmpresa, $fila, data) {
+        let selectCiudad = $fila.find('.ciudad_adicional_recorrido');
+        let selectBarrio = $fila.find('.barrio_adicional_recorrido');
+
+        // Vaciar selects antes de llenarlos
+        selectCiudad.empty().append('<option value="">Seleccione una ciudad</option>').prop('disabled', false);
+        selectBarrio.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
+
+        // Llenar el select de ciudades
+        barriosEmpresa.forEach(ciudad => {
+            selectCiudad.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
+        });
+
+        // Función para llenar barrios según la ciudad seleccionada
+        function llenarBarrios(ciudadId, selectBarrio, barrioSeleccionado = '') {
+            let ciudad = barriosEmpresa.find(c => c.id == ciudadId);
+            selectBarrio.empty().append('<option value="">Seleccione un barrio</option>');
+
+            if (ciudad && ciudad.barrios.length > 0) {
+                ciudad.barrios.forEach(barrio => {
+                    let value = barrio.zona;
+                    let text = barrio.barrio || barrio.zona;
+                    let isSelected = barrioSeleccionado == value ? 'selected' : '';
+                    selectBarrio.append(`<option value="${value}" ${isSelected}>${text}</option>`);
+                });
+            }
+        }
+
+        // Desactivar cualquier evento previo y agregar uno nuevo
+        $(document).off('change', '.ciudad_adicional_recorrido').on('change', '.ciudad_adicional_recorrido', function() {
+            let ciudadId = $(this).val();
+            let selectBarrio = $(this).closest('.franja').find('.barrio_adicional_recorrido');
+            llenarBarrios(ciudadId, selectBarrio);
+        });
+
+        // Seleccionar la ciudad y llenar barrios si existen en `data`
+        if (data.ciudad) {
+            selectCiudad.val(data.ciudad).trigger('change');
+            llenarBarrios(data.ciudad, selectBarrio, data.barrio);
+        }
+    }
+
+    function llenarSelectsRepetidorV2(barriosEmpresa, $fila, data) {
+        let selectCiudadOrigen = $fila.find('.ciudad_origen_pasajero_adicional');
+        let selectBarrioOrigen = $fila.find('.barrio_origen_pasajero_adi');
+        let selectCiudadDestino = $fila.find('.ciudad_destino_pasajero_adicional');
+        let selectBarrioDestino = $fila.find('.barrio_destino_pasajero_adi');
+
+        // Vaciar selects antes de llenarlos
+        selectCiudadOrigen.empty().append('<option value="">Selecciona una ciudad Origen</option>').prop('disabled', false);
+        selectBarrioOrigen.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
+        selectCiudadDestino.empty().append('<option value="">Selecciona una ciudad Destino</option>').prop('disabled', false);
+        selectBarrioDestino.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
+
+        // Llenar el select de ciudades
+        barriosEmpresa.forEach(ciudad => {
+            selectCiudadOrigen.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
+            selectCiudadDestino.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
+        });
+
+        // Función para llenar barrios según la ciudad seleccionada
+        function llenarBarrios(ciudadId, selectBarrio, barrioSeleccionado = '') {
+            let ciudad = barriosEmpresa.find(c => c.id == ciudadId);
+            selectBarrio.empty().append('<option value="">Seleccione un barrio</option>');
+
+            if (ciudad && ciudad.barrios.length > 0) {
+                ciudad.barrios.forEach(barrio => {
+                    let value = barrio.zona;
+                    let text = barrio.barrio || barrio.zona;
+                    let isSelected = barrioSeleccionado == value ? 'selected' : '';
+                    selectBarrio.append(`<option value="${value}" ${isSelected}>${text}</option>`);
+                });
+            }
+        }
+
+        // Desactivar eventos previos y agregar nuevos
+        $(document).off('change', '.ciudad_origen_pasajero_adicional').on('change', '.ciudad_origen_pasajero_adicional', function() {
+            let ciudadId = $(this).val();
+            let selectBarrio = $(this).closest('.franja').find('.barrio_origen_pasajero_adi');
+            llenarBarrios(ciudadId, selectBarrio);
+        });
+
+        $(document).off('change', '.ciudad_destino_pasajero_adicional').on('change', '.ciudad_destino_pasajero_adicional', function() {
+            let ciudadId = $(this).val();
+            let selectBarrio = $(this).closest('.franja').find('.barrio_destino_pasajero_adi');
+            llenarBarrios(ciudadId, selectBarrio);
+        });
+
+        // Seleccionar la ciudad y llenar barrios si existen en `data`
+        if (data.ciudad_origen) {
+            selectCiudadOrigen.val(data.ciudad_origen).trigger('change');
+            llenarBarrios(data.ciudad_origen, selectBarrioOrigen, data.origen);
+        }
+        if (data.ciudad_destino) {
+            selectCiudadDestino.val(data.ciudad_destino).trigger('change');
+            llenarBarrios(data.ciudad_destino, selectBarrioDestino, data.destino);
+        }
+
+        $fila.find('.direccion_origen_adicional').val(data.direccion_origen);
+        $fila.find('.direccion_destino_adicional').val(data.direccion_destino);
+    }
+
     // Registro de listeners iniciales
     handleCityChange('.ciudad_adicional_recorrido', '.barrio_adicional_recorrido');
     handleCityChange('.ciudad_origen_pasajero_adicional', '.barrio_origen_pasajero_adi');
     handleCityChange('.ciudad_destino_pasajero_adicional', '.barrio_destino_pasajero_adi');
 
-    $(document).on('change', '#id_solicitante_recorrido', function() {
+    /*$(document).on('change', '#id_solicitante_recorrido', function() {
         let idSolicitante = $(this).val();
         let centro_de_costo = $("#centro_de_costo");
         let ciudad_inicio = $("#ciudad_inicio");
@@ -206,190 +433,112 @@ jQuery(document).ready(function($) {
             centro_de_costo.prop('disabled', true).trigger('change');
             centro_de_costo.empty().append('<option value="0">Selecciona un centro de costo</option>').trigger('change');
         }
+    });*/
+
+    $(document).on('change', '#id_solicitante_recorrido', function() {
+
+        let id_colaborador = $(this).val().trim();
+
+        if (!id_colaborador || isNaN(id_colaborador) || parseInt(id_colaborador) <= 0) {
+            console.log("El ID del colaborador debe ser un número válido mayor a cero.");
+            return;
+        }
+
+        // Enviar la solicitud AJAX para obtener la informacion relacionada al usuario
+        $.ajax({
+            url: recorridoAjax.ajaxurl,
+            method: 'POST',
+            data: {
+                action: 'load_usuario_data',
+                id_colaborador: id_colaborador
+            },
+            beforeSend: function() {
+                $('body').addClass('actloader');
+            },
+            success: function(response) {
+                $('body').removeClass('actloader');
+                if (response.success) {
+
+                    let barriosEmpresa = response.data.barrios_empresa;
+                    $(document).off('change', '#ciudad_inicio');
+                    $(document).off('change', '#ciudad_fin');
+                    $(document).off('change', '#barrio_inicio');
+                    $(document).off('change', '#barrio_fin');
+                    llenarSelects(barriosEmpresa, response.data);
+
+                    /*Ciudad y Barrio Parada Adicional*/
+                    $(document).off('change', '.ciudad_adicional_recorrido, .barrio_adicional_recorrido');
+                    llenarSelect(barriosEmpresa, response.data, 'select[name="ciudad_adicional_recorrido[]"]', 'select[name="barrio_adicional_recorrido[]"]');
+
+                    /*Ciudad y Barrio Pasajero adicional*/
+                    $(document).off('change', '.ciudad_origen_pasajero_adicional, .barrio_origen_pasajero_adi');
+                    $(document).off('change', '.ciudad_destino_pasajero_adicional, .barrio_destino_pasajero_adi');
+                    llenarSelect(barriosEmpresa, response.data, 'select[name="ciudad_origen_pasajero_adicional[]"]', 'select[name="barrio_origen_pasajero_adi[]"]');
+                    llenarSelect(barriosEmpresa, response.data, 'select[name="ciudad_destino_pasajero_adicional[]"]', 'select[name="barrio_destino_pasajero_adi[]"]');
+
+
+                    $("#id_conductor_recorrido").prop('disabled', true);
+                    $("#dir_inicial_recorrido").prop('disabled', false);
+
+                    /*RAZON DE USO*/
+                    $("#razon_uso_recorrido").empty().append('<option value="">Seleccione una Opción</option>');
+
+                    response.data.razon_de_uso_para_el_recorrido.forEach(razon => {
+                        $("#razon_uso_recorrido").append(`<option value="${razon.razon}">${razon.razon}</option>`);
+                    });
+
+                    /*PERSONA QUE AUTORIZA*/
+                    $("#persona_autoriza_recorrido").empty().append('<option value="">Seleccione una Opción</option>');
+
+                    response.data.usuarios_administradores_empresa.forEach(persona => {
+                        $("#persona_autoriza_recorrido").append(`<option value="${persona.ID}">${persona.user_firstname} ${persona.user_lastname}</option>`);
+                    });
+
+                    /*USUARIOS ADICIONALES*/
+                    $('.sel_adicional_usuario').empty().append('<option value="">Seleccione una Opción</option>');
+                    response.data.colegas_empresa.forEach(colaborador => {
+                        $('.sel_adicional_usuario').append(`<option value="${colaborador.ID}">${colaborador.display_name}</option>`);
+                    });
+
+                    /*RUTA*/
+                    $("#tarifaxempresa").empty().append('<option value="">Seleccione una Opción</option>');
+                    response.data.rutas_empresa.forEach(ruta => {
+                        $("#tarifaxempresa").append(`<option data-valor="${ruta.valor}" data-nombre="${ruta.nombre_de_ruta}" value="${ruta.codigo}">${ruta.codigo} - ${ruta.nombre_de_ruta}</option>`);
+                    });
+
+                    /*CENTROS DE COSTO POR EMPRESA*/
+                    if (response.data.centros_de_costos_empresa) {
+
+                        $("#centro_de_costo").empty().append('<option value="">Seleccione una Opción</option>').prop('disabled', false);
+
+                        response.data.centros_de_costos_empresa.forEach(cce => {
+                            $("#centro_de_costo").append(`<option value="${cce.codigo}">${cce.codigo} - ${cce.nombre} </option>`);
+                        });
+
+                        $("#centro_de_costo").prop('disabled', false);
+                    }
+
+                } else {
+                    $('body').removeClass('actloader');
+                    Swal.fire({
+                        title: 'Algo ha ocurrido!',
+                        text: response.data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function() {
+                $('body').removeClass('actloader');
+                Swal.fire({
+                    title: '¡Error!',
+                    text: 'Hubo un problema al procesar la solicitud. Por favor intenta nuevamente.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                });
+            },
+        });
     });
-
-    function actualizarSelects(selects, datos) {
-        selects.each(function() {
-            let select = $(this);
-
-            let valorSeleccionado = select.val();
-
-            select.empty().append('<option value="">Selecciona un barrio</option>');
-
-            $.each(datos, function(index, barrio) {
-                let dataZona = barrio.zona ? ' data-zona="' + barrio.zona + '"' : '';
-                let option = '<option' + dataZona + ' value="' + barrio.barrio + '">' + barrio.barrio + '</option>';
-                select.append(option);
-            });
-
-            if (valorSeleccionado && select.find('option[value="' + valorSeleccionado + '"]').length) {
-                select.val(valorSeleccionado);
-            }
-
-            if (select.hasClass('select2-hidden-accessible')) {
-                select.trigger('change');
-            }
-        });
-    }
-
-    function llenarSelects(barriosEmpresa, data) {
-        let selectCiudadInicio = $('#ciudad_inicio');
-        let selectCiudadFin = $('#ciudad_fin');
-        let selectBarrioInicio = $('#barrio_inicio');
-        let selectBarrioFin = $('#barrio_fin');
-
-        // Vaciar selects antes de llenarlos
-        selectCiudadInicio.empty().append('<option value="">Seleccione una ciudad</option>');
-        selectCiudadFin.empty().append('<option value="">Seleccione una ciudad</option>');
-        selectBarrioInicio.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
-        selectBarrioFin.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
-
-        // Iterar sobre las ciudades y agregarlas a los selects
-        barriosEmpresa.forEach(ciudad => {
-            selectCiudadInicio.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
-            selectCiudadFin.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
-        });
-
-        // Función para llenar barrios según la ciudad seleccionada
-        function llenarBarrios(ciudadId, selectBarrio, barrioSeleccionado = '') {
-            let ciudad = barriosEmpresa.find(c => c.id == ciudadId);
-            selectBarrio.empty().append('<option value="">Seleccione un barrio</option>');
-
-            if (ciudad && ciudad.barrios.length > 0) {
-                ciudad.barrios.forEach(barrio => {
-                    let value = barrio.zona;
-                    let text = barrio.barrio || barrio.zona; // Usar zona si existe, si no el barrio
-                    let isSelected = barrioSeleccionado == value ? 'selected' : '';
-                    selectBarrio.append(`<option value="${value}" ${isSelected}>${text}</option>`);
-                });
-            }
-        }
-
-        // Agregar evento onchange para actualizar barrios dinámicamente
-        selectCiudadInicio.on('change', function() {
-            let ciudadId = $(this).val();
-            llenarBarrios(ciudadId, selectBarrioInicio);
-        });
-
-        selectCiudadFin.on('change', function() {
-            let ciudadId = $(this).val();
-            llenarBarrios(ciudadId, selectBarrioFin);
-        });
-
-        // Seleccionar la ciudad y llenar barrios de inicio si existen
-        if (data.ciudad_inicio) {
-            selectCiudadInicio.val(data.ciudad_inicio).trigger('change');
-            llenarBarrios(data.ciudad_inicio, selectBarrioInicio, data.barrio_inicio);
-        }
-
-        // Seleccionar la ciudad y llenar barrios de fin si existen
-        if (data.ciudad_fin) {
-            selectCiudadFin.val(data.ciudad_fin).trigger('change');
-            llenarBarrios(data.ciudad_fin, selectBarrioFin, data.barrio_fin);
-        }
-    }
-
-    function llenarSelectsRepetidor(barriosEmpresa, $fila, data) {
-        let selectCiudad = $fila.find('.ciudad_adicional_recorrido');
-        let selectBarrio = $fila.find('.barrio_adicional_recorrido');
-
-        // Vaciar selects antes de llenarlos
-        selectCiudad.empty().append('<option value="">Seleccione una ciudad</option>').prop('disabled', false);
-        selectBarrio.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
-
-        // Llenar el select de ciudades
-        barriosEmpresa.forEach(ciudad => {
-            selectCiudad.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
-        });
-
-        // Función para llenar barrios según la ciudad seleccionada
-        function llenarBarrios(ciudadId, selectBarrio, barrioSeleccionado = '') {
-            let ciudad = barriosEmpresa.find(c => c.id == ciudadId);
-            selectBarrio.empty().append('<option value="">Seleccione un barrio</option>');
-
-            if (ciudad && ciudad.barrios.length > 0) {
-                ciudad.barrios.forEach(barrio => {
-                    let value = barrio.zona;
-                    let text = barrio.barrio || barrio.zona;
-                    let isSelected = barrioSeleccionado == value ? 'selected' : '';
-                    selectBarrio.append(`<option value="${value}" ${isSelected}>${text}</option>`);
-                });
-            }
-        }
-
-        // Desactivar cualquier evento previo y agregar uno nuevo
-        $(document).off('change', '.ciudad_adicional_recorrido').on('change', '.ciudad_adicional_recorrido', function() {
-            let ciudadId = $(this).val();
-            let selectBarrio = $(this).closest('.franja').find('.barrio_adicional_recorrido');
-            llenarBarrios(ciudadId, selectBarrio);
-        });
-
-        // Seleccionar la ciudad y llenar barrios si existen en `data`
-        if (data.ciudad) {
-            selectCiudad.val(data.ciudad).trigger('change');
-            llenarBarrios(data.ciudad, selectBarrio, data.barrio);
-        }
-    }
-
-    function llenarSelectsRepetidorV2(barriosEmpresa, $fila, data) {
-        let selectCiudadOrigen = $fila.find('.ciudad_origen_pasajero_adicional');
-        let selectBarrioOrigen = $fila.find('.barrio_origen_pasajero_adi');
-        let selectCiudadDestino = $fila.find('.ciudad_destino_pasajero_adicional');
-        let selectBarrioDestino = $fila.find('.barrio_destino_pasajero_adi');
-
-        // Vaciar selects antes de llenarlos
-        selectCiudadOrigen.empty().append('<option value="">Selecciona una ciudad Origen</option>').prop('disabled', false);
-        selectBarrioOrigen.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
-        selectCiudadDestino.empty().append('<option value="">Selecciona una ciudad Destino</option>').prop('disabled', false);
-        selectBarrioDestino.empty().append('<option value="">Seleccione un barrio</option>').prop('disabled', false);
-
-        // Llenar el select de ciudades
-        barriosEmpresa.forEach(ciudad => {
-            selectCiudadOrigen.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
-            selectCiudadDestino.append(`<option value="${ciudad.id}">${ciudad.ciudad}</option>`);
-        });
-
-        // Función para llenar barrios según la ciudad seleccionada
-        function llenarBarrios(ciudadId, selectBarrio, barrioSeleccionado = '') {
-            let ciudad = barriosEmpresa.find(c => c.id == ciudadId);
-            selectBarrio.empty().append('<option value="">Seleccione un barrio</option>');
-
-            if (ciudad && ciudad.barrios.length > 0) {
-                ciudad.barrios.forEach(barrio => {
-                    let value = barrio.zona;
-                    let text = barrio.barrio || barrio.zona;
-                    let isSelected = barrioSeleccionado == value ? 'selected' : '';
-                    selectBarrio.append(`<option value="${value}" ${isSelected}>${text}</option>`);
-                });
-            }
-        }
-
-        // Desactivar eventos previos y agregar nuevos
-        $(document).off('change', '.ciudad_origen_pasajero_adicional').on('change', '.ciudad_origen_pasajero_adicional', function() {
-            let ciudadId = $(this).val();
-            let selectBarrio = $(this).closest('.franja').find('.barrio_origen_pasajero_adi');
-            llenarBarrios(ciudadId, selectBarrio);
-        });
-
-        $(document).off('change', '.ciudad_destino_pasajero_adicional').on('change', '.ciudad_destino_pasajero_adicional', function() {
-            let ciudadId = $(this).val();
-            let selectBarrio = $(this).closest('.franja').find('.barrio_destino_pasajero_adi');
-            llenarBarrios(ciudadId, selectBarrio);
-        });
-
-        // Seleccionar la ciudad y llenar barrios si existen en `data`
-        if (data.ciudad_origen) {
-            selectCiudadOrigen.val(data.ciudad_origen).trigger('change');
-            llenarBarrios(data.ciudad_origen, selectBarrioOrigen, data.origen);
-        }
-        if (data.ciudad_destino) {
-            selectCiudadDestino.val(data.ciudad_destino).trigger('change');
-            llenarBarrios(data.ciudad_destino, selectBarrioDestino, data.destino);
-        }
-
-        $fila.find('.direccion_origen_adicional').val(data.direccion_origen);
-        $fila.find('.direccion_destino_adicional').val(data.direccion_destino);
-    }
 
     $(document).on('change', '#ciudad_inicio', function() {
         let ciudadId = $(this).val();

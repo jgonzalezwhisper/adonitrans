@@ -67,106 +67,346 @@
             <div class="wrap wrap-title">
                 <h3 class="title">Crear Vehiculo</h3>
             </div>
-            <form id="vehiculo-form" method="post" class="formplug" autocomplete="off">
+            <ul class="adonitrans-tabs-nav">
+                <li class="active" data-tab="tab1">Datos del Vehículo</li>
+                <li data-tab="tab2">Especificaciones Técnicas</li>
+                <li data-tab="tab3">Documentos</li>
+                <li data-tab="tab4">Archivos</li>
+                <li data-tab="tab5">Imágenes</li>
+            </ul>
+            <form id="vehiculo-form" method="post" class="formplug" autocomplete="off" enctype="multipart/form-data">
                 <input type="hidden" id="vehiculo-id" name="vehiculo-id" value="">
                 <?php wp_nonce_field('create_vehiculo_action', 'create_vehiculo_nonce'); ?>
 
-                <div class="wrap wrap-2">
-                    <label for="estado_del_vehiculo">Estado</label>
-                    <select id="estado_del_vehiculo" name="estado_del_vehiculo">
-                        <option value="Activo">Activo</option>
-                        <option value="Inactivo">Inactivo</option>
-                    </select>
-                </div>
-                <div class="wrap wrap-2">
-                    <label for="placa_vehiculo">Placa</label>
-                    <input type="text" id="placa_vehiculo" name="placa_vehiculo" value="">
+                <div class="adonitrans-tabs-content">
+
+                    <!-- Datos del Vehículo -->
+                    <div id="tab1" class="tab-content active">
+
+                        <?php
+                            $fields = [
+                                [
+                                    'id' => 'estado_del_vehiculo',
+                                    'label' => 'Estado',
+                                    'type' => 'select',
+                                    'class' => 'wrap wrap-2',
+                                    'options' => ['Activo', 'Inactivo']
+                                ],
+                                [
+                                    'id' => 'ruta__movil_vehi',
+                                    'label' => 'Ruta / Móvil',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'fecha_vinculacion_vehi',
+                                    'label' => 'Fecha Vinculación',
+                                    'type' => 'date',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'link_gps_vehi',
+                                    'label' => 'Link GPS',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'placa_vehiculo',
+                                    'label' => 'Placa',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'fecha_terminacion_vehi',
+                                    'label' => 'Fecha Terminación',
+                                    'type' => 'date',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'ciudad_vehiculo',
+                                    'label' => 'Ciudad',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'empresa_vehi',
+                                    'label' => 'Empresa',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'ultimo_mantenimiento_preventivo_vehi',
+                                    'label' => 'Ultimo Mantenimiento Preventivo',
+                                    'type' => 'date',
+                                    'class' => 'wrap wrap-2'
+                                ],                                
+                                /*[
+                                    'id' => 'propietario_de_vehiculo',
+                                    'label' => 'Propietario de Vehículo',
+                                    'type' => 'select',
+                                    'class' => 'wrap wrap-2',
+                                    'options' => 'users'
+                                ]*/
+                            ];
+                            render_fields($fields);
+                        ?>                        
+                    </div>
+                    <!-- Especificaciones Técnicas -->
+                    <div id="tab2" class="tab-content">
+
+                        <?php
+                            $fields = [
+                                [
+                                    'id' => 'marca_vehiculo',
+                                    'label' => 'Marca del Vehículo',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2',
+                                ],
+                                [
+                                    'id' => 'servicio_vehi',
+                                    'label' => 'Servicio',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'serial_vehiculo',
+                                    'label' => 'No de Serie',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'combustible_vehi',
+                                    'label' => 'Combustible',
+                                    'type' => 'select',
+                                    'class' => 'wrap wrap-2',
+                                    'options' => ['Gasolina','Gasolina/Gas','Diesel','Gas','Electrico']
+                                ],
+                                [
+                                    'id' => 'cantidad_pasajeros_vehiculo',
+                                    'label' => 'Capacidad',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'modelo_vehiculo',
+                                    'label' => 'Modelo',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'color_vehi',
+                                    'label' => 'Color',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'no_de_motor_vehi',
+                                    'label' => 'No de Motor',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'chasis_vehiculo',
+                                    'label' => 'Chasis',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'linea_vehi',
+                                    'label' => 'Línea',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'cilindraje_vehi',
+                                    'label' => 'Cilindraje',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],
+                                [
+                                    'id' => 'tipo_de_vehiculo',
+                                    'label' => 'Tipo de vehículo',
+                                    'type' => 'select',
+                                    'class' => 'wrap wrap-2',
+                                    'options' => ['', 'Automovil', 'Camioneta', 'Doble Cabina', 'Campero', 'Van', 'Bus', 'Buseta']
+                                ],
+                                [
+                                    'id' => 'carroceria_vehi',
+                                    'label' => 'Carrocería',
+                                    'type' => 'text',
+                                    'class' => 'wrap wrap-2'
+                                ],                                
+                            ];
+                            render_fields($fields);
+                        ?>
+                    </div>
+                    <!-- Documentos -->
+                    <div id="tab3" class="tab-content">
+
+                        <?php
+                            $fieldsets = [
+                                [
+                                    'legend' => 'Seguro Contractual-Extracontractual',
+                                    'class' => 'fieldset-seguro wrap wrap-2',
+                                    'fields' => [
+                                        [
+                                            'id' => 'seguro_fecha',
+                                            'label' => 'Fecha',
+                                            'type' => 'date',
+                                            'class' => 'wrap wrap-2',
+                                        ],
+                                        [
+                                            'id' => 'seguro_numero',
+                                            'label' => 'Número',
+                                            'type' => 'text',
+                                            'class' => 'wrap wrap-2'
+                                        ],
+                                        [
+                                            'id' => 'seguro_empresa',
+                                            'label' => 'Empresa',
+                                            'type' => 'text',
+                                            'class' => 'wrap wrap-2',
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    'legend' => 'SOAT',
+                                    'class' => 'fieldset-soat wrap wrap-2',
+                                    'fields' => [
+                                        [
+                                            'id' => 'soat_fecha',
+                                            'label' => 'Fecha',
+                                            'type' => 'date',
+                                            'class' => 'wrap wrap-2',
+                                        ],
+                                        [
+                                            'id' => 'soat_numero',
+                                            'label' => 'Número',
+                                            'type' => 'text',
+                                            'class' => 'wrap wrap-2'
+                                        ],
+                                        [
+                                            'id' => 'soat_empresa',
+                                            'label' => 'Empresa',
+                                            'type' => 'text',
+                                            'class' => 'wrap wrap-2'
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    'legend' => 'Tecnomecánica',
+                                    'class' => 'fieldset-tecnomecanica wrap wrap-2',
+                                    'fields' => [
+                                        [
+                                            'id' => 'tecno_fecha',
+                                            'label' => 'Fecha',
+                                            'type' => 'date',
+                                            'class' => 'wrap wrap-2',
+                                        ],
+                                        [
+                                            'id' => 'tecno_preventiva',
+                                            'label' => 'Preventiva',
+                                            'type' => 'date',
+                                            'class' => 'wrap wrap-2',
+                                        ],
+                                        [
+                                            'id' => 'tecno_fuec',
+                                            'label' => 'FUEC',
+                                            'type' => 'date',
+                                            'class' => 'wrap wrap-2',
+                                        ],
+                                    ]
+                                ],
+                                [
+                                    'legend' => 'Tarjeta de Operación',
+                                    'class' => 'fieldset-tarjeta wrap wrap-2',
+                                    'fields' => [
+                                        [
+                                            'id' => 'tarjeta_fecha',
+                                            'label' => 'Fecha',
+                                            'type' => 'date',
+                                            'class' => 'wrap wrap-2',
+                                        ],
+                                        [
+                                            'id' => 'tarjeta_numero',
+                                            'label' => 'Número',
+                                            'type' => 'text',
+                                            'class' => 'wrap wrap-2',
+                                        ],
+                                        [
+                                            'id' => 'tarjeta_fecha_matricula',
+                                            'label' => 'Fecha Matricula',
+                                            'type' => 'date',
+                                            'class' => 'wrap wrap-2',
+                                        ],
+                                    ]
+                                ]
+                            ];
+
+                            render_fields_group($fieldsets);
+                        ?>                        
+                    </div>
+                    <!-- Archivos -->
+                    <div id="tab4" class="tab-content">
+
+                        <div id="archivos-vehiculo-wrap" class="wrap">
+
+                            <div class="clonar" style="display: none;">
+                                <div class="archivo-vehiculo">
+                                    <div class="wrap wrap-2">                                        
+                                        <label for="">
+                                            Nombre Archivo
+                                            <input type="text" name="nombre_archivo[]" class="nombre-archivo">
+                                        </label>
+                                    </div>
+                                    <div class="wrap wrap-2 wrap-file">
+                                        <label for="">
+                                            Archivo
+                                            <input type="file" name="file_archivo[]">
+                                        </label>
+                                        <i class="icofont-trash"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="wrap-archivos-vehiculo" class="wrap"></div>
+
+                            <button id="add-file-vehiculo" href="#" class="button">Añadir Archivo <i class="icofont-ui-file"></i></button>
+                        </div>
+                        
+                    </div>
+                    <!-- Imágenes -->
+                    <div id="tab5" class="tab-content">
+
+                        <div id="imagenes-vehiculo-wrap" class="wrap wrap-clonar">
+
+                            <div class="clonar" style="display: none;">
+                                <div class="imagen-vehiculo">
+                                    <div class="wrap wrap-2">                                        
+                                        <label for="">
+                                            Nombre Archivo
+                                            <input type="text" name="nombre_imagen[]" class="nombre-archivo">
+                                        </label>
+                                    </div>
+                                    <div class="wrap wrap-2 wrap-file">
+                                        <label for="">
+                                            Imagen
+                                            <input type="file" name="imagen_archivo[]" accept="image/*">
+                                        </label>
+                                        <i class="icofont-trash"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="wrap-imagenes-vehiculo" class="wrap"></div>
+
+                            <button id="add-imagen-vehiculo" href="#" class="button">Añadir Imagen <i class="icofont-image"></i></button>
+                        </div>
+                        
+                    </div>
+                    
                 </div>
 
-                <div class="wrap wrap-2">
-                    <label for="tipo_de_vehiculo">Tipo de vehículo</label>
-                    <select id="tipo_de_vehiculo" name="tipo_de_vehiculo">
-                        <option value=""></option>
-                        <option value="Automovil">Automovil</option>
-                        <option value="Camioneta">Camioneta</option>
-                        <option value="Doble Cabina">Doble Cabina</option>
-                        <option value="Campero">Campero</option>
-                        <option value="Van">Van</option>
-                        <option value="Bus">Bus</option>
-                        <option value="Buseta">Buseta</option>
-                    </select>
-                </div>
-
-                <div class="wrap wrap-2">
-                    <label for="modelo_vehiculo">Modelo</label>
-                    <input type="text" id="modelo_vehiculo" name="modelo_vehiculo" value="">
-                </div>
-                <div class="wrap wrap-2">
-                    <label for="cantidad_pasajeros_vehiculo">Cantidad de Pasajeros</label>
-                    <input type="text" id="cantidad_pasajeros_vehiculo" name="cantidad_pasajeros_vehiculo" value="">
-                </div>
-                <div class="wrap wrap-2">
-                    <label for="marca_vehiculo">Marca del Vehículo</label>
-                    <input type="text" id="marca_vehiculo" name="marca_vehiculo" value="">
-                </div>
-                <div class="wrap wrap-2">
-                    <label for="serial_vehiculo">Serial</label>
-                    <input type="text" id="serial_vehiculo" name="serial_vehiculo" value="">
-                </div>
-                <div class="wrap wrap-2">
-                    <label for="chasis_vehiculo"># Chasis</label>
-                    <input type="text" id="chasis_vehiculo" name="chasis_vehiculo" value="">
-                </div>
-                <div class="wrap wrap-2">
-                    <label for="fecha_vencimiento_soat">Fecha vencimiento SOAT (DD/MM/YYYY)</label>
-                    <input type="date" id="fecha_vencimiento_soat" name="fecha_vencimiento_soat" value="" placeholder="dd/mm/yyyy">
-                </div>
-                <div class="wrap wrap-2">
-                    <label for="fecha_vencimiento_tecno_mecanica">Fecha Vencimiento Tecno Mecanica</label>
-                    <input type="date" id="fecha_vencimiento_tecno_mecanica" name="fecha_vencimiento_tecno_mecanica" value="" placeholder="dd/mm/yyyy">
-                </div>
-                <div class="wrap wrap-2">
-                    <label for="propietario_de_vehiculo">Propietario de Vehículo</label>
-                    <select id="propietario_de_vehiculo" name="propietario_de_vehiculo">
-                        <option value=""></option>
-                        <?php
-                            // Obtén todos los usuarios con roles específicos
-                            $roles = ['conductor', 'propietario_vehiculo', 'administrador'];
-                            $args = [
-                                'role__in' => $roles,
-                                'orderby'  => 'display_name',
-                                'order'    => 'ASC',
-                            ];
-                            $usuarios = get_users($args);
-                        ?>
-                        <?php foreach ($usuarios as $usuario) : $first_name = get_user_meta($usuario->ID, 'first_name', true);?>
-                            <option value="<?php echo esc_attr($usuario->ID); ?>">
-                                <?= esc_html($first_name . ' - ' . $usuario->user_email); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <!-- <div class="wrap wrap-2">
-                    <label for="conductor_del_vehiculo">Conductor del Vehiculo</label>
-                    <select id="conductor_del_vehiculo" name="conductor_del_vehiculo">
-                        <option value=""></option>
-                        <?php
-                            // Obtén todos los usuarios con roles específicos
-                            $roles = ['conductor'];
-                            $args = [
-                                'role__in' => $roles,
-                                'orderby'  => 'display_name',
-                                'order'    => 'ASC',
-                            ];
-                            $usuarios = get_users($args);
-                        ?>
-                        <?php foreach ($usuarios as $usuario) : $first_name = get_user_meta($usuario->ID, 'first_name', true);?>
-                            <option value="<?php echo esc_attr($usuario->ID); ?>">
-                                <?= esc_html($first_name . ' - ' . $usuario->user_email); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div> -->
                 <div class="wrap">
                     <button class="button button-add" type="submit" name="submit-user">Crear Vehículo</button>
                     <button class="button button-remove" type="button" id="cancelar-vehiculo-btn">Cancelar</button>

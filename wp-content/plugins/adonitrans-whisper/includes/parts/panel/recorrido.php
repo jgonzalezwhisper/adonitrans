@@ -33,7 +33,10 @@ function mostrar_razones($empresa_id) {
         </div>
         <p>Administra y gestiona los recorridos registrados en ADONITRANS desde este panel. Mantén toda la información organizada y actualizada.</p>
         <div class="wrap-listado-recorridos">
-            <?php if ( $user_role === 'colaborador' ): ?>
+            <?php
+                $roles_permitidos = ['administrator', 'operaciones_1', 'operaciones_2', 'colaborador'];
+            ?>
+            <?php if ( validar_rol_usuario($roles_permitidos, $user_role) ): ?>
                 <a href="#" class="button" id="crear-recorrido"><i class="icofont-plus-circle"></i> Solicitar Recorrido</a>
             <?php endif ?>
             <table id="table-recorridos" class="display table-adoni">
@@ -251,7 +254,7 @@ function mostrar_razones($empresa_id) {
                 <div class="wrap wrap-2">
                     <label for="id_solicitante_recorrido">Colaborador Solicitante</label>
                     <select id="id_solicitante_recorrido" name="id_solicitante_recorrido" class="<?php echo $user_role === 'administrator' ? 'admin-select-solicitante' : ''; ?>" required>
-                        <option value="">Selecciona un Colaborador</option>
+                        <option value=""></option>
                         <?php foreach ($colaboradores as $colaborador): ?>
                         <?php
                             // Obtener los datos del usuario

@@ -69,10 +69,68 @@ function create_vehiculo_function() {
         }
     }
 
+    $fields = [
+        'ruta__movil_vehi',
+        'fecha_vinculacion_vehi',
+        'link_gps_vehi',
+        'fecha_terminacion_vehi',
+        'ciudad_vehiculo',
+        'empresa_vehi',
+        'ultimo_mantenimiento_preventivo_vehi',
+        'servicio_vehi',
+        'combustible_vehi',
+        'color_vehi',
+        'no_de_motor_vehi',
+        'linea_vehi',
+        'cilindraje_vehi',
+        'carroceria_vehi',
+        'tipo_de_vehiculo'
+    ];
+    
+    foreach ($fields as $field) {
+        if (isset($_POST[$field])) {
+            $value = sanitize_text_field($_POST[$field]);
+            update_field($field, $value, $post_id);
+        }
+    }
+
+    // Definición de los grupos ACF
+    $acf_groups = [
+        'seguro_contractual-extracontractual_vehi' => [
+            'fecha' => 'seguro_fecha',
+            'numero' => 'seguro_numero',
+            'empresa' => 'seguro_empresa'
+        ],
+        'soat_vehi' => [
+            'fecha' => 'soat_fecha',
+            'numero' => 'soat_numero',
+            'empresa' => 'soat_empresa'
+        ],
+        'tecnomecanica_vehi' => [
+            'fecha' => 'tecno_fecha',
+            'preventiva' => 'tecno_preventiva',
+            'fuec' => 'tecno_fuec'
+        ],
+        'tarjeta_de_operacion_vehi' => [
+            'fecha' => 'tarjeta_fecha',
+            'numero' => 'tarjeta_numero',
+            'fecha_matricula' => 'tarjeta_fecha_matricula'
+        ]
+    ];
+
+    // Procesar y actualizar los campos ACF tipo grupo
+    foreach ($acf_groups as $group_key => $fields) {
+        $group_values = [];
+        foreach ($fields as $acf_field => $post_key) {
+            $group_values[$acf_field] = sanitize_text_field($_POST[$post_key] ?? '');
+        }
+        update_field($group_key, $group_values, $post_id);
+    }
+    
+
     // Guardar campos personalizados
     update_post_meta( $post_id, 'estado_del_vehiculo', $estado_del_vehiculo );
     update_post_meta( $post_id, 'placa_vehiculo', $placa_vehiculo );
-    update_post_meta( $post_id, 'tipo_de_vehiculo', $tipo_de_vehiculo );
     update_post_meta( $post_id, 'modelo_vehiculo', $modelo_vehiculo );
     update_post_meta( $post_id, 'cantidad_pasajeros_vehiculo', $cantidad_pasajeros_vehiculo );
     update_post_meta( $post_id, 'marca_vehiculo', $marca_vehiculo );
@@ -82,6 +140,49 @@ function create_vehiculo_function() {
     update_post_meta( $post_id, 'fecha_vencimiento_tecno_mecanica', $fecha_vencimiento_tecno_mecanica );
     update_post_meta( $post_id, 'propietario_de_vehiculo', $propietario_de_vehiculo );
     /*update_post_meta( $post_id, 'conductor_del_vehiculo', $conductor_del_vehiculo );*/
+
+    /*ARCHIVOS DEL VEHICULO*/
+    $nombres = $_POST['nombre_archivo'];
+    $archivos = $_FILES['file_archivo'];
+    $repetidor_data = [];
+
+    foreach ($nombres as $index => $nombre) {
+        if (!empty($archivos['name'][$index])) {
+            $archivo_id = subir_archivo_vehiculo($archivos, $index); // Obtener ID del adjunto
+
+            if ($archivo_id) {
+                $repetidor_data[] = [
+                    'nombre'  => sanitize_text_field($nombre),
+                    'archivo' => $archivo_id, // ACF espera el ID del adjunto, no la URL
+                ];
+            }
+        }
+    }
+
+    // Guardar en el campo repetidor de ACF
+    update_field('repetidor_archivos_vehi', $repetidor_data, $post_id);
+
+    /*IMAGENES DEL VEHICULO*/
+    $nombres_img = $_POST['nombre_imagen'];
+    $archivos_img = $_FILES['imagen_archivo'];
+    $repetidor_imagen_vehiculo = [];
+
+    foreach ($nombres_img as $index => $nombre) {
+        if (!empty($archivos_img['name'][$index])) {
+            $archivo_id = subir_archivo_vehiculo($archivos_img, $index); // Obtener ID del adjunto
+
+            if ($archivo_id) {
+                $repetidor_imagen_vehiculo[] = [
+                    'nombre'  => sanitize_text_field($nombre),
+                    'archivo' => $archivo_id,
+                ];
+            }
+        }
+    }
+
+    // Guardar en el campo repetidor de ACF
+    update_field('repetidor_imagenes_vehi', $repetidor_imagen_vehiculo, $post_id);
+
 
     // Definir el asunto y cuerpo del mensaje
     $subject = 'Vehículo '.$accion2.' en AdoniGo';
@@ -193,27 +294,113 @@ function load_vehiculo_data_function() {
         wp_send_json_error(['message' => 'Post no válido o no es un tipo de post vehiculo.']);
     }
 
-    $fecha_vencimiento_soat = get_post_meta($post_id, 'fecha_vencimiento_soat', true);
-    $fecha_vencimiento_tecno_mecanica = get_post_meta($post_id, 'fecha_vencimiento_tecno_mecanica', true);
+    $fields = [
+        'estado_del_vehiculo',
+        'placa_vehiculo',
+        'modelo_vehiculo',
+        'cantidad_pasajeros_vehiculo',
+        'marca_vehiculo',
+        'serial_vehiculo',
+        'chasis_vehiculo',
+        'propietario_de_vehiculo',
+        'conductor_del_vehiculo',
+        'ruta__movil_vehi',
+        'fecha_vinculacion_vehi',
+        'link_gps_vehi',
+        'fecha_terminacion_vehi',
+        'ciudad_vehiculo',
+        'empresa_vehi',
+        'ultimo_mantenimiento_preventivo_vehi',
+        'servicio_vehi',
+        'combustible_vehi',
+        'color_vehi',
+        'no_de_motor_vehi',
+        'linea_vehi',
+        'cilindraje_vehi',
+        'carroceria_vehi',
+        'tipo_de_vehiculo',
+        'fecha_vencimiento_soat',
+        'fecha_vencimiento_tecno_mecanica'
+    ];
 
-    // Convertir las fechas al formato YYYY-MM-DD
-    $fecha_vencimiento_soat_formatted = format_date_for_input($fecha_vencimiento_soat);
-    $fecha_vencimiento_tecno_mecanica_formatted = format_date_for_input($fecha_vencimiento_tecno_mecanica);
+    $acf_groups = [
+        'seguro_contractual-extracontractual_vehi' => [
+            'fecha'   => 'seguro_fecha',
+            'numero'  => 'seguro_numero',
+            'empresa' => 'seguro_empresa'
+        ],
+        'soat_vehi' => [
+            'fecha'   => 'soat_fecha',
+            'numero'  => 'soat_numero',
+            'empresa' => 'soat_empresa'
+        ],
+        'tecnomecanica_vehi' => [
+            'fecha'      => 'tecno_fecha',
+            'preventiva' => 'tecno_preventiva',
+            'fuec'       => 'tecno_fuec'
+        ],
+        'tarjeta_de_operacion_vehi' => [
+            'fecha'           => 'tarjeta_fecha',
+            'numero'          => 'tarjeta_numero',
+            'fecha_matricula' => 'tarjeta_fecha_matricula'
+        ]
+    ];
 
-    wp_send_json_success([
-        'estado_del_vehiculo'               => get_post_meta($post_id, 'estado_del_vehiculo', true),
-        'placa_vehiculo'                    => get_post_meta($post_id, 'placa_vehiculo', true),
-        'tipo_de_vehiculo'                  => get_post_meta($post_id, 'tipo_de_vehiculo', true),
-        'modelo_vehiculo'                   => get_post_meta($post_id, 'modelo_vehiculo', true),
-        'cantidad_pasajeros_vehiculo'       => get_post_meta($post_id, 'cantidad_pasajeros_vehiculo', true),
-        'marca_vehiculo'                    => get_post_meta($post_id, 'marca_vehiculo', true),
-        'serial_vehiculo'                   => get_post_meta($post_id, 'serial_vehiculo', true),
-        'chasis_vehiculo'                   => get_post_meta($post_id, 'chasis_vehiculo', true),
-        'fecha_vencimiento_soat'            => $fecha_vencimiento_soat_formatted,
-        'fecha_vencimiento_tecno_mecanica'  => $fecha_vencimiento_tecno_mecanica_formatted,
-        'propietario_de_vehiculo'           => get_post_meta($post_id, 'propietario_de_vehiculo', true),
-        'conductor_del_vehiculo'            => get_post_meta($post_id, 'conductor_del_vehiculo', true),
-    ]);
+    $response = [];
+
+    foreach ($fields as $field) {
+        $value = get_field($field, $post_id);
+        $response[$field] = in_array($field, ['fecha_vencimiento_soat', 'fecha_vencimiento_tecno_mecanica', 'fecha_vinculacion_vehi', 'fecha_terminacion_vehi', 'ultimo_mantenimiento_preventivo_vehi'])
+            ? format_date_for_input($value)
+            : $value;
+    }
+
+    // Obtener datos de los grupos ACF
+    foreach ($acf_groups as $group_key => $subfields) {
+        $group_values = get_field($group_key, $post_id);
+        if ($group_values) {
+            foreach ($subfields as $sub_key => $mapped_key) {
+                $value = $group_values[$sub_key] ?? '';
+                // Aplicar formato si el sub_key contiene 'fecha'
+                $response[$mapped_key] = (strpos($sub_key, 'fecha') !== false || strpos($sub_key, 'preventiva') !== false) ? format_date_for_input($value) : $value;
+            }
+        }
+    }
+
+    // Obtener los datos del repetidor de Archivos del Vehiculo
+    $repetidor_archivos = get_field('repetidor_archivos_vehi', $post_id);
+    $response['repetidor_archivos_vehi'] = [];
+
+    if (!empty($repetidor_archivos)) {
+        foreach ($repetidor_archivos as $archivo) {
+            $response['repetidor_archivos_vehi'][] = [
+                'nombre'  => $archivo['nombre'] ?? '',
+                'archivo' => $archivo['archivo'] ?? '',
+            ];
+        }
+    }
+
+    // Obtener los datos del repetidor de Imagenes del Vehiculo
+    $repetidor_imagenes = get_field('repetidor_imagenes_vehi', $post_id);
+    $response['repetidor_imagenes_vehi'] = [];
+
+    if (!empty($repetidor_imagenes)) {
+        foreach ($repetidor_imagenes as $imagen) {
+            $archivo = $imagen['archivo'] ?? '';
+            // Si el valor es un ID, obtener la URL
+            if (is_numeric($archivo)) {
+                $archivo = wp_get_attachment_url($archivo);
+            }
+
+            $response['repetidor_imagenes_vehi'][] = [
+                'nombre'  => $imagen['nombre'] ?? '',
+                'archivo' => $archivo,
+            ];
+        }
+    }
+
+
+    wp_send_json_success($response);
 }
 
 // Obtener lista de vehículos
